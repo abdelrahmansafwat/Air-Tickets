@@ -1,5 +1,6 @@
-import ReserveForm from "./components/ReserveForm";
+import React from 'react';
 import { makeStyles } from "@material-ui/core/styles";
+import { Paper } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -13,11 +14,13 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-function Reserve() {
+function ReserveForm() {
     const classes = useStyles();
     
     return (
-        <ReserveForm />
+        <Paper elevation={10}>
+        Hiya
+      </Paper>
     );
   }
   

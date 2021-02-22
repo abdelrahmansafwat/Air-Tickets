@@ -12,7 +12,7 @@ export default class Routes extends Component {
             <Router history={history}>
                 <Switch>
                     <Route path="/" exact component={Search} />
-                    <Route path="/login" component={Reserve} />
+                    <Route path="/reserve" component={Reserve} />
                 </Switch>
             </Router>
         )
