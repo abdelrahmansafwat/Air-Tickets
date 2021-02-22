@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, TextField, Grid, Button } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+import clsx from "clsx";
 import {
-  MuiPickersUtilsProvider,
-  DatePicker,
-} from "@material-ui/pickers";
+  Paper,
+  TextField,
+  Grid,
+  Button,
+  Typography,
+  Switch,
+} from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
@@ -21,6 +26,23 @@ const useStyles = makeStyles((theme) => ({
   },
   field: {
     marginTop: theme.spacing(2),
+  },
+  oneWayGrid: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  oneWayButton: {
+    textTransform: "none",
+  },
+  enabledText: {
+    color: "#2193b0",
+    fontWeight: 600,
+  },
+  disabledText: {
+    color: "#808080",
+  },
+  switch: {
+    color: "#2193b0",
   },
 }));
 
@@ -38,6 +60,7 @@ function SearchForm() {
   const [adults, setAdults] = useState(0);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
+  const [oneWay, setOneWay] = useState(false);
 
   const getAirports = async (query) => {
     console.log("Getting info from API...");
@@ -72,6 +95,53 @@ function SearchForm() {
   return (
     <Paper elevation={10} className={classes.form}>
       <Grid container direction={"column"} spacing={1}>
+        <Grid
+          container
+          direction={"row"}
+          spacing={3}
+          className={classes.oneWayGrid}
+        >
+          <Grid item xs={"auto"}>
+            <Button
+              className={classes.oneWayButton}
+              onClick={() => setOneWay(false)}
+            >
+              <Typography
+                variant="h5"
+                className={oneWay ? classes.disabledText : classes.enabledText}
+              >
+                One way
+              </Typography>
+            </Button>
+          </Grid>
+          <Grid item xs={"auto"}>
+            <Switch
+              checked={oneWay}
+              onChange={(value) => setOneWay(value.target.checked)}
+              name="checkedB"
+              color={"primary"}
+              switchBase={{
+                color: "#6dd5ed",
+              }}
+              colorPrimary={{
+                color: "#2193b0",
+              }}
+            />
+          </Grid>
+          <Grid item xs={"auto"}>
+            <Button
+              className={classes.oneWayButton}
+              onClick={() => setOneWay(true)}
+            >
+              <Typography
+                variant="h5"
+                className={oneWay ? classes.enabledText : classes.disabledText}
+              >
+                Roundtrip
+              </Typography>
+            </Button>
+          </Grid>
+        </Grid>
         <Grid item>
           <Autocomplete
             id="combo-box-demo"
@@ -144,8 +214,12 @@ function SearchForm() {
               margin="normal"
               id="date"
               label="Departure Date"
+              disablePast
               value={departureDate}
-              onChange={(date) => setDepartureDate(date)}
+              onChange={(date) => {
+                setDepartureDate(date);
+                setArrivalDate(date);
+              }}
               KeyboardButtonProps={{
                 "aria-label": "change date",
               }}
@@ -161,7 +235,9 @@ function SearchForm() {
               margin="normal"
               id="date"
               label="Arrival Date"
+              minDate={departureDate}
               value={arrivalDate}
+              disabled={!oneWay}
               onChange={(date) => setArrivalDate(date)}
               KeyboardButtonProps={{
                 "aria-label": "change date",
@@ -218,7 +294,6 @@ function SearchForm() {
         </Grid>
         <Grid item className={classes.field}>
           <Button
-            
             variant="contained"
             color="primary"
             component="span"

@@ -24,9 +24,19 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <style>
+      @keyframes move {
+        from {
+          left: -30%;
+        }
+        to {
+          left: 120%;
+        }
+      }
+    </style>
     <title>React App</title>
   </head>
-  <body style="background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%);">
+  <body style="background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%)">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
@@ -39,5 +49,32 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script>
+      for (var i = 0; i < 100; i++) {
+        var x = Math.floor(Math.random() * (60 - 10 + 1) + 10);;
+        var y = Math.random() * screen.height;
+        //var style = document.createElement("style");
+        //style.type = "text/css";
+        //style.innerHTML = '@-webkit-keyframes move' + i + ' {}';
+        //document.getElementsByTagName("head")[0].appendChild(style);
+
+        //document.getElementById("someElementId").className = "cssClass";
+        //console.log("Cloud");
+        //var x = Math.random() * screen.width;
+
+        var cloud = document.createElement("img");
+        cloud.style.display = "inline";
+        cloud.src = "%PUBLIC_URL%/baseline_cloud_white_18dp.png";
+        cloud.style.position = "absolute";
+        //cloud.style.webkitAnimation = 'from {left: -' + x + ';} to {left: 120%;}';
+        //cloud.style.animationDuration = '1s';
+        //cloud.style.animationIterationCount = 'infinite';
+        //cloud.style.left = "-" + x;
+        cloud.style.animation = "move " + x + "s linear 1s infinite"
+        cloud.style.top = y + "px";
+        cloud.style.zIndex = "-1";
+        document.body.appendChild(cloud);
+      }
+    </script>
   </body>
 </html>
