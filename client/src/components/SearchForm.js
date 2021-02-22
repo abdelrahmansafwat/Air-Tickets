@@ -4,7 +4,7 @@ import { Paper, TextField, Grid, Button } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker,
+  DatePicker,
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import { useForm, Controller } from "react-hook-form";
@@ -137,7 +137,7 @@ function SearchForm() {
         </Grid>
         <Grid item>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
+            <DatePicker
               disableToolbar
               fullWidth
               variant="outlined"
@@ -154,7 +154,7 @@ function SearchForm() {
         </Grid>
         <Grid item>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
+            <DatePicker
               disableToolbar
               fullWidth
               variant="outlined"
