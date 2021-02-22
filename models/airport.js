@@ -19,7 +19,7 @@ let airportSchema = new Schema({
     city: { type: Boolean, required: true },
 });
 
-airportSchema.plugin(mongooseFuzzySearching, { fields: ['name', 'cityName'] })
+airportSchema.plugin(mongooseFuzzySearching, { fields: ['name', 'cityName', 'code'] })
 
 let airportModel = mongoose.model("aiport", airportSchema);
 
