@@ -1,5 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
+const mongooseFuzzySearching = require('mongoose-fuzzy-searching');
 const Schema = mongoose.Schema;
 mongoose.connect(process.env.MONGO_URI, { useUnifiedTopology: true, useNewUrlParser: true });
 mongoose.set('useFindAndModify', false);
@@ -18,7 +19,7 @@ let airportSchema = new Schema({
     city: { type: Boolean, required: true },
 });
 
-airportSchema.index({name: 'text', cityName: 'text'});
+airportSchema.plugin(mongooseFuzzySearching, { fields: ['name', 'cityName'] })
 
 let airportModel = mongoose.model("aiport", airportSchema);
 
