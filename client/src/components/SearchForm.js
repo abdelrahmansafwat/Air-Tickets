@@ -76,7 +76,7 @@ function SearchForm() {
   const [retrievedAirports, setRetrievedAirports] = useState([]);
   const [departureDate, setDepartureDate] = useState(new Date());
   const [arrivalDate, setArrivalDate] = useState(new Date());
-  const [adults, setAdults] = useState(0);
+  const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
   const [oneWay, setOneWay] = useState(false);
