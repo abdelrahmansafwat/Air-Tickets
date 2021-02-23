@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
+//import clsx from "clsx";
 import {
   Paper,
   TextField,
@@ -20,7 +20,7 @@ import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import { RemoveCircle, AddCircle, LocationOn } from "@material-ui/icons";
 
 import DateFnsUtils from "@date-io/date-fns";
-import { useForm, Controller } from "react-hook-form";
+//import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -60,11 +60,14 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     marginRight: theme.spacing(2),
   },
+  dialog: {
+    width: "35%",
+  },
 }));
 
 function SearchForm() {
   const classes = useStyles();
-  const { control } = useForm();
+  //const { control } = useForm();
 
   //const [departureAirport, setDepartureAirport] = useState("");
   const [selectedDepartureAirport, setSelectedDepartureAirport] = useState("");
@@ -325,6 +328,7 @@ function SearchForm() {
         onClose={() => setPassengersDialog(false)}
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
+        classes={{ paper: classes.dialog}}
       >
         <DialogTitle id="alert-dialog-slide-title">
           {"Add Passengers"}
