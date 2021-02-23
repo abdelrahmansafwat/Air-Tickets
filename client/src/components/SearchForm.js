@@ -360,7 +360,7 @@ function SearchForm() {
                       aria-label="upload picture"
                       component="span"
                       onClick={() => {
-                        if(adults > 0){
+                        if(adults > 1){
                           setAdults(adults-1);
                         }
                       }}
