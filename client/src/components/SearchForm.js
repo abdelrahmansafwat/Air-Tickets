@@ -19,7 +19,8 @@ import {
 import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import { RemoveCircle, AddCircle, LocationOn } from "@material-ui/icons";
-import { CustomSwitchStyles } from './CustomSwitch';
+import { CustomSwitchStyles } from "./CustomSwitch";
+import { CustomButtonStyles } from "./CustomButton";
 import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
@@ -31,10 +32,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const useStyles = makeStyles((theme) => ({
   form: {
     display: "flex",
-    [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up("md")]: {
       width: "50%",
     },
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down("md")]: {
       width: "90%",
     },
     margin: "10%",
@@ -91,6 +92,7 @@ function SearchForm() {
   const [errorMessage, setErrorMessage] = useState(false);
 
   const CustomSwitch = CustomSwitchStyles();
+  const CustomButton = CustomButtonStyles({ chubby: true });
 
   const getAirports = async (query) => {
     console.log("Getting info from API...");
@@ -133,9 +135,7 @@ function SearchForm() {
           spacing={3}
           className={classes.oneWayGrid}
         >
-          <Grid item xs={"auto"}>
-            
-          </Grid>
+          <Grid item xs={"auto"}></Grid>
           <Grid item xs={"auto"}>
             <Switch
               checked={oneWay}
@@ -144,9 +144,7 @@ function SearchForm() {
               classes={CustomSwitch}
             />
           </Grid>
-          <Grid item xs={"auto"}>
-            
-          </Grid>
+          <Grid item xs={"auto"}></Grid>
         </Grid>
         <Grid item>
           <Autocomplete
@@ -302,15 +300,26 @@ function SearchForm() {
         </Grid>
 
         <Grid item className={classes.field}>
-          <Button
-            variant="contained"
-            color="primary"
-            component="span"
-            fullWidth
-            onClick={(event) => {}}
+          <Grid
+            container
+            direction={"row"}
+            spacing={3}
+            className={classes.oneWayGrid}
           >
-            Submit
-          </Button>
+            <Grid item xs={"auto"}></Grid>
+            <Grid item xs={"auto"}>
+              <Button
+                variant="contained"
+                color="primary"
+                component="span"
+                classes={CustomButton}
+                onClick={(event) => {}}
+              >
+                Submit
+              </Button>
+            </Grid>
+            <Grid item xs={"auto"}></Grid>
+          </Grid>
         </Grid>
       </Grid>
       <Dialog
@@ -510,25 +519,25 @@ function SearchForm() {
         </DialogActions>
       </Dialog>
       <Dialog
-            open={error}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={() => setError(false)}
-            aria-labelledby="alert-dialog-slide-title"
-            aria-describedby="alert-dialog-slide-description"
-          >
-            <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-slide-description">
-                {errorMessage}
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setError(false)} color="primary">
-                Close
-              </Button>
-            </DialogActions>
-          </Dialog>
+        open={error}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setError(false)}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            {errorMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setError(false)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }
