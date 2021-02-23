@@ -16,7 +16,7 @@ export default () => ({
     backgroundColor: '#fff',
     borderRadius: 20,
     '&:before': {
-      content: '"One way"',
+      content: '"One Way"',
     },
   },
   track: {
@@ -35,7 +35,7 @@ export default () => ({
       fontFamily: 'Roboto, Helvetica'
     },
     '&:before': {
-      content: '"One way"',
+      content: '"One Way"',
       left: 4,
       opacity: 0,
     },

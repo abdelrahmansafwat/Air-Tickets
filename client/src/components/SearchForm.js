@@ -15,10 +15,17 @@ import {
   IconButton,
   DialogTitle,
   Slide,
+  InputAdornment,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
-import { RemoveCircle, AddCircle, LocationOn } from "@material-ui/icons";
+import {
+  RemoveCircle,
+  AddCircle,
+  LocationOn,
+  Wc,
+  Today,
+} from "@material-ui/icons";
 import { CustomSwitchStyles } from "./CustomSwitch";
 import { CustomButtonStyles } from "./CustomButton";
 import DateFnsUtils from "@date-io/date-fns";
@@ -43,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
     },
     alignItems: "center",
     justifyContent: "center",
-    
   },
   field: {
     marginTop: theme.spacing(2),
@@ -66,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#2193b0",
   },
   icon: {
-    color: theme.palette.text.secondary,
+    color: "#2193b0",
     marginRight: theme.spacing(2),
   },
   dialog: {
@@ -77,6 +83,26 @@ const useStyles = makeStyles((theme) => ({
       width: "50%",
     },
   },
+  textField: {
+    "& label.Mui-focused": {
+      color: "#2193b0",
+    },
+    "& .MuiInput-underline:after": {
+      borderBottomColor: "#2193b0",
+    },
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "#2193b0",
+      },
+      "&:hover fieldset": {
+        borderColor: "#6dd5ed",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#2193b0",
+      },
+    },
+  },
+  
 }));
 
 function SearchForm() {
@@ -161,7 +187,11 @@ function SearchForm() {
             disableClearable
             filterOptions={(x) => x}
             options={retrievedAirports}
-            value={selectedDepartureAirport.name ? String(selectedDepartureAirport.name) : "" }
+            value={
+              selectedDepartureAirport.name
+                ? String(selectedDepartureAirport.name)
+                : ""
+            }
             renderOption={(option) => {
               //console.log(retrievedAirports);
               if (retrievedAirports && retrievedAirports.length > 0) {
@@ -191,12 +221,21 @@ function SearchForm() {
             renderInput={(params) => (
               <TextField
                 //variant="outlined"
+                classes={{ root: classes.textField }}
                 {...params}
                 margin="normal"
                 fullWidth
                 id="departureAirport"
                 label="Departure Airport"
                 name="departureAirport"
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocationOn className={classes.icon} />
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
           />
@@ -210,7 +249,11 @@ function SearchForm() {
             disableClearable
             filterOptions={(x) => x}
             options={retrievedAirports}
-            value={selectedArrivalAirport.name ? String(selectedArrivalAirport.name) : "" }
+            value={
+              selectedArrivalAirport.name
+                ? String(selectedArrivalAirport.name)
+                : ""
+            }
             renderOption={(option) => {
               //console.log(retrievedAirports);
               if (retrievedAirports && retrievedAirports.length > 0) {
@@ -239,12 +282,21 @@ function SearchForm() {
             renderInput={(params) => (
               <TextField
                 //variant="outlined"
+                classes={{ root: classes.textField }}
                 {...params}
                 margin="normal"
                 fullWidth
                 id="arrivalAirport"
                 label="Arrival Airport"
                 name="arrivalAirport"
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocationOn className={classes.icon} />
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
           />
@@ -253,6 +305,7 @@ function SearchForm() {
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <DatePicker
               disableToolbar
+              classes={{ root: classes.textField }}
               fullWidth
               variant="outlined"
               margin="normal"
@@ -267,6 +320,13 @@ function SearchForm() {
               KeyboardButtonProps={{
                 "aria-label": "change date",
               }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Today className={classes.icon} />
+                  </InputAdornment>
+                ),
+              }}
             />
           </MuiPickersUtilsProvider>
         </Grid>
@@ -274,6 +334,7 @@ function SearchForm() {
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <DatePicker
               disableToolbar
+              classes={{ root: classes.textField }}
               fullWidth
               variant="outlined"
               margin="normal"
@@ -286,11 +347,19 @@ function SearchForm() {
               KeyboardButtonProps={{
                 "aria-label": "change date",
               }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Today className={classes.icon} />
+                  </InputAdornment>
+                ),
+              }}
             />
           </MuiPickersUtilsProvider>
         </Grid>
         <Grid item>
           <TextField
+            classes={{ root: classes.textField }}
             id="outlined-number"
             label="Passengers"
             fullWidth
@@ -307,6 +376,13 @@ function SearchForm() {
             onClick={() => setPassengersDialog(true)}
             InputLabelProps={{
               shrink: true,
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Wc className={classes.icon} />
+                </InputAdornment>
+              ),
             }}
           />
         </Grid>
@@ -325,7 +401,9 @@ function SearchForm() {
                 color="primary"
                 component="span"
                 classes={CustomButton}
-                onClick={(event) => {console.log(selectedDepartureAirport);}}
+                onClick={(event) => {
+                  console.log(selectedDepartureAirport);
+                }}
               >
                 Submit
               </Button>
@@ -461,7 +539,7 @@ function SearchForm() {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={12} md={"auto"} >
+            <Grid item xs={12} md={"auto"}>
               <Grid container direction={"column"} xs={"auto"}>
                 <Grid item style={{ textAlign: "center" }} xs={"auto"}>
                   <Typography variant="h6">{"Infants"}</Typography>
