@@ -455,7 +455,7 @@ function SearchForm() {
                             setInfants(0);
                             setError(true);
                             setErrorMessage(
-                              "Number of infants can't be less than the number of adults."
+                              "Number of infants can't be more than the number of adults."
                             );
                           }
                         }
@@ -581,7 +581,7 @@ function SearchForm() {
                         } else if (adults <= infants) {
                           setError(true);
                           setErrorMessage(
-                            "Number of infants can't be less than the number of adults."
+                            "Number of infants can't be more than the number of adults."
                           );
                         } else {
                           setError(true);
