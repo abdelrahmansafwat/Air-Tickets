@@ -12,7 +12,8 @@ router.get("/find/:q", async (req, res) => {
     data
   });
   */
-  
+
+  /*
   await airportModel.find({ $text: { $search: req.params.q } }, (err, data) => {
     if (!data) {
       res.status(401).json({
@@ -25,7 +26,21 @@ router.get("/find/:q", async (req, res) => {
       });
     }
   });
-  
+  */
+  var codeSearch = [];
+  var textSearch = await airportModel.find({
+    $text: { $search: req.params.q },
+  });
+
+  if (req.params.q.length === 3) {
+    codeSearch = await airportModel.find({ code: req.params.q.toUpperCase() });
+  }
+
+  var data = codeSearch.concat(textSearch);
+
+  res.status(200).json({
+    data
+  });
 });
 
 module.exports = router;
