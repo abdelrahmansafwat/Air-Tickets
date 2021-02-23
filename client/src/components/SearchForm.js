@@ -8,12 +8,24 @@ import {
   Button,
   Typography,
   Switch,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  IconButton,
+  DialogTitle,
+  Slide,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
+import { RemoveCircle, AddCircle, LocationOn } from "@material-ui/icons";
+
 import DateFnsUtils from "@date-io/date-fns";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -44,6 +56,10 @@ const useStyles = makeStyles((theme) => ({
   switch: {
     color: "#2193b0",
   },
+  icon: {
+    color: theme.palette.text.secondary,
+    marginRight: theme.spacing(2),
+  },
 }));
 
 function SearchForm() {
@@ -61,6 +77,7 @@ function SearchForm() {
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
   const [oneWay, setOneWay] = useState(false);
+  const [passengersDialog, setPassengersDialog] = useState(false);
 
   const getAirports = async (query) => {
     console.log("Getting info from API...");
@@ -73,6 +90,8 @@ function SearchForm() {
         if (response.data.data && response.data.data.length > 0) {
           console.log(response.data.data);
           setRetrievedAirports(response.data.data);
+        } else {
+          setRetrievedAirports([]);
         }
         //history.push("/dashboard");
       })
@@ -151,7 +170,21 @@ function SearchForm() {
             renderOption={(option) => {
               //console.log(retrievedAirports);
               if (retrievedAirports && retrievedAirports.length > 0) {
-                return option.name;
+                return (
+                  <Grid container alignItems="center">
+                    <Grid item>
+                      <LocationOn className={classes.icon} />
+                    </Grid>
+                    <Grid item xs>
+                      <span key={option.name} style={{ fontWeight: 700 }}>
+                        {option.name + " (" + option.code + ")"}
+                      </span>
+                      <Typography variant="body2" color="textSecondary">
+                        {option.cityName}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                );
               }
             }}
             onChange={(event, newValue) => {
@@ -183,7 +216,21 @@ function SearchForm() {
             renderOption={(option) => {
               //console.log(retrievedAirports);
               if (retrievedAirports && retrievedAirports.length > 0) {
-                return option.name;
+                return (
+                  <Grid container alignItems="center">
+                    <Grid item>
+                      <LocationOn className={classes.icon} />
+                    </Grid>
+                    <Grid item xs>
+                      <span key={option.name} style={{ fontWeight: 700 }}>
+                        {option.name + " (" + option.code + ")"}
+                      </span>
+                      <Typography variant="body2" color="textSecondary">
+                        {option.cityName}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                );
               }
             }}
             onChange={(event, newValue) => {
@@ -245,53 +292,20 @@ function SearchForm() {
             />
           </MuiPickersUtilsProvider>
         </Grid>
-        <Grid container direction={"row"} spacing={3} className={classes.field}>
-          <Grid item xs={4}>
-            <TextField
-              id="outlined-number"
-              label="Adults"
-              type="number"
-              fullWidth
-              onChange={(value) => setAdults(value)}
-              InputLabelProps={{
-                shrink: true,
-                inputProps: {
-                  min: 0,
-                },
-              }}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              id="outlined-number"
-              label="Children"
-              type="number"
-              fullWidth
-              onChange={(value) => setChildren(value)}
-              InputLabelProps={{
-                shrink: true,
-                inputProps: {
-                  min: 0,
-                },
-              }}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              id="outlined-number"
-              label="Infants"
-              type="number"
-              fullWidth
-              onChange={(value) => setInfants(value)}
-              InputLabelProps={{
-                shrink: true,
-                inputProps: {
-                  min: 0,
-                },
-              }}
-            />
-          </Grid>
+        <Grid item>
+          <TextField
+            id="outlined-number"
+            label="Passengers"
+            fullWidth
+            //value={passengers}
+            //onChange={(value) => setAdults(value)}
+            onClick={() => setPassengersDialog(true)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
         </Grid>
+
         <Grid item className={classes.field}>
           <Button
             variant="contained"
@@ -304,6 +318,165 @@ function SearchForm() {
           </Button>
         </Grid>
       </Grid>
+      <Dialog
+        open={passengersDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setPassengersDialog(false)}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">
+          {"Add Passengers"}
+        </DialogTitle>
+        <DialogContent>
+          <Grid
+            container
+            direction={"row"}
+            spacing={3}
+            className={classes.field}
+            xs={"auto"}
+          >
+            <Grid item xs={"auto"}>
+              <Grid container direction={"column"} xs={"auto"}>
+                <Grid item style={{textAlign: "center"}} xs={"auto"}>
+                  <Typography variant="h6">
+                    {"Adults"}
+                  </Typography>
+                </Grid>
+                <Grid
+                  container
+                  direction={"row"}
+                  className={classes.oneWayGrid}
+                  xs={"auto"}
+                >
+                  <Grid item xs={"auto"}>
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="span"
+                      onClick={() => {
+                        if(adults > 0){
+                          setAdults(adults-1);
+                        }
+                      }}
+                    >
+                      <RemoveCircle />
+                    </IconButton>
+                  </Grid>
+                  <Grid item xs={"auto"}>
+                    {adults}
+                  </Grid>
+                  <Grid item xs={"auto"}>
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="span"
+                      onClick={() => {
+                        setAdults(adults+1);
+                      }}
+                    >
+                      <AddCircle />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={"auto"}>
+              <Grid
+                container
+                direction={"column"}
+                
+              >
+                <Grid item style={{textAlign: "center"}} xs={"auto"}>
+                  <Typography variant="h6">
+                    {"Children"}
+                  </Typography>
+                </Grid>
+                <Grid container direction={"row"} className={classes.oneWayGrid} xs={"auto"}>
+                  <Grid item xs={"auto"}>
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="span"
+                      onClick={() => {
+                        if(children > 0){
+                          setChildren(children-1);
+                        }
+                      }}
+                    >
+                      <RemoveCircle />
+                    </IconButton>
+                  </Grid>
+                  <Grid item xs={"auto"}>
+                    {children}
+                  </Grid>
+                  <Grid item xs={"auto"}>
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="span"
+                      onClick={() => {
+                        setChildren(children+1);
+                      }}
+                    >
+                      <AddCircle />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={"auto"}>
+              <Grid container direction={"column"} xs={"auto"}>
+                <Grid item style={{textAlign: "center"}} xs={"auto"}>
+                  <Typography variant="h6">
+                    {"Infants"}
+                  </Typography>
+                </Grid>
+                <Grid container direction={"row"} className={classes.oneWayGrid} xs={"auto"}>
+                  <Grid item xs={"auto"}>
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="span"
+                      onClick={() => {
+                        if(infants > 0){
+                          setInfants(infants-1);
+                        }
+                      }}
+                    >
+                      <RemoveCircle />
+                    </IconButton>
+                  </Grid>
+                  <Grid item xs={"auto"}>
+                    {infants}
+                  </Grid>
+                  <Grid item xs={"auto"}>
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="span"
+                      onClick={() => {
+                        setInfants(infants+1);
+                      }}
+                    >
+                      <AddCircle />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setPassengersDialog(false)}
+            variant="contained"
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }
