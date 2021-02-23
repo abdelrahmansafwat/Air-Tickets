@@ -30,7 +30,7 @@
           left: -30%;
         }
         to {
-          left: 100%;
+          left: 120%;
         }
       }
 
@@ -39,7 +39,7 @@
           left: -500%;
         }
         to {
-          left: 100%;
+          left: 120%;
         }
       }
 
@@ -52,18 +52,17 @@
         }
       }
 
-      html,
-      body {
+      .container, body, html {
         max-width: 100%;
         overflow-x: hidden;
-        background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%);
       }
     </style>
     <title>Airfare Ticket Reservation</title>
   </head>
-  <body>
+  <body style="background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%)">
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="container"><div id="root"></div></div>
+    
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -98,7 +97,7 @@
         cloud.style.animation = "move " + x + "s linear 1s infinite";
         cloud.style.top = y + "px";
         cloud.style.zIndex = "-1";
-        document.body.appendChild(cloud);
+        document.getElementById("container").appendChild(cloud);
       }
 
       for (var i = 0; i < 10; i++) {
@@ -133,7 +132,7 @@
         }
         cloud.style.top = y + "px";
         cloud.style.zIndex = "-1";
-        document.body.appendChild(cloud);
+        document.getElementById("container").appendChild(cloud);
       }
     </script>
   </body>
