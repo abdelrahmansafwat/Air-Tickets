@@ -146,6 +146,68 @@
           document.getElementById("container").appendChild(cloud);
         }
       }
+      else {
+        for (var i = 0; i < 100; i++) {
+          var x = Math.random() * screen.width;
+          var y = Math.random() * screen.height;
+          //var style = document.createElement("style");
+          //style.type = "text/css";
+          //style.innerHTML = '@-webkit-keyframes move' + i + ' {}';
+          //document.getElementsByTagName("head")[0].appendChild(style);
+
+          //document.getElementById("someElementId").className = "cssClass";
+          //console.log("Cloud");
+          //var x = Math.random() * screen.width;
+
+          var cloud = document.createElement("img");
+          cloud.style.display = "inline";
+          cloud.src = "%PUBLIC_URL%/baseline_cloud_white_18dp.png";
+          cloud.style.position = "absolute";
+          //cloud.style.webkitAnimation = 'from {left: -' + x + ';} to {left: 120%;}';
+          //cloud.style.animationDuration = '1s';
+          //cloud.style.animationIterationCount = 'infinite';
+          //cloud.style.left = "-200%";
+          //cloud.style.animation = "move " + x + "s linear 1s infinite";
+          cloud.style.top = y + "px";
+          cloud.style.left = x + "px";
+          cloud.style.zIndex = "-1";
+          document.getElementById("container").appendChild(cloud);
+        }
+
+        for (var i = 0; i < 10; i++) {
+          var x = Math.random() * screen.width;
+          var y = Math.random() * screen.height;
+          //var style = document.createElement("style");
+          //style.type = "text/css";
+          //style.innerHTML = '@-webkit-keyframes move' + i + ' {}';
+          //document.getElementsByTagName("head")[0].appendChild(style);
+
+          //document.getElementById("someElementId").className = "cssClass";
+          //console.log("Cloud");
+          //var x = Math.random() * screen.width;
+
+          var cloud = document.createElement("img");
+          cloud.style.display = "inline";
+          cloud.style.position = "absolute";
+          //cloud.style.webkitAnimation = 'from {left: -' + x + ';} to {left: 120%;}';
+          //cloud.style.animationDuration = '1s';
+          //cloud.style.animationIterationCount = 'infinite';
+          //cloud.style.left = "-" + x;
+          cloud.style.left = "-200%";
+          console.log(x);
+          if (x % 2 === 0) {
+            cloud.src = "%PUBLIC_URL%/baseline_flight_black_18dp.png";
+            //cloud.style.animation = "movePlane 60s linear " + x + "s infinite";
+          } else {
+            cloud.src = "%PUBLIC_URL%/baseline_flight_black_18dp-right.png";
+            //cloud.style.animation = "movePlaneRight 60s linear " + x + "s infinite";
+          }
+          cloud.style.top = y + "px";
+          cloud.style.left = x + "px";
+          cloud.style.zIndex = "-1";
+          document.getElementById("container").appendChild(cloud);
+        }
+      }
     </script>
   </body>
 </html>

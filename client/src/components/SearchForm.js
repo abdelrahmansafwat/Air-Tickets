@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
   IconButton,
   DialogTitle,
   Slide,
@@ -30,7 +31,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const useStyles = makeStyles((theme) => ({
   form: {
     display: "flex",
-    width: "50%",
+    [theme.breakpoints.up('md')]: {
+      width: "50%",
+    },
+    [theme.breakpoints.down('md')]: {
+      width: "80%",
+    },
     margin: "10%",
     alignItems: "center",
     justifyContent: "center",
@@ -81,6 +87,8 @@ function SearchForm() {
   const [infants, setInfants] = useState(0);
   const [oneWay, setOneWay] = useState(false);
   const [passengersDialog, setPassengersDialog] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false);
 
   const getAirports = async (query) => {
     console.log("Getting info from API...");
@@ -300,6 +308,14 @@ function SearchForm() {
             id="outlined-number"
             label="Passengers"
             fullWidth
+            value={
+              adults +
+              " adults, " +
+              children +
+              " children, " +
+              infants +
+              " infants"
+            }
             //value={passengers}
             //onChange={(value) => setAdults(value)}
             onClick={() => setPassengersDialog(true)}
@@ -328,7 +344,7 @@ function SearchForm() {
         onClose={() => setPassengersDialog(false)}
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
-        classes={{ paper: classes.dialog}}
+        classes={{ paper: classes.dialog }}
       >
         <DialogTitle id="alert-dialog-slide-title">
           {"Add Passengers"}
@@ -343,10 +359,8 @@ function SearchForm() {
           >
             <Grid item xs={"auto"}>
               <Grid container direction={"column"} xs={"auto"}>
-                <Grid item style={{textAlign: "center"}} xs={"auto"}>
-                  <Typography variant="h6">
-                    {"Adults"}
-                  </Typography>
+                <Grid item style={{ textAlign: "center" }} xs={"auto"}>
+                  <Typography variant="h6">{"Adults"}</Typography>
                 </Grid>
                 <Grid
                   container
@@ -360,8 +374,15 @@ function SearchForm() {
                       aria-label="upload picture"
                       component="span"
                       onClick={() => {
-                        if(adults > 1){
-                          setAdults(adults-1);
+                        if (adults > 1) {
+                          setAdults(adults - 1);
+                          if (adults < infants) {
+                            setInfants(0);
+                            setError(true);
+                            setErrorMessage(
+                              "Number of infants can't be less than the number of adults."
+                            );
+                          }
                         }
                       }}
                     >
@@ -377,7 +398,14 @@ function SearchForm() {
                       aria-label="upload picture"
                       component="span"
                       onClick={() => {
-                        setAdults(adults+1);
+                        if (adults + children + infants < 9) {
+                          setAdults(adults + 1);
+                        } else {
+                          setError(true);
+                          setErrorMessage(
+                            "Number of passengers can't be more than 9."
+                          );
+                        }
                       }}
                     >
                       <AddCircle />
@@ -387,25 +415,24 @@ function SearchForm() {
               </Grid>
             </Grid>
             <Grid item xs={"auto"}>
-              <Grid
-                container
-                direction={"column"}
-                
-              >
-                <Grid item style={{textAlign: "center"}} xs={"auto"}>
-                  <Typography variant="h6">
-                    {"Children"}
-                  </Typography>
+              <Grid container direction={"column"}>
+                <Grid item style={{ textAlign: "center" }} xs={"auto"}>
+                  <Typography variant="h6">{"Children"}</Typography>
                 </Grid>
-                <Grid container direction={"row"} className={classes.oneWayGrid} xs={"auto"}>
+                <Grid
+                  container
+                  direction={"row"}
+                  className={classes.oneWayGrid}
+                  xs={"auto"}
+                >
                   <Grid item xs={"auto"}>
                     <IconButton
                       color="primary"
                       aria-label="upload picture"
                       component="span"
                       onClick={() => {
-                        if(children > 0){
-                          setChildren(children-1);
+                        if (children > 0) {
+                          setChildren(children - 1);
                         }
                       }}
                     >
@@ -421,7 +448,14 @@ function SearchForm() {
                       aria-label="upload picture"
                       component="span"
                       onClick={() => {
-                        setChildren(children+1);
+                        if (adults + children + infants < 9) {
+                          setChildren(children + 1);
+                        } else {
+                          setError(true);
+                          setErrorMessage(
+                            "Number of passengers can't be more than 9."
+                          );
+                        }
                       }}
                     >
                       <AddCircle />
@@ -432,20 +466,23 @@ function SearchForm() {
             </Grid>
             <Grid item xs={"auto"}>
               <Grid container direction={"column"} xs={"auto"}>
-                <Grid item style={{textAlign: "center"}} xs={"auto"}>
-                  <Typography variant="h6">
-                    {"Infants"}
-                  </Typography>
+                <Grid item style={{ textAlign: "center" }} xs={"auto"}>
+                  <Typography variant="h6">{"Infants"}</Typography>
                 </Grid>
-                <Grid container direction={"row"} className={classes.oneWayGrid} xs={"auto"}>
+                <Grid
+                  container
+                  direction={"row"}
+                  className={classes.oneWayGrid}
+                  xs={"auto"}
+                >
                   <Grid item xs={"auto"}>
                     <IconButton
                       color="primary"
                       aria-label="upload picture"
                       component="span"
                       onClick={() => {
-                        if(infants > 0){
-                          setInfants(infants-1);
+                        if (infants > 0) {
+                          setInfants(infants - 1);
                         }
                       }}
                     >
@@ -461,7 +498,22 @@ function SearchForm() {
                       aria-label="upload picture"
                       component="span"
                       onClick={() => {
-                        setInfants(infants+1);
+                        if (
+                          adults + children + infants < 9 &&
+                          adults > infants
+                        ) {
+                          setInfants(infants + 1);
+                        } else if (adults <= infants) {
+                          setError(true);
+                          setErrorMessage(
+                            "Number of infants can't be less than the number of adults."
+                          );
+                        } else {
+                          setError(true);
+                          setErrorMessage(
+                            "Number of passengers can't be more than 9."
+                          );
+                        }
                       }}
                     >
                       <AddCircle />
@@ -481,6 +533,26 @@ function SearchForm() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+            open={error}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={() => setError(false)}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                {errorMessage}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setError(false)} color="primary">
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
     </Paper>
   );
 }
