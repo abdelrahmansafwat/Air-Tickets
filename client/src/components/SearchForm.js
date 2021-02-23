@@ -430,7 +430,7 @@ function SearchForm() {
                   console.log(selectedDepartureAirport);
                 }}
               >
-                Submit
+                Search
               </Button>
             </Grid>
             <Grid item xs={"auto"}></Grid>
