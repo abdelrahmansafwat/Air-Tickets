@@ -19,7 +19,7 @@ import {
 import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import { RemoveCircle, AddCircle, LocationOn } from "@material-ui/icons";
-
+import { CustomSwitchStyles } from './CustomSwitch';
 import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
       width: "50%",
     },
     [theme.breakpoints.down('md')]: {
-      width: "80%",
+      width: "90%",
     },
     margin: "10%",
     alignItems: "center",
@@ -90,6 +90,8 @@ function SearchForm() {
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(false);
 
+  const CustomSwitch = CustomSwitchStyles();
+
   const getAirports = async (query) => {
     console.log("Getting info from API...");
     axios.create({ baseURL: window.location.origin });
@@ -132,44 +134,18 @@ function SearchForm() {
           className={classes.oneWayGrid}
         >
           <Grid item xs={"auto"}>
-            <Button
-              className={classes.oneWayButton}
-              onClick={() => setOneWay(false)}
-            >
-              <Typography
-                variant="h5"
-                className={oneWay ? classes.disabledText : classes.enabledText}
-              >
-                One way
-              </Typography>
-            </Button>
+            
           </Grid>
           <Grid item xs={"auto"}>
             <Switch
               checked={oneWay}
               onChange={(value) => setOneWay(value.target.checked)}
               name="checkedB"
-              color={"primary"}
-              switchBase={{
-                color: "#6dd5ed",
-              }}
-              colorPrimary={{
-                color: "#2193b0",
-              }}
+              classes={CustomSwitch}
             />
           </Grid>
           <Grid item xs={"auto"}>
-            <Button
-              className={classes.oneWayButton}
-              onClick={() => setOneWay(true)}
-            >
-              <Typography
-                variant="h5"
-                className={oneWay ? classes.enabledText : classes.disabledText}
-              >
-                Roundtrip
-              </Typography>
-            </Button>
+            
           </Grid>
         </Grid>
         <Grid item>
