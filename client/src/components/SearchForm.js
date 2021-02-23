@@ -34,14 +34,16 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     [theme.breakpoints.up("md")]: {
       width: "50%",
+      padding: "2%",
+      margin: "10%",
     },
     [theme.breakpoints.down("md")]: {
       width: "90%",
+      padding: 5,
     },
-    margin: "10%",
     alignItems: "center",
     justifyContent: "center",
-    padding: "2%",
+    
   },
   field: {
     marginTop: theme.spacing(2),
@@ -68,7 +70,12 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
   dialog: {
-    width: "35%",
+    [theme.breakpoints.up("md")]: {
+      width: "35%",
+    },
+    [theme.breakpoints.down("md")]: {
+      width: "50%",
+    },
   },
 }));
 
@@ -150,8 +157,11 @@ function SearchForm() {
           <Autocomplete
             id="combo-box-demo"
             fullWidth
+            freeSolo
+            disableClearable
             filterOptions={(x) => x}
             options={retrievedAirports}
+            value={selectedDepartureAirport.name ? String(selectedDepartureAirport.name) : "" }
             renderOption={(option) => {
               //console.log(retrievedAirports);
               if (retrievedAirports && retrievedAirports.length > 0) {
@@ -175,9 +185,9 @@ function SearchForm() {
             onChange={(event, newValue) => {
               console.log(newValue.name);
               setSelectedDepartureAirport(newValue);
+              console.log(selectedDepartureAirport);
             }}
             onInputChange={handleInputChange}
-            value={selectedDepartureAirport.name}
             renderInput={(params) => (
               <TextField
                 //variant="outlined"
@@ -196,8 +206,11 @@ function SearchForm() {
           <Autocomplete
             id="combo-box-demo"
             fullWidth
+            freeSolo
+            disableClearable
             filterOptions={(x) => x}
             options={retrievedAirports}
+            value={selectedArrivalAirport.name ? String(selectedArrivalAirport.name) : "" }
             renderOption={(option) => {
               //console.log(retrievedAirports);
               if (retrievedAirports && retrievedAirports.length > 0) {
@@ -223,7 +236,6 @@ function SearchForm() {
               setSelectedArrivalAirport(newValue);
             }}
             onInputChange={handleInputChange}
-            value={selectedArrivalAirport.name}
             renderInput={(params) => (
               <TextField
                 //variant="outlined"
@@ -266,7 +278,7 @@ function SearchForm() {
               variant="outlined"
               margin="normal"
               id="date"
-              label="Arrival Date"
+              label="Return Date"
               minDate={departureDate}
               value={arrivalDate}
               disabled={!oneWay}
@@ -284,11 +296,11 @@ function SearchForm() {
             fullWidth
             value={
               adults +
-              " adults, " +
+              " Adults, " +
               children +
-              " children, " +
+              " Children, " +
               infants +
-              " infants"
+              " Infants"
             }
             //value={passengers}
             //onChange={(value) => setAdults(value)}
@@ -313,7 +325,7 @@ function SearchForm() {
                 color="primary"
                 component="span"
                 classes={CustomButton}
-                onClick={(event) => {}}
+                onClick={(event) => {console.log(selectedDepartureAirport);}}
               >
                 Submit
               </Button>
@@ -342,7 +354,7 @@ function SearchForm() {
             className={classes.field}
             xs={"auto"}
           >
-            <Grid item xs={"auto"}>
+            <Grid item xs={12} md={"auto"}>
               <Grid container direction={"column"} xs={"auto"}>
                 <Grid item style={{ textAlign: "center" }} xs={"auto"}>
                   <Typography variant="h6">{"Adults"}</Typography>
@@ -399,7 +411,7 @@ function SearchForm() {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={"auto"}>
+            <Grid item xs={12} md={"auto"}>
               <Grid container direction={"column"}>
                 <Grid item style={{ textAlign: "center" }} xs={"auto"}>
                   <Typography variant="h6">{"Children"}</Typography>
@@ -449,7 +461,7 @@ function SearchForm() {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={"auto"}>
+            <Grid item xs={12} md={"auto"} >
               <Grid container direction={"column"} xs={"auto"}>
                 <Grid item style={{ textAlign: "center" }} xs={"auto"}>
                   <Typography variant="h6">{"Infants"}</Typography>

@@ -40,7 +40,7 @@ export default () => ({
       opacity: 0,
     },
     '&:after': {
-      content: '"Roundtrip"',
+      content: '"Round Trip"',
       right: 4,
     },
   },
@@ -53,7 +53,7 @@ export default () => ({
     '& $thumb': {
       backgroundColor: '#fff',
       '&:before': {
-        content: '"Roundtrip"',
+        content: '"Round Trip"',
       },
     },
     '& + $track': {

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default ({ palette, shadows }) => ({
     root: ({ chubby }) => ({
-      minWidth: 320,
+      width: 320,
       transition: '0.3s cubic-bezier(.47,1.64,.41,.8)',
       background:
         /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
