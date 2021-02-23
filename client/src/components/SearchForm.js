@@ -25,6 +25,7 @@ import {
   LocationOn,
   Wc,
   Today,
+  Sync
 } from "@material-ui/icons";
 import { CustomSwitchStyles } from "./CustomSwitch";
 import { CustomButtonStyles } from "./CustomButton";
@@ -156,6 +157,8 @@ function SearchForm() {
     if (e.target.value && e.target.value.length > 0) {
       console.log(e.target.value);
       await getAirports(e.target.value);
+    } else {
+      setRetrievedAirports([]);
     }
   };
 
@@ -215,6 +218,7 @@ function SearchForm() {
             onChange={(event, newValue) => {
               console.log(newValue.name);
               setSelectedDepartureAirport(newValue);
+              setRetrievedAirports([]);
               console.log(selectedDepartureAirport);
             }}
             onInputChange={handleInputChange}
@@ -239,6 +243,26 @@ function SearchForm() {
               />
             )}
           />
+        </Grid>
+
+        <Grid
+          container
+          direction={"row"}
+          spacing={3}
+          className={classes.oneWayGrid}
+        >
+          <Grid item xs={"auto"}></Grid>
+          <Grid item xs={"auto"}>
+            <IconButton onClick={ () => {
+              var arrivalTemp = selectedArrivalAirport;
+              var departureTemp = selectedDepartureAirport;
+              setSelectedDepartureAirport(arrivalTemp);
+              setSelectedArrivalAirport(departureTemp);
+            }}>
+                <Sync className={classes.icon} />
+            </IconButton>
+          </Grid>
+          <Grid item xs={"auto"}></Grid>
         </Grid>
 
         <Grid item>
@@ -277,6 +301,7 @@ function SearchForm() {
             onChange={(event, newValue) => {
               console.log(newValue.name);
               setSelectedArrivalAirport(newValue);
+              setRetrievedAirports([]);
             }}
             onInputChange={handleInputChange}
             renderInput={(params) => (

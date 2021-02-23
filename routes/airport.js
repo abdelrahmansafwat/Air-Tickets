@@ -27,6 +27,7 @@ router.get("/find/:q", async (req, res) => {
     }
   });
   */
+  /*
   var codeSearch = [];
   var textSearch = await airportModel.find({
     $text: { $search: req.params.q },
@@ -40,6 +41,20 @@ router.get("/find/:q", async (req, res) => {
 
   res.status(200).json({
     data
+  });
+  */
+  var codeSearch = [];
+  var textSearch = await airportModel.fuzzySearch(req.params.q);
+  //console.log(data[0]);
+  
+  if (req.params.q.length === 3) {
+    codeSearch = await airportModel.find({ code: req.params.q.toUpperCase() });
+  }
+
+  var data = codeSearch.concat(textSearch);
+
+  res.status(200).json({
+    data,
   });
 });
 
