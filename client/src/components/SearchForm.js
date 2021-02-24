@@ -42,9 +42,9 @@ import { CustomButtonStyles } from "./CustomButton";
 import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
-import BG from '../resources/BG.png';
-import BS from '../resources/BS.png';
-import VQ from '../resources/VQ.png';
+import BG from "../resources/BG.png";
+import BS from "../resources/BS.png";
+import VQ from "../resources/VQ.png";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -197,64 +197,109 @@ function SearchForm() {
   const preprocessData = (data) => {
     var birman = data.birman;
     var flynovoair = data.flynovoair;
+    var usbair = data.usbair;
     var going = [];
     var returning = [];
     var lowestPrice = [];
 
     if (!oneWay) {
-      for (const [ticketKey, ticket] of Object.entries(birman)) {
-        lowestPrice = [];
-        birman[ticketKey]["planeCode"] = ticketKey;
-        for (const [priceKey, price] of Object.entries(ticket.prices)) {
-          birman[ticketKey]["prices"][priceKey] = price
-            .split(" ")[1]
-            .replace(",", "");
-          lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
+      if (!birman.hasOwnProperty("Error")) {
+        for (const [ticketKey, ticket] of Object.entries(birman)) {
+          lowestPrice = [];
+          birman[ticketKey]["planeCode"] = ticketKey;
+          for (const [priceKey, price] of Object.entries(ticket.prices)) {
+            birman[ticketKey]["prices"][priceKey] = price
+              .split(" ")[1]
+              .replace(",", "");
+            lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
+          }
+          birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+          going.push(birman[ticketKey]);
         }
-        birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
-        going.push(birman[ticketKey]);
       }
 
-      for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
-        lowestPrice = [];
-        flynovoair[ticketKey]["planeCode"] = ticketKey;
-        for (const [priceKey, price] of Object.entries(ticket.prices)) {
-          lowestPrice.push(parseInt(flynovoair[ticketKey]["prices"][priceKey]));
+      if (!flynovoair.hasOwnProperty("Error")) {
+        for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
+          lowestPrice = [];
+          flynovoair[ticketKey]["planeCode"] = ticketKey;
+          for (const [priceKey, price] of Object.entries(ticket.prices)) {
+            lowestPrice.push(
+              parseInt(flynovoair[ticketKey]["prices"][priceKey])
+            );
+          }
+          flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+          going.push(flynovoair[ticketKey]);
         }
-        flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
-        going.push(flynovoair[ticketKey]);
+      }
+
+      if (!usbair.hasOwnProperty("Error")) {
+        for (const [ticketKey, ticket] of Object.entries(usbair)) {
+          lowestPrice = [];
+          usbair[ticketKey]["planeCode"] = ticketKey;
+          for (const [priceKey, price] of Object.entries(ticket.prices)) {
+            lowestPrice.push(
+              parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
+            );
+          }
+          usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+          going.push(usbair[ticketKey]);
+        }
       }
 
       console.log(going);
       setAvailableReservationsGoing(going);
     } else {
-      for (const [ticketKey, ticket] of Object.entries(birman)) {
-        lowestPrice = [];
-        birman[ticketKey]["planeCode"] = ticketKey;
-        for (const [priceKey, price] of Object.entries(ticket.prices)) {
-          birman[ticketKey]["prices"][priceKey] = price
-            .split(" ")[1]
-            .replace(",", "");
-          lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
-        }
-        if (ticket["from"] === String(selectedDepartureAirport.code)) {
-          going.push(birman[ticketKey]);
-        } else {
-          returning.push(birman[ticketKey]);
+      if (!birman.hasOwnProperty("Error")) {
+        for (const [ticketKey, ticket] of Object.entries(birman)) {
+          lowestPrice = [];
+          birman[ticketKey]["planeCode"] = ticketKey;
+          for (const [priceKey, price] of Object.entries(ticket.prices)) {
+            birman[ticketKey]["prices"][priceKey] = price
+              .split(" ")[1]
+              .replace(",", "");
+            lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
+          }
+          if (ticket["from"] === String(selectedDepartureAirport.code)) {
+            going.push(birman[ticketKey]);
+          } else {
+            returning.push(birman[ticketKey]);
+          }
         }
       }
 
-      for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
-        lowestPrice = [];
-        flynovoair[ticketKey]["planeCode"] = ticketKey;
-        for (const [priceKey, price] of Object.entries(ticket.prices)) {
-          lowestPrice.push(parseInt(flynovoair[ticketKey]["prices"][priceKey]));
+      if (!flynovoair.hasOwnProperty("Error")) {
+        for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
+          lowestPrice = [];
+          flynovoair[ticketKey]["planeCode"] = ticketKey;
+          for (const [priceKey, price] of Object.entries(ticket.prices)) {
+            lowestPrice.push(
+              parseInt(flynovoair[ticketKey]["prices"][priceKey])
+            );
+          }
+          flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+          if (ticket["from"] === String(selectedDepartureAirport.code)) {
+            going.push(flynovoair[ticketKey]);
+          } else {
+            returning.push(flynovoair[ticketKey]);
+          }
         }
-        flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
-        if (ticket["from"] === String(selectedDepartureAirport.code)) {
-          going.push(flynovoair[ticketKey]);
-        } else {
-          returning.push(flynovoair[ticketKey]);
+      }
+
+      if (!usbair.hasOwnProperty("Error")) {
+        for (const [ticketKey, ticket] of Object.entries(usbair)) {
+          lowestPrice = [];
+          usbair[ticketKey]["planeCode"] = ticketKey;
+          for (const [priceKey, price] of Object.entries(ticket.prices)) {
+            lowestPrice.push(
+              parseInt(usbair[ticketKey]["prices"][priceKey]).replace(",", "")
+            );
+          }
+          usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+          if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
+            going.push(usbair[ticketKey]);
+          } else {
+            returning.push(usbair[ticketKey]);
+          }
         }
       }
 
@@ -809,9 +854,21 @@ function SearchForm() {
                     inputProps={{ "aria-label": "A" }}
                   />
                 </ListItemIcon>
-                <ListItemText primary={"Price: " + data.lowestPrice + " BDT"} secondary={"Take off: " + data.take_off.substring(0, 5)} />
+                <ListItemText
+                  primary={"Price: " + data.lowestPrice + " BDT"}
+                  secondary={"Take off: " + data.take_off.substring(0, 5)}
+                />
                 <ListItemSecondaryAction>
-                  <img src={data.planeCode.substring(0, 2) === "BG" ? BG : data.planeCode.substring(0, 2) === "BS" ? BS : VQ} alt={data.planeCode.substring(0, 2)} />
+                  <img
+                    src={
+                      data.planeCode.substring(0, 2) === "BG"
+                        ? BG
+                        : data.planeCode.substring(0, 2) === "BS"
+                        ? BS
+                        : VQ
+                    }
+                    alt={data.planeCode.substring(0, 2)}
+                  />
                 </ListItemSecondaryAction>
               </ListItem>
               <Divider />
