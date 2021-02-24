@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require('cors');
 const app = express();
 const airport = require("./routes/airport")
+const reservation = require("./routes/reservation")
 const path = require("path");
 
 app.use(express.urlencoded({extended: true}));
@@ -13,6 +14,7 @@ app.use(express.static("public"));
 
 //Initializing routes
 app.use('/api/airport', airport);     //Route for all airport related functions
+app.use('/api/reservation', reservation);     //Route for all reservation related functions
 
 //For testing the root when deployed to cloud
 app.get('/', async (req, res) => {

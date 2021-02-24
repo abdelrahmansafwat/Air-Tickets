@@ -16,6 +16,15 @@ import {
   DialogTitle,
   Slide,
   InputAdornment,
+  ListItemText,
+  ListItem,
+  List,
+  Divider,
+  AppBar,
+  Toolbar,
+  ListItemIcon,
+  Radio,
+  ListItemSecondaryAction,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
@@ -25,13 +34,17 @@ import {
   LocationOn,
   Wc,
   Today,
-  ImportExport
+  ImportExport,
+  Close,
 } from "@material-ui/icons";
 import { CustomSwitchStyles } from "./CustomSwitch";
 import { CustomButtonStyles } from "./CustomButton";
 import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
+import BG from '../resources/BG.png';
+import BS from '../resources/BS.png';
+import VQ from '../resources/VQ.png';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -103,7 +116,13 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
-  
+  appBar: {
+    position: "relative",
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
 }));
 
 function SearchForm() {
@@ -124,6 +143,15 @@ function SearchForm() {
   const [passengersDialog, setPassengersDialog] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(false);
+  const [availableReservationsGoing, setAvailableReservationsGoing] = useState(
+    []
+  );
+  const [
+    availableReservationsReturning,
+    setAvailableReservationsReturning,
+  ] = useState([]);
+  const [reservationsDialog, setReservationsDialog] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("");
 
   const CustomSwitch = CustomSwitchStyles();
   const CustomButton = CustomButtonStyles({ chubby: true });
@@ -159,6 +187,82 @@ function SearchForm() {
       await getAirports(e.target.value);
     } else {
       setRetrievedAirports([]);
+    }
+  };
+
+  const handleChange = (event) => {
+    setSelectedValue(event.currentTarget.value);
+  };
+
+  const preprocessData = (data) => {
+    var birman = data.birman;
+    var flynovoair = data.flynovoair;
+    var going = [];
+    var returning = [];
+    var lowestPrice = [];
+
+    if (!oneWay) {
+      for (const [ticketKey, ticket] of Object.entries(birman)) {
+        lowestPrice = [];
+        birman[ticketKey]["planeCode"] = ticketKey;
+        for (const [priceKey, price] of Object.entries(ticket.prices)) {
+          birman[ticketKey]["prices"][priceKey] = price
+            .split(" ")[1]
+            .replace(",", "");
+          lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
+        }
+        birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+        going.push(birman[ticketKey]);
+      }
+
+      for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
+        lowestPrice = [];
+        flynovoair[ticketKey]["planeCode"] = ticketKey;
+        for (const [priceKey, price] of Object.entries(ticket.prices)) {
+          lowestPrice.push(parseInt(flynovoair[ticketKey]["prices"][priceKey]));
+        }
+        flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+        going.push(flynovoair[ticketKey]);
+      }
+
+      console.log(going);
+      setAvailableReservationsGoing(going);
+    } else {
+      for (const [ticketKey, ticket] of Object.entries(birman)) {
+        lowestPrice = [];
+        birman[ticketKey]["planeCode"] = ticketKey;
+        for (const [priceKey, price] of Object.entries(ticket.prices)) {
+          birman[ticketKey]["prices"][priceKey] = price
+            .split(" ")[1]
+            .replace(",", "");
+          lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
+        }
+        if (ticket["from"] === String(selectedDepartureAirport.code)) {
+          going.push(birman[ticketKey]);
+        } else {
+          returning.push(birman[ticketKey]);
+        }
+      }
+
+      for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
+        lowestPrice = [];
+        flynovoair[ticketKey]["planeCode"] = ticketKey;
+        for (const [priceKey, price] of Object.entries(ticket.prices)) {
+          lowestPrice.push(parseInt(flynovoair[ticketKey]["prices"][priceKey]));
+        }
+        flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+        if (ticket["from"] === String(selectedDepartureAirport.code)) {
+          going.push(flynovoair[ticketKey]);
+        } else {
+          returning.push(flynovoair[ticketKey]);
+        }
+      }
+
+      console.log(going);
+      console.log(returning);
+
+      setAvailableReservationsGoing(going);
+      setAvailableReservationsReturning(returning);
     }
   };
 
@@ -239,9 +343,9 @@ function SearchForm() {
                     <InputAdornment position="start">
                       <LocationOn className={classes.icon} />
                     </InputAdornment>
-                  )
+                  ),
                 }}
-                onFocus={ () => {
+                onFocus={() => {
                   setSelectedDepartureAirport("");
                 }}
               />
@@ -257,13 +361,15 @@ function SearchForm() {
         >
           <Grid item xs={"auto"}></Grid>
           <Grid item xs={"auto"}>
-            <IconButton onClick={ () => {
-              var arrivalTemp = selectedArrivalAirport;
-              var departureTemp = selectedDepartureAirport;
-              setSelectedDepartureAirport(arrivalTemp);
-              setSelectedArrivalAirport(departureTemp);
-            }}>
-                <ImportExport className={classes.icon} />
+            <IconButton
+              onClick={() => {
+                var arrivalTemp = selectedArrivalAirport;
+                var departureTemp = selectedDepartureAirport;
+                setSelectedDepartureAirport(arrivalTemp);
+                setSelectedArrivalAirport(departureTemp);
+              }}
+            >
+              <ImportExport className={classes.icon} />
             </IconButton>
           </Grid>
           <Grid item xs={"auto"}></Grid>
@@ -327,7 +433,7 @@ function SearchForm() {
                     </InputAdornment>
                   ),
                 }}
-                onFocus={ () => {
+                onFocus={() => {
                   setSelectedArrivalAirport("");
                 }}
               />
@@ -434,8 +540,29 @@ function SearchForm() {
                 color="primary"
                 component="span"
                 classes={CustomButton}
-                onClick={(event) => {
-                  console.log(selectedDepartureAirport);
+                onClick={async (event) => {
+                  setReservationsDialog(true);
+                  axios.create({ baseURL: window.location.origin });
+                  await axios
+                    .post("/api/reservation/find/", {
+                      departure_code: String(selectedDepartureAirport.code),
+                      arrival_code: String(selectedArrivalAirport.code),
+                      departure_date: departureDate.toISOString().split("T")[0],
+                      arrival_date: arrivalDate.toISOString().split("T")[0],
+                      adult: String(adults),
+                      child: String(children),
+                      infant: String(infants),
+                      oneway: String(!oneWay),
+                    })
+                    .then(function (response) {
+                      console.log(response.data);
+                      preprocessData(response.data);
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                      if (error) {
+                      }
+                    });
                 }}
               >
                 Search
@@ -640,6 +767,57 @@ function SearchForm() {
             Close
           </Button>
         </DialogActions>
+      </Dialog>
+      <Dialog
+        fullScreen
+        open={reservationsDialog}
+        onClose={() => setReservationsDialog(false)}
+        TransitionComponent={Transition}
+      >
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={() => setReservationsDialog(false)}
+              aria-label="close"
+            >
+              <Close />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              Available Reservations
+            </Typography>
+            <Button
+              autoFocus
+              color="inherit"
+              onClick={() => setReservationsDialog(false)}
+            >
+              Next
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <List>
+          {availableReservationsGoing.map((data) => (
+            <React.Fragment>
+              <ListItem button onClick={() => setSelectedValue(data.planeCode)}>
+                <ListItemIcon>
+                  <Radio
+                    checked={selectedValue === data.planeCode}
+                    onChange={() => setSelectedValue(data.planeCode)}
+                    value={data.planeCode}
+                    name="radio-button-demo"
+                    inputProps={{ "aria-label": "A" }}
+                  />
+                </ListItemIcon>
+                <ListItemText primary={"Price: " + data.lowestPrice + " BDT"} secondary={"Take off: " + data.take_off.substring(0, 5)} />
+                <ListItemSecondaryAction>
+                  <img src={data.planeCode.substring(0, 2) === "BG" ? BG : data.planeCode.substring(0, 2) === "BS" ? BS : VQ} alt={data.planeCode.substring(0, 2)} />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+          ))}
+        </List>
       </Dialog>
       <Dialog
         open={error}
