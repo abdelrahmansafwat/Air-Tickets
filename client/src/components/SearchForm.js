@@ -25,7 +25,7 @@ import {
   LocationOn,
   Wc,
   Today,
-  Sync
+  ImportExport
 } from "@material-ui/icons";
 import { CustomSwitchStyles } from "./CustomSwitch";
 import { CustomButtonStyles } from "./CustomButton";
@@ -232,13 +232,17 @@ function SearchForm() {
                 id="departureAirport"
                 label="Departure Airport"
                 name="departureAirport"
+                placeholder="From where?"
                 InputProps={{
                   ...params.InputProps,
                   startAdornment: (
                     <InputAdornment position="start">
                       <LocationOn className={classes.icon} />
                     </InputAdornment>
-                  ),
+                  )
+                }}
+                onFocus={ () => {
+                  setSelectedDepartureAirport("");
                 }}
               />
             )}
@@ -259,7 +263,7 @@ function SearchForm() {
               setSelectedDepartureAirport(arrivalTemp);
               setSelectedArrivalAirport(departureTemp);
             }}>
-                <Sync className={classes.icon} />
+                <ImportExport className={classes.icon} />
             </IconButton>
           </Grid>
           <Grid item xs={"auto"}></Grid>
@@ -314,6 +318,7 @@ function SearchForm() {
                 id="arrivalAirport"
                 label="Arrival Airport"
                 name="arrivalAirport"
+                placeholder="To where?"
                 InputProps={{
                   ...params.InputProps,
                   startAdornment: (
@@ -321,6 +326,9 @@ function SearchForm() {
                       <LocationOn className={classes.icon} />
                     </InputAdornment>
                   ),
+                }}
+                onFocus={ () => {
+                  setSelectedArrivalAirport("");
                 }}
               />
             )}
