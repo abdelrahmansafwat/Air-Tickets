@@ -25,6 +25,7 @@ import {
   ListItemIcon,
   Radio,
   ListItemSecondaryAction,
+  CircularProgress,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
@@ -42,6 +43,7 @@ import { CustomButtonStyles } from "./CustomButton";
 import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
+import _ from 'underscore';
 import BG from "../resources/BG.png";
 import BS from "../resources/BS.png";
 import VQ from "../resources/VQ.png";
@@ -152,6 +154,7 @@ function SearchForm() {
   ] = useState([]);
   const [reservationsDialog, setReservationsDialog] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
+  const [ready, setReady] = useState(true);
 
   const CustomSwitch = CustomSwitchStyles();
   const CustomButton = CustomButtonStyles({ chubby: true });
@@ -246,6 +249,8 @@ function SearchForm() {
         }
       }
 
+      going = _.sortBy(going, 'lowestPrice');
+
       console.log(going);
       setAvailableReservationsGoing(going);
     } else {
@@ -305,6 +310,9 @@ function SearchForm() {
 
       console.log(going);
       console.log(returning);
+
+      going = _.sortBy(going, 'lowestPrice');
+      returning = _.sortBy(returning, 'lowestPrice');
 
       setAvailableReservationsGoing(going);
       setAvailableReservationsReturning(returning);
@@ -586,8 +594,10 @@ function SearchForm() {
                 component="span"
                 classes={CustomButton}
                 onClick={async (event) => {
+                  setReady(false);
                   setReservationsDialog(true);
                   axios.create({ baseURL: window.location.origin });
+                  
                   await axios
                     .post("/api/reservation/find/", {
                       departure_code: String(selectedDepartureAirport.code),
@@ -608,6 +618,7 @@ function SearchForm() {
                       if (error) {
                       }
                     });
+                    setReady(true);
                 }}
               >
                 Search
@@ -841,40 +852,56 @@ function SearchForm() {
             </Button>
           </Toolbar>
         </AppBar>
-        <List>
-          {availableReservationsGoing.map((data) => (
-            <React.Fragment>
-              <ListItem button onClick={() => setSelectedValue(data.planeCode)}>
-                <ListItemIcon>
-                  <Radio
-                    checked={selectedValue === data.planeCode}
-                    onChange={() => setSelectedValue(data.planeCode)}
-                    value={data.planeCode}
-                    name="radio-button-demo"
-                    inputProps={{ "aria-label": "A" }}
+        {ready && <List>
+          {
+            availableReservationsGoing.map((data) => (
+              <React.Fragment>
+                <ListItem
+                  button
+                  onClick={() => setSelectedValue(data.planeCode)}
+                >
+                  <ListItemIcon>
+                    <Radio
+                      checked={selectedValue === data.planeCode}
+                      onChange={() => setSelectedValue(data.planeCode)}
+                      value={data.planeCode}
+                      name="radio-button-demo"
+                      inputProps={{ "aria-label": "A" }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={"Price: " + data.lowestPrice + " BDT"}
+                    secondary={"Take off: " + data.take_off.substring(0, 5)}
                   />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"Price: " + data.lowestPrice + " BDT"}
-                  secondary={"Take off: " + data.take_off.substring(0, 5)}
-                />
-                <ListItemSecondaryAction>
-                  <img
-                    src={
-                      data.planeCode.substring(0, 2) === "BG"
-                        ? BG
-                        : data.planeCode.substring(0, 2) === "BS"
-                        ? BS
-                        : VQ
-                    }
-                    alt={data.planeCode.substring(0, 2)}
-                  />
-                </ListItemSecondaryAction>
-              </ListItem>
-              <Divider />
-            </React.Fragment>
-          ))}
-        </List>
+                  <ListItemSecondaryAction>
+                    <img
+                      src={
+                        data.planeCode.substring(0, 2) === "BG"
+                          ? BG
+                          : data.planeCode.substring(0, 2) === "BS"
+                          ? BS
+                          : VQ
+                      }
+                      alt={data.planeCode.substring(0, 2)}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            ))}
+
+          
+        </List>}
+
+        {!ready && (
+            <CircularProgress
+              style={{
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+              }}
+            />
+          )}
       </Dialog>
       <Dialog
         open={error}
