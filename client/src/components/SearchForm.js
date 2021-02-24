@@ -43,7 +43,7 @@ import { CustomButtonStyles } from "./CustomButton";
 import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
-import _ from 'underscore';
+import _ from "underscore";
 import BG from "../resources/BG.png";
 import BS from "../resources/BS.png";
 import VQ from "../resources/VQ.png";
@@ -155,6 +155,7 @@ function SearchForm() {
   const [reservationsDialog, setReservationsDialog] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
   const [ready, setReady] = useState(true);
+  const [secondPage, setSecondPage] = useState(false);
 
   const CustomSwitch = CustomSwitchStyles();
   const CustomButton = CustomButtonStyles({ chubby: true });
@@ -249,7 +250,7 @@ function SearchForm() {
         }
       }
 
-      going = _.sortBy(going, 'lowestPrice');
+      going = _.sortBy(going, "lowestPrice");
 
       console.log(going);
       setAvailableReservationsGoing(going);
@@ -296,7 +297,7 @@ function SearchForm() {
           usbair[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
             lowestPrice.push(
-              parseInt(usbair[ticketKey]["prices"][priceKey]).replace(",", "")
+              parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
             );
           }
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
@@ -311,8 +312,8 @@ function SearchForm() {
       console.log(going);
       console.log(returning);
 
-      going = _.sortBy(going, 'lowestPrice');
-      returning = _.sortBy(returning, 'lowestPrice');
+      going = _.sortBy(going, "lowestPrice");
+      returning = _.sortBy(returning, "lowestPrice");
 
       setAvailableReservationsGoing(going);
       setAvailableReservationsReturning(returning);
@@ -597,7 +598,7 @@ function SearchForm() {
                   setReady(false);
                   setReservationsDialog(true);
                   axios.create({ baseURL: window.location.origin });
-                  
+
                   await axios
                     .post("/api/reservation/find/", {
                       departure_code: String(selectedDepartureAirport.code),
@@ -618,7 +619,7 @@ function SearchForm() {
                       if (error) {
                       }
                     });
-                    setReady(true);
+                  setReady(true);
                 }}
               >
                 Search
@@ -841,20 +842,38 @@ function SearchForm() {
               <Close />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Available Reservations
+              {secondPage
+                ? "From " +
+                  selectedArrivalAirport.cityName +
+                  " to " +
+                  selectedDepartureAirport.cityName +
+                  " on " +
+                  arrivalDate.toISOString().split("T")[0]
+                : "From " +
+                  selectedDepartureAirport.cityName +
+                  " to " +
+                  selectedArrivalAirport.cityName +
+                  " on " +
+                  departureDate.toISOString().split("T")[0]}
             </Typography>
             <Button
               autoFocus
               color="inherit"
-              onClick={() => setReservationsDialog(false)}
+              onClick={() => {
+                if (oneWay) {
+                  setSecondPage(true);
+                } else {
+                  setReservationsDialog(false)
+                }
+              }}
             >
               Next
             </Button>
           </Toolbar>
         </AppBar>
-        {ready && <List>
-          {
-            availableReservationsGoing.map((data) => (
+        {ready && !secondPage && (
+          <List>
+            {availableReservationsGoing.map((data) => (
               <React.Fragment>
                 <ListItem
                   button
@@ -889,19 +908,70 @@ function SearchForm() {
                 <Divider />
               </React.Fragment>
             ))}
+          </List>
+        )}
 
-          
-        </List>}
+        {ready && secondPage && (
+          <List>
+            {availableReservationsReturning.map((data) => (
+              <React.Fragment>
+                <ListItem
+                  button
+                  onClick={() => setSelectedValue(data.planeCode)}
+                >
+                  <ListItemIcon>
+                    <Radio
+                      checked={selectedValue === data.planeCode}
+                      onChange={() => setSelectedValue(data.planeCode)}
+                      value={data.planeCode}
+                      name="radio-button-demo"
+                      inputProps={{ "aria-label": "A" }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={"Price: " + data.lowestPrice + " BDT"}
+                    secondary={"Take off: " + data.take_off.substring(0, 5)}
+                  />
+                  <ListItemSecondaryAction>
+                    <img
+                      src={
+                        data.planeCode.substring(0, 2) === "BG"
+                          ? BG
+                          : data.planeCode.substring(0, 2) === "BS"
+                          ? BS
+                          : VQ
+                      }
+                      alt={data.planeCode.substring(0, 2)}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            ))}
+          </List>
+        )}
 
         {!ready && (
-            <CircularProgress
-              style={{
-                position: "absolute",
-                left: "50%",
-                top: "50%",
-              }}
-            />
-          )}
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            style={{ position: "absolute", top: "50%" }}
+          >
+            <CircularProgress />
+
+            <Grid item xs={3}>
+              <Typography style={{ textAlign: "center" }}>
+                {"We are searching the best fares for you."}
+              </Typography>
+              <Typography style={{ textAlign: "center" }}>
+                {"Please wait a moment."}
+              </Typography>
+            </Grid>
+          </Grid>
+        )}
       </Dialog>
       <Dialog
         open={error}
