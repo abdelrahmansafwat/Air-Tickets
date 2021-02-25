@@ -861,20 +861,7 @@ function SearchForm() {
                   " to " +
                   selectedArrivalAirport.cityName +
                   " on " +
-                  departureDate.toDateString()
-                  : "From " +
-                  selectedArrivalAirport.cityName +
-                  " to " +
-                  selectedDepartureAirport.cityName +
-                  " on " +
-                  arrivalDate.toDateString()
-                : "From " +
-                  selectedArrivalAirport.cityName +
-                  " to " +
-                  selectedDepartureAirport.cityName +
-                  " on " +
-                  departureDate.toDateString()
-                  }
+                  departureDate.toDateString()}
             </Typography>
             <Button
               autoFocus
