@@ -241,10 +241,9 @@ function SearchForm() {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            console.log(price.replace(",", ""));
-            usbair[ticketKey]["prices"][priceKey] = price.replace(",", "");
-            console.log(usbair[ticketKey]["prices"][priceKey]);
-            lowestPrice.push(parseInt(usbair[ticketKey]["prices"][priceKey]));
+            lowestPrice.push(
+              parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
+            );
           }
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           going.push(usbair[ticketKey]);
@@ -298,10 +297,9 @@ function SearchForm() {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            console.log(price.replace(",", ""));
-            usbair[ticketKey]["prices"][priceKey] = price.replace(",", "");
-            console.log(usbair[ticketKey]["prices"][priceKey]);
-            lowestPrice.push(parseInt(usbair[ticketKey]["prices"][priceKey]));
+            lowestPrice.push(
+              parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
+            );
           }
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
@@ -831,11 +829,7 @@ function SearchForm() {
       <Dialog
         fullScreen
         open={reservationsDialog}
-        onClose={() => {
-          setAvailableReservationsGoing([]);
-          setAvailableReservationsReturning([]);
-          setReservationsDialog(false);
-        }}
+        onClose={() => setReservationsDialog(false)}
         TransitionComponent={Transition}
       >
         <AppBar className={classes.appBar}>
@@ -844,9 +838,9 @@ function SearchForm() {
               edge="start"
               color="inherit"
               onClick={() => {
-                setAvailableReservationsGoing([]);
-                setAvailableReservationsReturning([]);
-                setReservationsDialog(false);
+                       setAvailableReservationsGoing([]);
+                       setAvailableReservationsReturning([]);
+                       setReservationsDialog(false);
               }}
               aria-label="close"
             >
