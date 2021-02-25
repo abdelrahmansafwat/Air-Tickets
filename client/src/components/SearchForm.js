@@ -202,8 +202,12 @@ function SearchForm() {
     var returning = [];
     var lowestPrice = [];
 
+    console.log(birman);
+    console.log(flynovoair);
+    console.log(usbair);
+
     if (!oneWay) {
-      if (!birman.hasOwnProperty("Error") && birman) {
+      if (!birman.hasOwnProperty("Error") && !(birman == null)) {
         for (const [ticketKey, ticket] of Object.entries(birman)) {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
@@ -218,7 +222,7 @@ function SearchForm() {
         }
       }
 
-      if (!flynovoair.hasOwnProperty("Error") && flynovoair) {
+      if (!flynovoair.hasOwnProperty("Error") && !(flynovoair == null)) {
         for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
@@ -232,7 +236,7 @@ function SearchForm() {
         }
       }
 
-      if (!usbair.hasOwnProperty("Error") && usbair) {
+      if (!usbair.hasOwnProperty("Error") && !(usbair == null)) {
         for (const [ticketKey, ticket] of Object.entries(usbair)) {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
@@ -251,7 +255,7 @@ function SearchForm() {
       console.log(going);
       setAvailableReservationsGoing(going);
     } else {
-      if (!birman.hasOwnProperty("Error") && birman) {
+      if (!birman.hasOwnProperty("Error") && !(birman == null)) {
         for (const [ticketKey, ticket] of Object.entries(birman)) {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
@@ -270,7 +274,7 @@ function SearchForm() {
         }
       }
 
-      if (!flynovoair.hasOwnProperty("Error") && flynovoair) {
+      if (!flynovoair.hasOwnProperty("Error") && !(flynovoair == null)) {
         for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
@@ -288,7 +292,7 @@ function SearchForm() {
         }
       }
 
-      if (!usbair.hasOwnProperty("Error") && usbair) {
+      if (!usbair.hasOwnProperty("Error") && !(usbair == null)) {
         for (const [ticketKey, ticket] of Object.entries(usbair)) {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
@@ -855,19 +859,19 @@ function SearchForm() {
                   " to " +
                   selectedDepartureAirport.cityName +
                   " on " +
-                  arrivalDate.toDateString()
+                  arrivalDate.toDateString().substring(4, 10) + "," + arrivalDate.toDateString().substring(10, 15)
                 : "From " +
                   selectedDepartureAirport.cityName +
                   " to " +
                   selectedArrivalAirport.cityName +
                   " on " +
-                  departureDate.toDateString()}
+                  departureDate.toDateString().substring(4, 10) + "," + arrivalDate.toDateString().substring(10, 15)}
             </Typography>
             <Button
               autoFocus
               color="inherit"
               onClick={() => {
-                if (oneWay) {
+                if (oneWay && !secondPage) {
                   setSecondPage(true);
                 } else if (secondPage) {
                   setAvailableReservationsGoing([]);
