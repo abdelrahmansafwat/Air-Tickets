@@ -194,10 +194,6 @@ function SearchForm() {
     }
   };
 
-  const handleChange = (event) => {
-    setSelectedValue(event.currentTarget.value);
-  };
-
   const preprocessData = (data) => {
     var birman = data.birman;
     var flynovoair = data.flynovoair;
@@ -829,7 +825,12 @@ function SearchForm() {
       <Dialog
         fullScreen
         open={reservationsDialog}
-        onClose={() => setReservationsDialog(false)}
+        onClose={() => {
+          setReservationsDialog(false);
+          setSecondPage(false);
+          setAvailableReservationsGoing([]);
+          setAvailableReservationsReturning([]);
+        }}
         TransitionComponent={Transition}
       >
         <AppBar className={classes.appBar}>
@@ -838,9 +839,10 @@ function SearchForm() {
               edge="start"
               color="inherit"
               onClick={() => {
-                       setAvailableReservationsGoing([]);
-                       setAvailableReservationsReturning([]);
-                       setReservationsDialog(false);
+                setSecondPage(false);
+                setAvailableReservationsGoing([]);
+                setAvailableReservationsReturning([]);
+                setReservationsDialog(false);
               }}
               aria-label="close"
             >
@@ -853,13 +855,26 @@ function SearchForm() {
                   " to " +
                   selectedDepartureAirport.cityName +
                   " on " +
-                  arrivalDate.toISOString().split("T")[0]
+                  arrivalDate.toDateString()
                 : "From " +
                   selectedDepartureAirport.cityName +
                   " to " +
                   selectedArrivalAirport.cityName +
                   " on " +
-                  departureDate.toISOString().split("T")[0]}
+                  departureDate.toDateString()
+                  : "From " +
+                  selectedArrivalAirport.cityName +
+                  " to " +
+                  selectedDepartureAirport.cityName +
+                  " on " +
+                  arrivalDate.toDateString()
+                : "From " +
+                  selectedArrivalAirport.cityName +
+                  " to " +
+                  selectedDepartureAirport.cityName +
+                  " on " +
+                  departureDate.toDateString()
+                  }
             </Typography>
             <Button
               autoFocus
@@ -867,6 +882,11 @@ function SearchForm() {
               onClick={() => {
                 if (oneWay) {
                   setSecondPage(true);
+                } else if (secondPage) {
+                  setAvailableReservationsGoing([]);
+                  setAvailableReservationsReturning([]);
+                  setSecondPage(false);
+                  setReservationsDialog(false);
                 } else {
                   setAvailableReservationsGoing([]);
                   setAvailableReservationsReturning([]);
