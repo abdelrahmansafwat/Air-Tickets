@@ -203,7 +203,7 @@ function SearchForm() {
     var lowestPrice = [];
 
     if (!oneWay) {
-      if (!birman.hasOwnProperty("Error")) {
+      if (!birman.hasOwnProperty("Error") && birman) {
         for (const [ticketKey, ticket] of Object.entries(birman)) {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
@@ -218,7 +218,7 @@ function SearchForm() {
         }
       }
 
-      if (!flynovoair.hasOwnProperty("Error")) {
+      if (!flynovoair.hasOwnProperty("Error") && flynovoair) {
         for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
@@ -232,7 +232,7 @@ function SearchForm() {
         }
       }
 
-      if (!usbair.hasOwnProperty("Error")) {
+      if (!usbair.hasOwnProperty("Error") && usbair) {
         for (const [ticketKey, ticket] of Object.entries(usbair)) {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
@@ -251,7 +251,7 @@ function SearchForm() {
       console.log(going);
       setAvailableReservationsGoing(going);
     } else {
-      if (!birman.hasOwnProperty("Error")) {
+      if (!birman.hasOwnProperty("Error") && birman) {
         for (const [ticketKey, ticket] of Object.entries(birman)) {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
@@ -270,7 +270,7 @@ function SearchForm() {
         }
       }
 
-      if (!flynovoair.hasOwnProperty("Error")) {
+      if (!flynovoair.hasOwnProperty("Error") && flynovoair) {
         for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
@@ -288,7 +288,7 @@ function SearchForm() {
         }
       }
 
-      if (!usbair.hasOwnProperty("Error")) {
+      if (!usbair.hasOwnProperty("Error") && usbair) {
         for (const [ticketKey, ticket] of Object.entries(usbair)) {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
