@@ -380,8 +380,8 @@ function SearchForm() {
 
     return (
       (String(hh).length === 1 ? "0" + hh : hh) +
-      ":" +
-      (String(mm).length === 1 ? "0" + mm : mm)
+      "h " +
+      (String(mm).length === 1 ? "0" + mm : mm) + "m"
     );
   }
 
