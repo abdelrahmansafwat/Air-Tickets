@@ -241,9 +241,10 @@ function SearchForm() {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            lowestPrice.push(
-              parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
-            );
+            console.log(price.replace(",", ""));
+            usbair[ticketKey]["prices"][priceKey] = price.replace(",", "");
+            console.log(usbair[ticketKey]["prices"][priceKey]);
+            lowestPrice.push(parseInt(usbair[ticketKey]["prices"][priceKey]));
           }
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           going.push(usbair[ticketKey]);
@@ -265,6 +266,7 @@ function SearchForm() {
               .replace(",", "");
             lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
           }
+          birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.code)) {
             going.push(birman[ticketKey]);
           } else {
@@ -296,9 +298,10 @@ function SearchForm() {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            lowestPrice.push(
-              parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
-            );
+            console.log(price.replace(",", ""));
+            usbair[ticketKey]["prices"][priceKey] = price.replace(",", "");
+            console.log(usbair[ticketKey]["prices"][priceKey]);
+            lowestPrice.push(parseInt(usbair[ticketKey]["prices"][priceKey]));
           }
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
@@ -828,7 +831,11 @@ function SearchForm() {
       <Dialog
         fullScreen
         open={reservationsDialog}
-        onClose={() => setReservationsDialog(false)}
+        onClose={() => {
+          setAvailableReservationsGoing([]);
+          setAvailableReservationsReturning([]);
+          setReservationsDialog(false);
+        }}
         TransitionComponent={Transition}
       >
         <AppBar className={classes.appBar}>
@@ -836,7 +843,11 @@ function SearchForm() {
             <IconButton
               edge="start"
               color="inherit"
-              onClick={() => setReservationsDialog(false)}
+              onClick={() => {
+                setAvailableReservationsGoing([]);
+                setAvailableReservationsReturning([]);
+                setReservationsDialog(false);
+              }}
               aria-label="close"
             >
               <Close />
@@ -863,7 +874,9 @@ function SearchForm() {
                 if (oneWay) {
                   setSecondPage(true);
                 } else {
-                  setReservationsDialog(false)
+                  setAvailableReservationsGoing([]);
+                  setAvailableReservationsReturning([]);
+                  setReservationsDialog(false);
                 }
               }}
             >
