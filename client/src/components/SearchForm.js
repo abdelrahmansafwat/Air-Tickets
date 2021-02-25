@@ -134,6 +134,8 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     //width: "90%",
     marginTop: theme.spacing(2),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
     textAlign: "center",
     display: "flex",
     alignItems: "center",
@@ -170,6 +172,10 @@ function SearchForm() {
   const [selectedValue, setSelectedValue] = useState("");
   const [ready, setReady] = useState(true);
   const [secondPage, setSecondPage] = useState(false);
+  const [selectedGoingTicket, setSelectedGoingTicket] = useState("");
+  const [selectedReturningTicket, setSelectedReturningTicket] = useState(
+    "false"
+  );
 
   const CustomSwitch = CustomSwitchStyles();
   const CustomButton = CustomButtonStyles({ chubby: true });
@@ -229,7 +235,9 @@ function SearchForm() {
             birman[ticketKey]["prices"][priceKey] = price
               .split(" ")[1]
               .replace(",", "");
-            lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
+            if (!isNaN(birman[ticketKey]["prices"][priceKey])) {
+              lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
+            }
           }
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           going.push(birman[ticketKey]);
@@ -241,9 +249,11 @@ function SearchForm() {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            lowestPrice.push(
-              parseInt(flynovoair[ticketKey]["prices"][priceKey])
-            );
+            if (!isNaN(flynovoair[ticketKey]["prices"][priceKey])) {
+              lowestPrice.push(
+                parseInt(flynovoair[ticketKey]["prices"][priceKey])
+              );
+            }
           }
           flynovoair[ticketKey]["landing"] = flynovoair[ticketKey][
             "landing"
@@ -262,9 +272,13 @@ function SearchForm() {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            lowestPrice.push(
-              parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
-            );
+            if (
+              !isNaN(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
+            ) {
+              lowestPrice.push(
+                parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
+              );
+            }
           }
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           going.push(usbair[ticketKey]);
@@ -284,7 +298,9 @@ function SearchForm() {
             birman[ticketKey]["prices"][priceKey] = price
               .split(" ")[1]
               .replace(",", "");
-            lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
+            if (!isNaN(birman[ticketKey]["prices"][priceKey])) {
+              lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
+            }
           }
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.code)) {
@@ -300,9 +316,11 @@ function SearchForm() {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            lowestPrice.push(
-              parseInt(flynovoair[ticketKey]["prices"][priceKey])
-            );
+            if (!isNaN(flynovoair[ticketKey]["prices"][priceKey])) {
+              lowestPrice.push(
+                parseInt(flynovoair[ticketKey]["prices"][priceKey])
+              );
+            }
           }
           flynovoair[ticketKey]["landing"] = flynovoair[ticketKey][
             "landing"
@@ -324,9 +342,13 @@ function SearchForm() {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            lowestPrice.push(
-              parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
-            );
+            if (
+              !isNaN(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
+            ) {
+              lowestPrice.push(
+                parseInt(usbair[ticketKey]["prices"][priceKey].replace(",", ""))
+              );
+            }
           }
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
@@ -889,7 +911,7 @@ function SearchForm() {
       <Dialog
         PaperProps={{
           style: {
-            backgroundColor: "#6dd5ed",
+            background: "linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%)",
           },
         }}
         fullScreen
@@ -965,7 +987,7 @@ function SearchForm() {
                 <Grid item xs={1}></Grid>
                 <Grid item xs={10}>
                   <Card elevation={10} className={classes.paper}>
-                    <CardActionArea>
+                    <CardActionArea onClick={() => {}}>
                       <Grid
                         direction={"row"}
                         className={classes.oneWayGrid}
@@ -982,40 +1004,45 @@ function SearchForm() {
                             }
                             alt={data.planeCode.substring(0, 2)}
                           />
+                          <Typography style={{ textAlign: "center" }}>
+                            {data.planeCode.substring(0, 2) === "BG"
+                              ? "Biman Airlines"
+                              : data.planeCode.substring(0, 2) === "BS"
+                              ? "US Bangla"
+                              : "Novo Air"}
+                          </Typography>
                         </Grid>
                         <Grid xs={4} container direction={"column"}>
-                          <Grid container direction={"row"}>
-                            <Grid xs={4}></Grid>
-                            <Grid xs={4}>
-                              <Grid
-                                container
-                                direction="row"
-                                alignItems="center"
-                              >
-                                <Grid item>
-                                  <FlightTakeoff />
-                                </Grid>
-                                <Grid item>
-                                  <Typography>{data.take_off}</Typography>
-                                </Grid>
-                                <Grid item>
-                                  <ArrowForward />
-                                </Grid>
-                                <Grid item>
-                                  <Typography>{data.landing}</Typography>
-                                </Grid>
-                                <Grid item>
-                                  <FlightLand />
-                                </Grid>
-                              </Grid>
+                          <Grid
+                            container
+                            direction={"row"}
+                            style={{ textAlign: "center" }}
+                            justify="center"
+                          >
+                            <Grid item>
+                              <FlightTakeoff />
                             </Grid>
-
-                            <Grid xs={4}></Grid>
+                            <Grid item>
+                              <Typography style={{ textAlign: "center" }}>
+                                {data.take_off}
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <ArrowForward />
+                            </Grid>
+                            <Grid item>
+                              <Typography style={{ textAlign: "center" }}>
+                                {data.landing}
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <FlightLand />
+                            </Grid>
                           </Grid>
                           <Grid container direction={"row"}>
                             <Grid xs={4}></Grid>
                             <Grid xs={4}>
-                              <Typography>
+                              <Typography style={{ textAlign: "center" }}>
                                 {duration(data.take_off, data.landing)}
                               </Typography>
                             </Grid>
@@ -1086,8 +1113,8 @@ function SearchForm() {
           >
             <CircularProgress />
 
-            <Grid item xs={3} wrap="nowrap">
-              <Typography style={{ textAlign: "center" }}>
+            <Grid item xs={3}>
+              <Typography wrap="nowrap" style={{ textAlign: "center" }}>
                 {"We are searching the best fares for you."}
               </Typography>
               <Typography style={{ textAlign: "center" }}>
