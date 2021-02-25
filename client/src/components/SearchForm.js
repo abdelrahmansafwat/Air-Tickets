@@ -202,12 +202,12 @@ function SearchForm() {
     var returning = [];
     var lowestPrice = [];
 
-    console.log(birman);
-    console.log(flynovoair);
-    console.log(usbair);
+    console.log(!_.isNull(birman));
+    console.log(!_.isNull(flynovoair));
+    console.log(!_.isNull(usbair));
 
     if (!oneWay) {
-      if (!birman.hasOwnProperty("Error") && !(birman == null)) {
+      if (!_.isNull(birman) && !birman.hasOwnProperty("Error")) {
         for (const [ticketKey, ticket] of Object.entries(birman)) {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
@@ -222,7 +222,7 @@ function SearchForm() {
         }
       }
 
-      if (!flynovoair.hasOwnProperty("Error") && !(flynovoair == null)) {
+      if (!_.isNull(flynovoair) && !flynovoair.hasOwnProperty("Error")) {
         for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
@@ -236,7 +236,7 @@ function SearchForm() {
         }
       }
 
-      if (!usbair.hasOwnProperty("Error") && !(usbair == null)) {
+      if (!_.isNull(usbair) && !usbair.hasOwnProperty("Error")) {
         for (const [ticketKey, ticket] of Object.entries(usbair)) {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
@@ -255,7 +255,7 @@ function SearchForm() {
       console.log(going);
       setAvailableReservationsGoing(going);
     } else {
-      if (!birman.hasOwnProperty("Error") && !(birman == null)) {
+      if (!_.isNull(birman) && !birman.hasOwnProperty("Error")) {
         for (const [ticketKey, ticket] of Object.entries(birman)) {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
@@ -274,7 +274,7 @@ function SearchForm() {
         }
       }
 
-      if (!flynovoair.hasOwnProperty("Error") && !(flynovoair == null)) {
+      if (!_.isNull(flynovoair) && !flynovoair.hasOwnProperty("Error")) {
         for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
@@ -292,7 +292,7 @@ function SearchForm() {
         }
       }
 
-      if (!usbair.hasOwnProperty("Error") && !(usbair == null)) {
+      if (!_.isNull(usbair) && !usbair.hasOwnProperty("Error")) {
         for (const [ticketKey, ticket] of Object.entries(usbair)) {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
