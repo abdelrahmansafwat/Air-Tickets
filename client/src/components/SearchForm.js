@@ -378,11 +378,7 @@ function SearchForm() {
     var ss = Math.floor(msec / 1000);
     msec -= ss * 1000;
 
-    return (
-      (String(hh).length === 1 ? "0" + hh : hh) +
-      "h " +
-      (String(mm).length === 1 ? "0" + mm : mm) + "m"
-    );
+    return hh + "h " + mm + "m";
   }
 
   return (
