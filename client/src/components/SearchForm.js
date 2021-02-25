@@ -26,6 +26,8 @@ import {
   Radio,
   ListItemSecondaryAction,
   CircularProgress,
+  Card,
+  CardActionArea,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
@@ -37,6 +39,9 @@ import {
   Today,
   ImportExport,
   Close,
+  FlightTakeoff,
+  FlightLand,
+  ArrowForward,
 } from "@material-ui/icons";
 import { CustomSwitchStyles } from "./CustomSwitch";
 import { CustomButtonStyles } from "./CustomButton";
@@ -120,10 +125,19 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     position: "relative",
+    background: "#2193b0",
   },
   title: {
     marginLeft: theme.spacing(2),
     flex: 1,
+  },
+  paper: {
+    //width: "90%",
+    marginTop: theme.spacing(2),
+    textAlign: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 }));
 
@@ -231,6 +245,13 @@ function SearchForm() {
               parseInt(flynovoair[ticketKey]["prices"][priceKey])
             );
           }
+          flynovoair[ticketKey]["landing"] = flynovoair[ticketKey][
+            "landing"
+          ].substring(0, 5);
+          flynovoair[ticketKey]["take_off"] = flynovoair[ticketKey][
+            "take_off"
+          ].substring(0, 5);
+
           flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           going.push(flynovoair[ticketKey]);
         }
@@ -283,6 +304,12 @@ function SearchForm() {
               parseInt(flynovoair[ticketKey]["prices"][priceKey])
             );
           }
+          flynovoair[ticketKey]["landing"] = flynovoair[ticketKey][
+            "landing"
+          ].substring(0, 5);
+          flynovoair[ticketKey]["take_off"] = flynovoair[ticketKey][
+            "take_off"
+          ].substring(0, 5);
           flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.code)) {
             going.push(flynovoair[ticketKey]);
@@ -320,6 +347,43 @@ function SearchForm() {
       setAvailableReservationsReturning(returning);
     }
   };
+
+  function duration(take_off, landing) {
+    var nextDay =
+      parseInt(landing.split(":")[0]) - parseInt(take_off.split(":")[0]) > 0
+        ? 0
+        : 1;
+    take_off = new Date(
+      2020,
+      10,
+      21,
+      take_off.split(":")[0],
+      take_off.split(":")[1]
+    );
+    landing = new Date(
+      2020,
+      10 + nextDay,
+      21,
+      landing.split(":")[0],
+      landing.split(":")[1]
+    );
+
+    var diff = landing - take_off;
+
+    var msec = diff;
+    var hh = Math.floor(msec / 1000 / 60 / 60);
+    msec -= hh * 1000 * 60 * 60;
+    var mm = Math.floor(msec / 1000 / 60);
+    msec -= mm * 1000 * 60;
+    var ss = Math.floor(msec / 1000);
+    msec -= ss * 1000;
+
+    return (
+      (String(hh).length === 1 ? "0" + hh : hh) +
+      ":" +
+      (String(mm).length === 1 ? "0" + mm : mm)
+    );
+  }
 
   return (
     <Paper elevation={10} className={classes.form}>
@@ -827,6 +891,11 @@ function SearchForm() {
         </DialogActions>
       </Dialog>
       <Dialog
+        PaperProps={{
+          style: {
+            backgroundColor: "#6dd5ed",
+          },
+        }}
         fullScreen
         open={reservationsDialog}
         onClose={() => {
@@ -859,13 +928,17 @@ function SearchForm() {
                   " to " +
                   selectedDepartureAirport.cityName +
                   " on " +
-                  arrivalDate.toDateString().substring(4, 10) + "," + arrivalDate.toDateString().substring(10, 15)
+                  arrivalDate.toDateString().substring(4, 10) +
+                  "," +
+                  arrivalDate.toDateString().substring(10, 15)
                 : "From " +
                   selectedDepartureAirport.cityName +
                   " to " +
                   selectedArrivalAirport.cityName +
                   " on " +
-                  departureDate.toDateString().substring(4, 10) + "," + arrivalDate.toDateString().substring(10, 15)}
+                  departureDate.toDateString().substring(4, 10) +
+                  "," +
+                  arrivalDate.toDateString().substring(10, 15)}
             </Typography>
             <Button
               autoFocus
@@ -892,39 +965,77 @@ function SearchForm() {
         {ready && !secondPage && (
           <List>
             {availableReservationsGoing.map((data) => (
-              <React.Fragment>
-                <ListItem
-                  button
-                  onClick={() => setSelectedValue(data.planeCode)}
-                >
-                  <ListItemIcon>
-                    <Radio
-                      checked={selectedValue === data.planeCode}
-                      onChange={() => setSelectedValue(data.planeCode)}
-                      value={data.planeCode}
-                      name="radio-button-demo"
-                      inputProps={{ "aria-label": "A" }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={"Price: " + data.lowestPrice + " BDT"}
-                    secondary={"Take off: " + data.take_off.substring(0, 5)}
-                  />
-                  <ListItemSecondaryAction>
-                    <img
-                      src={
-                        data.planeCode.substring(0, 2) === "BG"
-                          ? BG
-                          : data.planeCode.substring(0, 2) === "BS"
-                          ? BS
-                          : VQ
-                      }
-                      alt={data.planeCode.substring(0, 2)}
-                    />
-                  </ListItemSecondaryAction>
-                </ListItem>
-                <Divider />
-              </React.Fragment>
+              <Grid container>
+                <Grid item xs={1}></Grid>
+                <Grid item xs={10}>
+                  <Card elevation={10} className={classes.paper}>
+                    <CardActionArea>
+                      <Grid
+                        direction={"row"}
+                        className={classes.oneWayGrid}
+                        container
+                      >
+                        <Grid xs={4} item>
+                          <img
+                            src={
+                              data.planeCode.substring(0, 2) === "BG"
+                                ? BG
+                                : data.planeCode.substring(0, 2) === "BS"
+                                ? BS
+                                : VQ
+                            }
+                            alt={data.planeCode.substring(0, 2)}
+                          />
+                        </Grid>
+                        <Grid xs={4} container direction={"column"}>
+                          <Grid container direction={"row"}>
+                            <Grid xs={4}></Grid>
+                            <Grid xs={4}>
+                              <Grid
+                                container
+                                direction="row"
+                                alignItems="center"
+                                wrap="nowrap"
+                              >
+                                <Grid item>
+                                  <FlightTakeoff />
+                                </Grid>
+                                <Grid item>
+                                  <Typography>{data.take_off}</Typography>
+                                </Grid>
+                                <Grid item>
+                                  <ArrowForward />
+                                </Grid>
+                                <Grid item>
+                                  <Typography>{data.landing}</Typography>
+                                </Grid>
+                                <Grid item>
+                                  <FlightLand />
+                                </Grid>
+                              </Grid>
+                            </Grid>
+
+                            <Grid xs={4}></Grid>
+                          </Grid>
+                          <Grid container direction={"row"}>
+                            <Grid xs={4}></Grid>
+                            <Grid xs={4}>
+                              <Typography>
+                                {duration(data.take_off, data.landing)}
+                              </Typography>
+                            </Grid>
+                            <Grid xs={4}></Grid>
+                          </Grid>
+                        </Grid>
+                        <Grid xs={4} item>
+                          <Typography>{data.lowestPrice + " BDT"}</Typography>
+                        </Grid>
+                      </Grid>
+                    </CardActionArea>
+                  </Card>
+                </Grid>
+                <Grid item xs={1}></Grid>
+              </Grid>
             ))}
           </List>
         )}
@@ -980,7 +1091,7 @@ function SearchForm() {
           >
             <CircularProgress />
 
-            <Grid item xs={3}>
+            <Grid item xs={3} wrap="nowrap">
               <Typography style={{ textAlign: "center" }}>
                 {"We are searching the best fares for you."}
               </Typography>
