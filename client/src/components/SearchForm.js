@@ -991,7 +991,6 @@ function SearchForm() {
                                 container
                                 direction="row"
                                 alignItems="center"
-                                wrap="nowrap"
                               >
                                 <Grid item>
                                   <FlightTakeoff />
