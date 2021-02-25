@@ -976,7 +976,7 @@ function SearchForm() {
                 }
               }}
             >
-              Next
+              {oneWay ? "Book" : "Next"}
             </Button>
           </Toolbar>
         </AppBar>
@@ -1010,6 +1010,9 @@ function SearchForm() {
                               : data.planeCode.substring(0, 2) === "BS"
                               ? "US Bangla"
                               : "Novo Air"}
+                          </Typography>
+                          <Typography style={{ textAlign: "center" }}>
+                            {data.planeCode.replace('-','')}
                           </Typography>
                         </Grid>
                         <Grid xs={4} container direction={"column"}>
