@@ -265,6 +265,7 @@ function SearchForm() {
               .replace(",", "");
             lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
           }
+          birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.code)) {
             going.push(birman[ticketKey]);
           } else {
@@ -836,7 +837,11 @@ function SearchForm() {
             <IconButton
               edge="start"
               color="inherit"
-              onClick={() => setReservationsDialog(false)}
+              onClick={() => {
+                       setAvailableReservationsGoing([]);
+                       setAvailableReservationsReturning([]);
+                       setReservationsDialog(false);
+              }}
               aria-label="close"
             >
               <Close />
@@ -863,7 +868,9 @@ function SearchForm() {
                 if (oneWay) {
                   setSecondPage(true);
                 } else {
-                  setReservationsDialog(false)
+                  setAvailableReservationsGoing([]);
+                  setAvailableReservationsReturning([]);
+                  setReservationsDialog(false);
                 }
               }}
             >
