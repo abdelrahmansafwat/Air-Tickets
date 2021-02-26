@@ -712,7 +712,12 @@ function ReserveForm(props) {
                 var temp = passengers;
                 temp[index].dateOfBirth = value;
                 setPassengers(temp);
-                setIndex(index + 1);
+                if(index === adults+children+infants){
+                  setConfirm(true);
+                } 
+                else {
+                  setIndex(index + 1);
+                }
               }}
               KeyboardButtonProps={{
                 "aria-label": "change date",
