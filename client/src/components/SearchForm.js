@@ -146,7 +146,13 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     width: "100px",
     top: "3px",
-    left: "45.25%"
+    
+    [theme.breakpoints.up("md")]: {
+      left: "45.25%",
+    },
+    [theme.breakpoints.down("md")]: {
+      left: "40.25%",
+    },
   }
 }));
 
