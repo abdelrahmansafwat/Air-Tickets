@@ -52,6 +52,7 @@ import _ from "underscore";
 import BG from "../resources/BG.png";
 import BS from "../resources/BS.png";
 import VQ from "../resources/VQ.png";
+import logo from "../resources/logo.png";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -141,6 +142,12 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  logo: {
+    position: "absolute",
+    width: "100px",
+    top: "3px",
+    left: "45.25%"
+  }
 }));
 
 function SearchForm() {
@@ -1114,9 +1121,10 @@ function SearchForm() {
             justify="center"
             style={{ position: "absolute", top: "50%" }}
           >
-            <CircularProgress />
+            <CircularProgress size={80} />
+            <img className={classes.logo} src={logo} alt="logo" />
 
-            <Grid item xs={3}>
+            <Grid item xs={3} style={{ color: "white" }}>
               <Typography wrap="nowrap" style={{ textAlign: "center" }}>
                 {"We are searching the best fares for you."}
               </Typography>
