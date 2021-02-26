@@ -151,7 +151,7 @@ const useStyles = makeStyles((theme) => ({
       left: "45.25%",
     },
     [theme.breakpoints.down("md")]: {
-      left: "40.25%",
+      left: "32.25%",
     },
   }
 }));
