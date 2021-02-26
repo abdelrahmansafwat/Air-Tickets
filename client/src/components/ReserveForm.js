@@ -815,7 +815,7 @@ function ReserveForm(props) {
             }}
             color="primary"
           >
-            Close
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>
