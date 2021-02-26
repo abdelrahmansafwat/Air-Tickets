@@ -17,7 +17,7 @@ app.use('/api/airport', airport);     //Route for all airport related functions
 app.use('/api/reservation', reservation);     //Route for all reservation related functions
 
 //For testing the root when deployed to cloud
-app.get('/', async (req, res) => {
+app.get('*', async (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
 

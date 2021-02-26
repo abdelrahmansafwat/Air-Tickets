@@ -2,6 +2,7 @@ const express = require("express");
 const FormData = require("form-data");
 const axios = require("axios");
 const router = express.Router();
+const reservationModel = require("../models/reservation");
 
 //Find route
 router.post("/find", async (req, res) => {
@@ -81,6 +82,32 @@ router.post("/find", async (req, res) => {
     flynovoair: flynovoairData,
     birman: birmanData,
     usbair: usbairData,
+  });
+});
+
+//Reserve route
+router.post("/reserve", async (req, res) => {
+  console.log(req.body);
+  
+  let newReservation = new reservationModel({
+    passengers: req.body.passengers,
+    selectedGoingTicket: req.body.selectedGoingTicket,
+    selectedReturningTicket: req.body.selectedReturningTicket,
+    oneWay: req.body.oneWay,
+    departureDate: req.body.departureDate,
+    arrivalDate: req.body.arrivalDate,
+  });
+
+  newReservation.save((err, data) => {
+    if (err) {
+      res.status(500).json({
+        message: err.message,
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Auth OK",
+    });
   });
 });
 

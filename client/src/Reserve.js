@@ -21,4 +21,4 @@ function Reserve() {
     );
   }
   
-export default ReserveForm;
+export default Reserve;

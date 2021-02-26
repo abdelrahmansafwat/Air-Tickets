@@ -15,4 +15,4 @@ function Search() {
     );
   }
   
-export default SearchForm;
+export default Search;
