@@ -16,4 +16,4 @@ let reservationSchema = new Schema({
 
 let reservationModel = mongoose.model("reservation", reservationSchema);
 
-module.exports = airportModel;
+module.exports = reservationModel;
