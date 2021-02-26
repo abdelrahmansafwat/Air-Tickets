@@ -712,7 +712,7 @@ function ReserveForm(props) {
                 var temp = passengers;
                 temp[index].dateOfBirth = value;
                 setPassengers(temp);
-                if(index === adults+children+infants){
+                if(index === adults+children+infants-1){
                   setConfirm(true);
                 } 
                 else {
@@ -761,7 +761,7 @@ function ReserveForm(props) {
                 component="span"
                 classes={CustomButton}
                 onClick={async (event) => {
-                  if (index === adults + children + infants) {
+                  if (index === adults+children+infants-1) {
                     setConfirm(true);
                   } else {
                     setIndex(index + 1);
