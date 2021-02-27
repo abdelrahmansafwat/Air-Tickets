@@ -394,14 +394,14 @@ function SearchForm() {
     take_off = new Date(
       2020,
       10,
-      21,
+      23,
       take_off.split(":")[0],
       take_off.split(":")[1]
     );
     landing = new Date(
       2020,
-      10 + nextDay,
-      21,
+      10,
+      23 + nextDay,
       landing.split(":")[0],
       landing.split(":")[1]
     );
