@@ -256,7 +256,10 @@ function SearchForm() {
             }
           }
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
-          birman[ticketKey]["landing"] = birman[ticketKey]["landing"].substring(0, 5);
+          birman[ticketKey]["landing"] = birman[ticketKey]["landing"].substring(
+            0,
+            5
+          );
           going.push(birman[ticketKey]);
         }
       }
@@ -298,7 +301,10 @@ function SearchForm() {
             }
           }
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
-          usbair[ticketKey]["landing"] = usbair[ticketKey]["landing"].substring(0, 5);
+          usbair[ticketKey]["landing"] = usbair[ticketKey]["landing"].substring(
+            0,
+            5
+          );
           going.push(usbair[ticketKey]);
         }
       }
@@ -320,7 +326,10 @@ function SearchForm() {
               lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
             }
           }
-          birman[ticketKey]["landing"] = birman[ticketKey]["landing"].substring(0, 5);
+          birman[ticketKey]["landing"] = birman[ticketKey]["landing"].substring(
+            0,
+            5
+          );
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.code)) {
             going.push(birman[ticketKey]);
@@ -369,7 +378,10 @@ function SearchForm() {
               );
             }
           }
-          usbair[ticketKey]["landing"] = usbair[ticketKey]["landing"].substring(0, 5);
+          usbair[ticketKey]["landing"] = usbair[ticketKey]["landing"].substring(
+            0,
+            5
+          );
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
             going.push(usbair[ticketKey]);
@@ -1098,7 +1110,16 @@ function SearchForm() {
                             </Grid>
                             <Grid xs={4} item>
                               <Typography>
-                                {((adults * data.lowestPrice) + (children * (data.lowestPrice - (725 * (oneWay ? 2 : 1)) * 0.75 + (725 * (oneWay ? 2 : 1)))) + (infants * (data.lowestPrice - (725 * (oneWay ? 2 : 1)) * 0.10 + 200))) + " BDT"}
+                                {adults * data.lowestPrice +
+                                  children *
+                                    (data.lowestPrice -
+                                      725 * (oneWay ? 2 : 1) * 0.75 +
+                                      725 * (oneWay ? 2 : 1)) +
+                                  infants *
+                                    (data.lowestPrice -
+                                      725 * (oneWay ? 2 : 1) * 0.1 +
+                                      200) +
+                                  " BDT"}
                               </Typography>
                             </Grid>
                           </Grid>
@@ -1211,7 +1232,16 @@ function SearchForm() {
                           </Grid>
                           <Grid xs={4} item>
                             <Typography>
-                              {selectedGoingTicket.lowestPrice + " BDT"}
+                              {adults * selectedGoingTicket.lowestPrice +
+                                children *
+                                  (selectedGoingTicket.lowestPrice -
+                                    725 * (oneWay ? 2 : 1) * 0.75 +
+                                    725 * (oneWay ? 2 : 1)) +
+                                infants *
+                                  (selectedGoingTicket.lowestPrice -
+                                    725 * (oneWay ? 2 : 1) * 0.1 +
+                                    200) +
+                                " BDT"}
                             </Typography>
                           </Grid>
                         </Grid>
@@ -1307,7 +1337,16 @@ function SearchForm() {
                             </Grid>
                             <Grid xs={4} item>
                               <Typography>
-                                {data.lowestPrice + " BDT"}
+                                {adults * data.lowestPrice +
+                                  children *
+                                    (data.lowestPrice -
+                                      725 * (oneWay ? 2 : 1) * 0.75 +
+                                      725 * (oneWay ? 2 : 1)) +
+                                  infants *
+                                    (data.lowestPrice -
+                                      725 * (oneWay ? 2 : 1) * 0.1 +
+                                      200) +
+                                  " BDT"}
                               </Typography>
                             </Grid>
                           </Grid>
@@ -1375,6 +1414,8 @@ function SearchForm() {
           departureDate={departureDate}
           arrivalDate={arrivalDate}
           setSearch={setSearch}
+          setSelectedGoingTicket={setSelectedGoingTicket}
+          setSelectedReturningTicket={setSelectedReturningTicket}
         />
       )}
     </React.Fragment>

@@ -609,44 +609,7 @@ function ReserveForm(props) {
         )}
 
         {index < adults && (
-          <Grid container direction={"row"} alignItems="center" spacing={2}>
-            <Grid item xs={3}>
-              <Autocomplete
-                id="country-select-demo"
-                //style={{ width: 300 }}
-                options={countries}
-                classes={{
-                  option: classes.option,
-                }}
-                autoHighlight
-                disableClearable
-                //value={passengers[index].countryCode}
-                getOptionLabel={(option) => option.label}
-                renderOption={(option) => (
-                  <React.Fragment>
-                    <span>{countryToFlag(option.code)}</span>
-                    {option.label} ({option.code}) +{option.phone}
-                  </React.Fragment>
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Country"
-                    inputProps={{
-                      ...params.inputProps,
-                      autoComplete: "new-password", // disable autocomplete and autofill
-                    }}
-                  />
-                )}
-                onChange={(event, newValue) => {
-                  //console.log(newValue);
-                  var temp = passengers;
-                  temp[index].countryCode = newValue.phone;
-                  setPassengers(temp);
-                }}
-              />
-            </Grid>
-            <Grid item xs={9}>
+          <Grid item>
               <TextField
                 //variant="outlined"
                 classes={{ root: classes.textField }}
@@ -675,7 +638,6 @@ function ReserveForm(props) {
                   //setSelectedDepartureAirport("");
                 }}
               />
-            </Grid>
           </Grid>
         )}
 
@@ -748,6 +710,8 @@ function ReserveForm(props) {
                 classes={CustomButton}
                 onClick={async (event) => {
                   if(index === 0){
+                    props.setSelectedGoingTicket("");
+                    props.setSelectedReturningTicket("");
                     props.setSearch(true);
                   }
                   else {
