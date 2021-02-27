@@ -13,8 +13,14 @@ import {
   DialogTitle,
   Slide,
   InputAdornment,
+  FormControl,
+  Input,
+  Select,
+  ListItemText,
+  MenuItem,
+  InputLabel,
 } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+//import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import {
   Today,
@@ -23,7 +29,7 @@ import {
   Person,
   ChildCare,
   ChildFriendly,
-  PermIdentity
+  PermIdentity,
 } from "@material-ui/icons";
 import { CustomButtonStyles } from "./CustomButton";
 import DateFnsUtils from "@date-io/date-fns";
@@ -289,6 +295,16 @@ const countries = [
   { code: "ZM", label: "Zambia", phone: "260" },
   { code: "ZW", label: "Zimbabwe", phone: "263" },
 ];
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -429,6 +445,8 @@ function ReserveForm(props) {
       email: "",
       phone: "",
       countryCode: "",
+      title: "",
+      gender: "",
     });
     console.log(passengersTemp);
   }
@@ -516,6 +534,45 @@ function ReserveForm(props) {
           </Grid>
           <Grid item xs={"auto"}></Grid>
         </Grid>
+        {index < adults && (
+          <Grid item>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel id="title">Title</InputLabel>
+              <Select
+                labelId="title"
+                id="demo-mutiple-chip"
+                onChange={(selected) => {
+                  var temp = passengers;
+                  temp[index].title = selected.target.value;
+                  setPassengers(temp);
+                }}
+                input={
+                  <Input
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <PermIdentity className={classes.icon} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    id="select-multiple-chip"
+                  />
+                }
+                MenuProps={MenuProps}
+              >
+                <MenuItem key={"Mr"} value={"Mr"}>
+                  <ListItemText primary={"Mr"} />
+                </MenuItem>
+                <MenuItem key={"Ms"} value={"Ms"}>
+                  <ListItemText primary={"Ms"} />
+                </MenuItem>
+                <MenuItem key={"Mrs"} value={"Mrs"}>
+                  <ListItemText primary={"Mrs"} />
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        )}
         <Grid item>
           <TextField
             //variant="outlined"
@@ -576,6 +633,30 @@ function ReserveForm(props) {
           />
         </Grid>
 
+        <Grid item>
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel id="gender">Gender</InputLabel>
+            <Select
+              labelId="gender"
+              id="demo-mutiple-chip"
+              onChange={(selected) => {
+                var temp = passengers;
+                temp[index].gender = selected.target.value;
+                setPassengers(temp);
+              }}
+              input={<Input id="select-multiple-chip" />}
+              MenuProps={MenuProps}
+            >
+              <MenuItem key={"Male"} value={"Male"}>
+                <ListItemText primary={"Male"} />
+              </MenuItem>
+              <MenuItem key={"Female"} value={"Female"}>
+                <ListItemText primary={"Female"} />
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
         {index < adults && (
           <Grid item>
             <TextField
@@ -610,34 +691,34 @@ function ReserveForm(props) {
 
         {index < adults && (
           <Grid item>
-              <TextField
-                //variant="outlined"
-                classes={{ root: classes.textField }}
-                margin="normal"
-                fullWidth
-                id="phone"
-                label="Phone"
-                name="phone"
-                //placeholder="From where?"
-                //value={passengers[index].phone}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Phone className={classes.icon} />
-                    </InputAdornment>
-                  ),
-                }}
-                onBlur={(value) => {
-                  //console.log(newValue);
-                  var temp = passengers;
-                  temp[index].phone = value.target.value;
-                  setPassengers(temp);
-                  console.log(passengers);
-                }}
-                onFocus={() => {
-                  //setSelectedDepartureAirport("");
-                }}
-              />
+            <TextField
+              //variant="outlined"
+              classes={{ root: classes.textField }}
+              margin="normal"
+              fullWidth
+              id="phone"
+              label="Phone"
+              name="phone"
+              //placeholder="From where?"
+              //value={passengers[index].phone}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Phone className={classes.icon} />
+                  </InputAdornment>
+                ),
+              }}
+              onBlur={(value) => {
+                //console.log(newValue);
+                var temp = passengers;
+                temp[index].phone = value.target.value;
+                setPassengers(temp);
+                console.log(passengers);
+              }}
+              onFocus={() => {
+                //setSelectedDepartureAirport("");
+              }}
+            />
           </Grid>
         )}
 
@@ -652,6 +733,8 @@ function ReserveForm(props) {
               label="Date of Birth"
               disableFuture
               autoOk
+              openTo="year"
+              views={["year", "month", "date"]}
               maxDate={
                 index < adults
                   ? dayjs().subtract(12, "year")
@@ -673,10 +756,9 @@ function ReserveForm(props) {
                 var temp = passengers;
                 temp[index].dateOfBirth = value;
                 setPassengers(temp);
-                if(index === adults+children+infants-1){
+                if (index === adults + children + infants - 1) {
                   setConfirm(true);
-                } 
-                else {
+                } else {
                   setIndex(index + 1);
                 }
               }}
@@ -708,18 +790,16 @@ function ReserveForm(props) {
                 component="span"
                 classes={CustomButton}
                 onClick={async (event) => {
-                  if(index === 0){
+                  if (index === 0) {
                     props.setSelectedGoingTicket("");
                     props.setSelectedReturningTicket("");
                     props.setSearch(true);
+                  } else {
+                    setIndex(index - 1);
                   }
-                  else {
-                    setIndex(index-1);
-                  }
-                  
                 }}
               >
-              { index === 0 ? "Cancel" : "Back" }
+                {index === 0 ? "Cancel" : "Back"}
               </Button>
             </Grid>
             <Grid item xs={"auto"}>
@@ -729,7 +809,7 @@ function ReserveForm(props) {
                 component="span"
                 classes={CustomButton}
                 onClick={async (event) => {
-                  if (index === adults+children+infants-1) {
+                  if (index === adults + children + infants - 1) {
                     setConfirm(true);
                   } else {
                     setIndex(index + 1);
