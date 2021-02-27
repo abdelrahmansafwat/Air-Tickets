@@ -644,14 +644,12 @@ function ReserveForm(props) {
         <Grid item>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <DatePicker
-              disableToolbar
               classes={{ root: classes.textField }}
               fullWidth
               variant="outlined"
               margin="normal"
               id="date"
               label="Date of Birth"
-              views={["year", "month", "date"]}
               disableFuture
               autoOk
               maxDate={

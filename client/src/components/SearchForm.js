@@ -128,7 +128,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   appBar: {
-    position: "relative",
+    position: "sticky",
     background: "#2193b0",
   },
   title: {
@@ -714,33 +714,42 @@ function SearchForm() {
                     component="span"
                     classes={CustomButton}
                     onClick={async (event) => {
-                      setReady(false);
-                      setReservationsDialog(true);
-                      axios.create({ baseURL: window.location.origin });
+                      if (selectedDepartureAirport === "" || selectedArrivalAirport === "") {
+                        setError(true);
+                        setErrorMessage("Please fill out both Departure and Arrival Airports.");
+                      } else {
+                        setReady(false);
+                        setReservationsDialog(true);
+                        axios.create({ baseURL: window.location.origin });
 
-                      await axios
-                        .post("/api/reservation/find/", {
-                          departure_code: String(selectedDepartureAirport.code),
-                          arrival_code: String(selectedArrivalAirport.code),
-                          departure_date: departureDate
-                            .toISOString()
-                            .split("T")[0],
-                          arrival_date: arrivalDate.toISOString().split("T")[0],
-                          adult: String(adults),
-                          child: String(children),
-                          infant: String(infants),
-                          oneway: String(!oneWay),
-                        })
-                        .then(function (response) {
-                          console.log(response.data);
-                          preprocessData(response.data);
-                        })
-                        .catch(function (error) {
-                          console.log(error);
-                          if (error) {
-                          }
-                        });
-                      setReady(true);
+                        await axios
+                          .post("/api/reservation/find/", {
+                            departure_code: String(
+                              selectedDepartureAirport.code
+                            ),
+                            arrival_code: String(selectedArrivalAirport.code),
+                            departure_date: departureDate
+                              .toISOString()
+                              .split("T")[0],
+                            arrival_date: arrivalDate
+                              .toISOString()
+                              .split("T")[0],
+                            adult: String(adults),
+                            child: String(children),
+                            infant: String(infants),
+                            oneway: String(!oneWay),
+                          })
+                          .then(function (response) {
+                            console.log(response.data);
+                            preprocessData(response.data);
+                          })
+                          .catch(function (error) {
+                            console.log(error);
+                            if (error) {
+                            }
+                          });
+                        setReady(true);
+                      }
                     }}
                   >
                     Search
@@ -964,7 +973,7 @@ function SearchForm() {
             }}
             TransitionComponent={Transition}
           >
-            <AppBar className={classes.appBar}>
+            <AppBar className={classes.appBar} position="sticky">
               <Toolbar>
                 <IconButton
                   edge="start"
@@ -1115,15 +1124,10 @@ function SearchForm() {
                                 {Math.floor(
                                   adults * data.lowestPrice +
                                     children *
-                                      ((data.lowestPrice -
-                                        725 * (1)) *
-                                        0.75 +
-                                        725 * (1)) +
+                                      ((data.lowestPrice - 725 * 1) * 0.75 +
+                                        725 * 1) +
                                     infants *
-                                      ((data.lowestPrice -
-                                        725 * (1)) *
-                                        0.1 +
-                                        200)
+                                      ((data.lowestPrice - 725 * 1) * 0.1 + 200)
                                 ) + " BDT"}
                               </Typography>
                             </Grid>
@@ -1241,12 +1245,12 @@ function SearchForm() {
                                 adults * selectedGoingTicket.lowestPrice +
                                   children *
                                     ((selectedGoingTicket.lowestPrice -
-                                      725 * (1)) *
+                                      725 * 1) *
                                       0.75 +
-                                      725 * (1)) +
+                                      725 * 1) +
                                   infants *
                                     ((selectedGoingTicket.lowestPrice -
-                                      725 * (1)) *
+                                      725 * 1) *
                                       0.1 +
                                       200)
                               ) + " BDT"}
@@ -1262,9 +1266,15 @@ function SearchForm() {
                 <Grid container>
                   <Grid item xs={1}></Grid>
                   <Grid item xs={10}>
-                    <Card elevation={10} className={classes.paper} style={{ backgroundColor: "#2193b0" }}>
+                    <Card
+                      elevation={10}
+                      className={classes.paper}
+                      style={{ backgroundColor: "#2193b0" }}
+                    >
                       <CardActionArea disabled>
-                        <Typography style={{ textAlign: "center", color: "white" }}>
+                        <Typography
+                          style={{ textAlign: "center", color: "white" }}
+                        >
                           {"Please select Return Flight"}
                         </Typography>
                       </CardActionArea>
@@ -1362,15 +1372,10 @@ function SearchForm() {
                                 {Math.floor(
                                   adults * data.lowestPrice +
                                     children *
-                                      ((data.lowestPrice -
-                                        725 * (1)) *
-                                        0.75 +
-                                        725 * (1)) +
+                                      ((data.lowestPrice - 725 * 1) * 0.75 +
+                                        725 * 1) +
                                     infants *
-                                      ((data.lowestPrice -
-                                        725 * (1)) *
-                                        0.1 +
-                                        200)
+                                      ((data.lowestPrice - 725 * 1) * 0.1 + 200)
                                 ) + " BDT"}
                               </Typography>
                             </Grid>
