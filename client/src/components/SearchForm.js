@@ -1116,12 +1116,12 @@ function SearchForm() {
                                   adults * data.lowestPrice +
                                     children *
                                       ((data.lowestPrice -
-                                        725 * (oneWay ? 2 : 1)) *
+                                        725 * (1)) *
                                         0.75 +
-                                        725 * (oneWay ? 2 : 1)) +
+                                        725 * (1)) +
                                     infants *
                                       ((data.lowestPrice -
-                                        725 * (oneWay ? 2 : 1)) *
+                                        725 * (1)) *
                                         0.1 +
                                         200)
                                 ) + " BDT"}
@@ -1241,12 +1241,12 @@ function SearchForm() {
                                 adults * selectedGoingTicket.lowestPrice +
                                   children *
                                     ((selectedGoingTicket.lowestPrice -
-                                      725 * (oneWay ? 2 : 1)) *
+                                      725 * (1)) *
                                       0.75 +
-                                      725 * (oneWay ? 2 : 1)) +
+                                      725 * (1)) +
                                   infants *
                                     ((selectedGoingTicket.lowestPrice -
-                                      725 * (oneWay ? 2 : 1)) *
+                                      725 * (1)) *
                                       0.1 +
                                       200)
                               ) + " BDT"}
@@ -1363,12 +1363,12 @@ function SearchForm() {
                                   adults * data.lowestPrice +
                                     children *
                                       ((data.lowestPrice -
-                                        725 * (oneWay ? 2 : 1)) *
+                                        725 * (1)) *
                                         0.75 +
-                                        725 * (oneWay ? 2 : 1)) +
+                                        725 * (1)) +
                                     infants *
                                       ((data.lowestPrice -
-                                        725 * (oneWay ? 2 : 1)) *
+                                        725 * (1)) *
                                         0.1 +
                                         200)
                                 ) + " BDT"}
