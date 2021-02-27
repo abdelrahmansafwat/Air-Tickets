@@ -622,6 +622,7 @@ function SearchForm() {
                   id="date"
                   label="Departure Date"
                   disablePast
+                  autoOk
                   value={departureDate}
                   onChange={(date) => {
                     setDepartureDate(date);
@@ -650,6 +651,7 @@ function SearchForm() {
                   margin="normal"
                   id="date"
                   label="Return Date"
+                  autoOk
                   minDate={departureDate}
                   value={arrivalDate}
                   disabled={!oneWay}
@@ -1110,16 +1112,19 @@ function SearchForm() {
                             </Grid>
                             <Grid xs={4} item>
                               <Typography>
-                                {adults * data.lowestPrice +
-                                  children *
-                                    (data.lowestPrice -
-                                      725 * (oneWay ? 2 : 1) * 0.75 +
-                                      725 * (oneWay ? 2 : 1)) +
-                                  infants *
-                                    (data.lowestPrice -
-                                      725 * (oneWay ? 2 : 1) * 0.1 +
-                                      200) +
-                                  " BDT"}
+                                {Math.floor(
+                                  adults * data.lowestPrice +
+                                    children *
+                                      ((data.lowestPrice -
+                                        725 * (oneWay ? 2 : 1)) *
+                                        0.75 +
+                                        725 * (oneWay ? 2 : 1)) +
+                                    infants *
+                                      ((data.lowestPrice -
+                                        725 * (oneWay ? 2 : 1)) *
+                                        0.1 +
+                                        200)
+                                ) + " BDT"}
                               </Typography>
                             </Grid>
                           </Grid>
@@ -1232,19 +1237,36 @@ function SearchForm() {
                           </Grid>
                           <Grid xs={4} item>
                             <Typography>
-                              {adults * selectedGoingTicket.lowestPrice +
-                                children *
-                                  (selectedGoingTicket.lowestPrice -
-                                    725 * (oneWay ? 2 : 1) * 0.75 +
-                                    725 * (oneWay ? 2 : 1)) +
-                                infants *
-                                  (selectedGoingTicket.lowestPrice -
-                                    725 * (oneWay ? 2 : 1) * 0.1 +
-                                    200) +
-                                " BDT"}
+                              {Math.floor(
+                                adults * selectedGoingTicket.lowestPrice +
+                                  children *
+                                    ((selectedGoingTicket.lowestPrice -
+                                      725 * (oneWay ? 2 : 1)) *
+                                      0.75 +
+                                      725 * (oneWay ? 2 : 1)) +
+                                  infants *
+                                    ((selectedGoingTicket.lowestPrice -
+                                      725 * (oneWay ? 2 : 1)) *
+                                      0.1 +
+                                      200)
+                              ) + " BDT"}
                             </Typography>
                           </Grid>
                         </Grid>
+                      </CardActionArea>
+                    </Card>
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                </Grid>
+
+                <Grid container>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={10}>
+                    <Card elevation={10} className={classes.paper}>
+                      <CardActionArea disabled>
+                        <Typography style={{ textAlign: "center" }}>
+                          {"Please select return ticket"}
+                        </Typography>
                       </CardActionArea>
                     </Card>
                   </Grid>
@@ -1337,16 +1359,19 @@ function SearchForm() {
                             </Grid>
                             <Grid xs={4} item>
                               <Typography>
-                                {adults * data.lowestPrice +
-                                  children *
-                                    (data.lowestPrice -
-                                      725 * (oneWay ? 2 : 1) * 0.75 +
-                                      725 * (oneWay ? 2 : 1)) +
-                                  infants *
-                                    (data.lowestPrice -
-                                      725 * (oneWay ? 2 : 1) * 0.1 +
-                                      200) +
-                                  " BDT"}
+                                {Math.floor(
+                                  adults * data.lowestPrice +
+                                    children *
+                                      ((data.lowestPrice -
+                                        725 * (oneWay ? 2 : 1)) *
+                                        0.75 +
+                                        725 * (oneWay ? 2 : 1)) +
+                                    infants *
+                                      ((data.lowestPrice -
+                                        725 * (oneWay ? 2 : 1)) *
+                                        0.1 +
+                                        200)
+                                ) + " BDT"}
                               </Typography>
                             </Grid>
                           </Grid>

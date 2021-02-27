@@ -651,6 +651,7 @@ function ReserveForm(props) {
               margin="normal"
               id="date"
               label="Date of Birth"
+              views={["year", "month", "date"]}
               disableFuture
               autoOk
               maxDate={
