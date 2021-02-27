@@ -1198,7 +1198,7 @@ function SearchForm() {
                               <Typography
                                 style={{ textAlign: "center", fontSize: 24 }}
                               >
-                                Chosen going ticket
+                                Selected departure flight
                               </Typography>
                               <Grid item>
                                 <FlightTakeoff />
@@ -1265,7 +1265,7 @@ function SearchForm() {
                     <Card elevation={10} className={classes.paper}>
                       <CardActionArea disabled>
                         <Typography style={{ textAlign: "center" }}>
-                          {"Please select return ticket"}
+                          {"Please select return flight"}
                         </Typography>
                       </CardActionArea>
                     </Card>
