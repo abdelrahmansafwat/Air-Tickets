@@ -256,6 +256,7 @@ function SearchForm() {
             }
           }
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+          birman[ticketKey]["landing"] = birman[ticketKey]["landing"].substring(0, 5);
           going.push(birman[ticketKey]);
         }
       }
@@ -297,6 +298,7 @@ function SearchForm() {
             }
           }
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+          usbair[ticketKey]["landing"] = usbair[ticketKey]["landing"].substring(0, 5);
           going.push(usbair[ticketKey]);
         }
       }
@@ -318,6 +320,7 @@ function SearchForm() {
               lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
             }
           }
+          birman[ticketKey]["landing"] = birman[ticketKey]["landing"].substring(0, 5);
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.code)) {
             going.push(birman[ticketKey]);
@@ -366,6 +369,7 @@ function SearchForm() {
               );
             }
           }
+          usbair[ticketKey]["landing"] = usbair[ticketKey]["landing"].substring(0, 5);
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
             going.push(usbair[ticketKey]);
