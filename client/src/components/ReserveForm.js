@@ -747,11 +747,16 @@ function ReserveForm(props) {
                 component="span"
                 classes={CustomButton}
                 onClick={async (event) => {
-                  setIndex(index - 1);
+                  if(index === 0){
+                    props.setSearch(true);
+                  }
+                  else {
+                    setIndex(index-1);
+                  }
+                  
                 }}
-                disabled={index === 0}
               >
-                Back
+              { index === 0 ? "Cancel" : "Back" }
               </Button>
             </Grid>
             <Grid item xs={"auto"}>

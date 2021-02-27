@@ -7,9 +7,9 @@ const reservationModel = require("../models/reservation");
 //Find route
 router.post("/find", async (req, res) => {
   console.log(req.body);
-  var birmanUrl = "http://143.110.230.33/api/birman";
-  var flynovoairUrl = "http://143.110.230.33/api/flynovoair";
-  var usbairUrl = "http://144.126.215.47/api/usbair";
+  var birmanUrl = "http://api.tktbd.com/api/birman";
+  var flynovoairUrl = "http://api.tktbd.com/api/flynovoair";
+  var usbairUrl = "http://api.tktbd.com/api/usbair";
 
   var birmanData = null;
   var flynovoairData = null;

@@ -388,7 +388,7 @@ function SearchForm() {
 
   function duration(take_off, landing) {
     var nextDay =
-      parseInt(landing.split(":")[0]) - parseInt(take_off.split(":")[0]) > 0
+      parseInt(landing.split(":")[0]) - parseInt(take_off.split(":")[0]) >= 0
         ? 0
         : 1;
     take_off = new Date(
@@ -955,6 +955,8 @@ function SearchForm() {
                     setSecondPage(false);
                     setAvailableReservationsGoing([]);
                     setAvailableReservationsReturning([]);
+                    setSelectedGoingTicket("");
+                    setSelectedReturningTicket("");
                     setReservationsDialog(false);
                   }}
                   aria-label="close"
@@ -1163,6 +1165,11 @@ function SearchForm() {
                               style={{ textAlign: "center" }}
                               justify="center"
                             >
+                              <Typography
+                                style={{ textAlign: "center", fontSize: 24 }}
+                              >
+                                Chosen going ticket
+                              </Typography>
                               <Grid item>
                                 <FlightTakeoff />
                                 <Typography style={{ textAlign: "center" }}>
@@ -1363,6 +1370,7 @@ function SearchForm() {
           selectedReturningTicket={selectedReturningTicket}
           departureDate={departureDate}
           arrivalDate={arrivalDate}
+          setSearch={setSearch}
         />
       )}
     </React.Fragment>

@@ -56,12 +56,19 @@
       html {
         max-width: 100%;
         overflow-x: hidden !important;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
       }
 
       .container {
         max-width: 100%;
         overflow-x: hidden !important;
         position: relative;
+        
+      }
+
+      body::-webkit-scrollbar {
+        display: none;
       }
     </style>
     <title>Airfare Ticket Reservation</title>
