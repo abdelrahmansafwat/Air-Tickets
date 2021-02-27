@@ -1202,7 +1202,7 @@ function SearchForm() {
                               <Typography
                                 style={{ textAlign: "center", fontSize: 24 }}
                               >
-                                Selected Departure Flight
+                                Departure Flight
                               </Typography>
                               <Grid item>
                                 <FlightTakeoff />
