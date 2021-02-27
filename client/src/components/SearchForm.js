@@ -1094,7 +1094,7 @@ function SearchForm() {
                             </Grid>
                             <Grid xs={4} item>
                               <Typography>
-                                {data.lowestPrice + " BDT"}
+                                {((adults * data.lowestPrice) + (children * (data.lowestPrice - (725 * (oneWay ? 2 : 1)) * 0.75 + (725 * (oneWay ? 2 : 1)))) + (infants * (data.lowestPrice - (725 * (oneWay ? 2 : 1)) * 0.10 + 200))) + " BDT"}
                               </Typography>
                             </Grid>
                           </Grid>
