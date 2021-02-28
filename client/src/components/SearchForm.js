@@ -717,6 +717,7 @@ function SearchForm() {
                     variant="contained"
                     color="primary"
                     component="span"
+                    style={{ width: "320px" }}
                     classes={CustomButton}
                     onClick={async (event) => {
                       if (
@@ -1016,26 +1017,45 @@ function SearchForm() {
                       "," +
                       departureDate.toDateString().substring(10, 15)}
                 </Typography>
-                { oneWay && !(selectedGoingTicket === "") && <Button
-                  autoFocus
-                  color="inherit"
-                  onClick={() => {
-                    if (!secondPage) {
-                      setSecondPage(true);
-                      setNextButtonEnabled(false);
-                    }
-                    else {
-                      setSecondPage(false);
-                    }
-
-                  }}
-                >
-                  { secondPage ? "Back" : "Next" }
-                </Button>}
+                {oneWay && !(selectedGoingTicket === "") && (
+                  <Button
+                    autoFocus
+                    color="inherit"
+                    onClick={() => {
+                      if (!secondPage) {
+                        setSecondPage(true);
+                        setNextButtonEnabled(false);
+                      } else {
+                        setSecondPage(false);
+                      }
+                    }}
+                  >
+                    {secondPage ? "Back" : "Next"}
+                  </Button>
+                )}
               </Toolbar>
             </AppBar>
             {ready && !secondPage && (
               <List>
+                <Grid container>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={10}>
+                    <Card
+                      elevation={10}
+                      className={classes.paper}
+                      style={{ backgroundColor: "#2193b0" }}
+                    >
+                      <CardActionArea disabled>
+                        <Typography
+                          style={{ textAlign: "center", color: "white" }}
+                        >
+                          {"Please select Departure Flight"}
+                        </Typography>
+                      </CardActionArea>
+                    </Card>
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                </Grid>
                 {availableReservationsGoing.map((data) => (
                   <Grid container>
                     <Grid item xs={1}></Grid>
@@ -1413,62 +1433,68 @@ function SearchForm() {
                 </Grid>
               </Grid>
             )}
-            <AppBar
-              position="fixed"
-              color="primary"
-              className={classes.appBarBottom}
-            >
-              <Toolbar>
-                <Typography variant="h6" className={classes.title}>
-                  {"Total fare: " +
-                    ((selectedGoingTicket === ""
-                      ? 0
-                      : Math.floor(
-                          adults * selectedGoingTicket.lowestPrice +
-                            children *
-                              ((selectedGoingTicket.lowestPrice -
-                                725 * 1) *
-                                0.75 +
-                                725 * 1) +
-                            infants *
-                              ((selectedGoingTicket.lowestPrice -
-                                725 * 1) *
-                                0.1 +
-                                200)
-                        )) +
-                      (selectedReturningTicket === ""
+            {!(selectedGoingTicket === "") && (
+              <AppBar
+                position="fixed"
+                color="primary"
+                className={classes.appBarBottom}
+              >
+                <Toolbar>
+                  <Typography variant="h6" className={classes.title}>
+                    {"Total fare: " +
+                      ((selectedGoingTicket === ""
                         ? 0
                         : Math.floor(
-                            adults * selectedReturningTicket.lowestPrice +
+                            adults * selectedGoingTicket.lowestPrice +
                               children *
-                                ((selectedReturningTicket.lowestPrice -
-                                  725 * 1) *
+                                ((selectedGoingTicket.lowestPrice - 725 * 1) *
                                   0.75 +
                                   725 * 1) +
                               infants *
-                                ((selectedReturningTicket.lowestPrice -
-                                  725 * 1) *
+                                ((selectedGoingTicket.lowestPrice - 725 * 1) *
                                   0.1 +
                                   200)
-                          ))) +
-                    " BDT"}
-                </Typography>
-                <Button
-                  autoFocus
-                  color="inherit"
-                  disabled={!nextButtonEnabled}
-                  onClick={() => {
-                    setAvailableReservationsGoing([]);
-                    setAvailableReservationsReturning([]);
-                    setSecondPage(false);
-                    setReservationsDialog(false);
-                    setSearch(false);
-                  }}
-                >
-                  {"Book"}
-                </Button>
-              </Toolbar>
-            </AppBar>
+                          )) +
+                        (selectedReturningTicket === ""
+                          ? 0
+                          : Math.floor(
+                              adults * selectedReturningTicket.lowestPrice +
+                                children *
+                                  ((selectedReturningTicket.lowestPrice -
+                                    725 * 1) *
+                                    0.75 +
+                                    725 * 1) +
+                                infants *
+                                  ((selectedReturningTicket.lowestPrice -
+                                    725 * 1) *
+                                    0.1 +
+                                    200)
+                            ))) +
+                      " BDT"}
+                  </Typography>
+                  <Button
+                    autoFocus
+                    color="inherit"
+                    disabled={!nextButtonEnabled}
+                    onClick={() => {
+                      if (!secondPage && oneWay) {
+                        setSecondPage(true);
+                        setNextButtonEnabled(false);
+                      } else {
+                        setSecondPage(false);
+                        setAvailableReservationsGoing([]);
+                        setAvailableReservationsReturning([]);
+                        setSecondPage(false);
+                        setReservationsDialog(false);
+                        setSearch(false);
+                      }
+                    }}
+                  >
+                    { !oneWay ? "Book" : secondPage ? "Book" : "Select Return Flight" }
+                  </Button>
+                </Toolbar>
+              </AppBar>
+            )}
           </Dialog>
           <Dialog
             open={error}

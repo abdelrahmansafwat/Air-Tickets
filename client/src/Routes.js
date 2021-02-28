@@ -3,6 +3,7 @@ import { Router, Switch, Route } from "react-router-dom";
 
 import Search from "./Search";
 import Reserve from './Reserve';
+import Success from './components/Success';
 import history from './history';
 
 
@@ -13,6 +14,7 @@ export default class Routes extends Component {
                 <Switch>
                     <Route path="/" exact component={Search} />
                     <Route path="/reserve" component={Reserve} />
+                    <Route path="/success" component={Success} />
                 </Switch>
             </Router>
         )

@@ -1,8 +1,18 @@
+require("dotenv").config();
 const express = require("express");
 const FormData = require("form-data");
 const axios = require("axios");
 const router = express.Router();
+const SSLCommerz = require("sslcommerz-nodejs");
+const { v4: uuidv4 } = require("uuid")
 const reservationModel = require("../models/reservation");
+
+let settings = {
+  isSandboxMode: true, //false if live version
+  store_id: process.env.STORE_ID,
+  store_passwd: process.env.STORE_PASSWORD,
+};
+let sslcommerz = new SSLCommerz(settings);
 
 //Find route
 router.post("/find", async (req, res) => {
@@ -88,7 +98,41 @@ router.post("/find", async (req, res) => {
 //Reserve route
 router.post("/reserve", async (req, res) => {
   console.log(req.body);
-  
+
+  let transactionId = uuidv4();
+  let gateWayUrl = "";
+
+  let post_body = {};
+  post_body["total_amount"] = req.body.total;
+  post_body["currency"] = "BDT";
+  post_body["tran_id"] = transactionId;
+  post_body["success_url"] = req.body.url + "api/reservation/reserve/success";
+  post_body["fail_url"] = req.body.url + "api/reservation/reserve/success";
+  post_body["cancel_url"] = req.body.url + "api/reservation/reserve/success";
+  post_body["emi_option"] = 0;
+  post_body["cus_name"] = req.body.passengers[0].firstName + req.body.passengers[0].lastName;
+  post_body["cus_email"] = req.body.passengers[0].email;
+  post_body["cus_phone"] = req.body.passengers[0].phone;
+  post_body["cus_add1"] = "customer address";
+  post_body["cus_city"] = "Dhaka";
+  post_body["cus_country"] = "Bangladesh";
+  post_body["shipping_method"] = "NO";
+  post_body["multi_card_name"] = "";
+  post_body["num_of_item"] = req.body.passengers[0].numberOfTickets;
+  post_body["product_name"] = "Ticket";
+  post_body["product_category"] = "Tickets";
+  post_body["product_profile"] = "general";
+  await sslcommerz
+    .init_transaction(post_body)
+    .then(function(response) {
+      console.log(response.GatewayPageURL);
+      gateWayUrl = response.GatewayPageURL;
+      console.log(gateWayUrl);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
   let newReservation = new reservationModel({
     passengers: req.body.passengers,
     selectedGoingTicket: req.body.selectedGoingTicket,
@@ -96,9 +140,12 @@ router.post("/reserve", async (req, res) => {
     oneWay: req.body.oneWay,
     departureDate: req.body.departureDate,
     arrivalDate: req.body.arrivalDate,
+    gateWayUrl: gateWayUrl
   });
 
-  newReservation.save((err, data) => {
+  console.log(gateWayUrl);
+
+  newReservation.save(function(err, data) {
     if (err) {
       res.status(500).json({
         message: err.message,
@@ -106,9 +153,26 @@ router.post("/reserve", async (req, res) => {
       return;
     }
     res.status(200).json({
-      message: "Auth OK",
+      message: "OK",
+      gateWayUrl: gateWayUrl
     });
   });
+});
+
+//Reserve success route
+router.post("/reserve/success", async (req, res) => {
+  console.log(req.body);
+  res.redirect("/success")
+});
+
+//Reserve fail route
+router.post("/reserve/fail", async (req, res) => {
+  console.log(req.body);
+});
+
+//Reserve cance; route
+router.post("/reserve/fail", async (req, res) => {
+  console.log(req.body);
 });
 
 module.exports = router;
