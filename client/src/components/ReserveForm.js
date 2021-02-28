@@ -748,7 +748,7 @@ function ReserveForm(props) {
               autoOk
               openTo="year"
               views={["year", "month", "date"]}
-              format="dd/mm/yyyy"
+              format="dd/MM/yyyy"
               maxDate={
                 index < adults
                   ? dayjs().subtract(12, "year")
