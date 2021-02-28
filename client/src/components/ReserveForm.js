@@ -221,6 +221,15 @@ function ReserveForm(props) {
                   <IconButton
                     onClick={(value) => {
                       if (
+                        !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+                          passengers[index].email
+                        ) &&
+                        index < adults
+                      ) {
+                        setMessage("Invalid email format.");
+                        setMessageLevel("Error");
+                        setMessageDialog(true);
+                      } else if (
                         (index < adults && passengers[index].title === "") ||
                         (index < adults && passengers[index].email === "") ||
                         (index < adults && passengers[index].phone === "") ||
@@ -596,13 +605,13 @@ function ReserveForm(props) {
                   if (
                     !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
                       passengers[index].email
-                    )
+                    ) &&
+                    index < adults
                   ) {
                     setMessage("Invalid email format.");
                     setMessageLevel("Error");
                     setMessageDialog(true);
-                  }
-                  else if (
+                  } else if (
                     (index < adults && passengers[index].title === "") ||
                     (index < adults && passengers[index].email === "") ||
                     (index < adults && passengers[index].phone === "") ||
@@ -619,6 +628,7 @@ function ReserveForm(props) {
                       setConfirm(true);
                     } else {
                       setIndex(index + 1);
+                      setRender(!render);
                     }
                   }
                 }}

@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core/styles";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import { Paper, Typography, Grid } from "@material-ui/core";
+import { Paper, Typography, Grid, Button } from "@material-ui/core";
+import { CustomButtonStyles } from "./CustomButton";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -118,21 +119,48 @@ const useStyles = makeStyles((theme) => ({
 function Success() {
   const classes = useStyles();
 
+  const CustomButton = CustomButtonStyles({ chubby: true });
+
+  /*
   var getUrl = window.location;
   var baseUrl = getUrl.protocol + "//" + getUrl.host;
 
   setTimeout(function () {
     window.location.href = baseUrl;
   }, 5000);
+  */
 
   return (
     <Paper elevation={10} className={classes.form}>
       <Grid container className={classes.oneWayGrid} direction={"column"}>
-      <Grid xs={1} item></Grid>
+        <Grid xs={1} item></Grid>
         <Grid xs={10} item>
           <CheckCircleIcon className={classes.passengerIcons} />
-          <Typography style={{ textAlign: "center" }}>Success</Typography>
-          <Typography style={{ textAlign: "center" }}>Redirecting in 5 seconds...</Typography>
+          <Typography style={{ textAlign: "center" }}>
+            Success! We have received your payment and your ticket is currently
+            on processing.
+          </Typography>
+          <Typography style={{ textAlign: "center" }}>
+            Your E-ticket copy will be emailed to you and a confirmation sms
+            will be sent to your given phone number within few minutes.
+          </Typography>
+          <Typography style={{ textAlign: "center" }}>
+            Thank you for your purchase with us. Have a safe trip.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            component="span"
+            style={{ width: "320px" }}
+            classes={CustomButton}
+            onClick={async (event) => {
+              var getUrl = window.location;
+              var baseUrl = getUrl.protocol + "//" + getUrl.host;
+              window.location.href = baseUrl;
+            }}
+          >
+            Return to Home
+          </Button>
         </Grid>
         <Grid xs={1} item></Grid>
       </Grid>
