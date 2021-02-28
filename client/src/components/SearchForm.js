@@ -1019,15 +1019,18 @@ function SearchForm() {
                 { oneWay && !(selectedGoingTicket === "") && <Button
                   autoFocus
                   color="inherit"
-                  disabled={!nextButtonEnabled}
                   onClick={() => {
                     if (!secondPage) {
                       setSecondPage(true);
                       setNextButtonEnabled(false);
-                    } 
+                    }
+                    else {
+                      setSecondPage(false);
+                    }
+
                   }}
                 >
-                  {"Next"}
+                  { secondPage ? "Back" : "Next" }
                 </Button>}
               </Toolbar>
             </AppBar>
