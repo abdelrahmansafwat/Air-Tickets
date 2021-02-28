@@ -131,6 +131,11 @@ const useStyles = makeStyles((theme) => ({
     position: "sticky",
     background: "#2193b0",
   },
+  appBarBottom: {
+    top: "auto",
+    bottom: 0,
+    background: "#2193b0",
+  },
   title: {
     marginLeft: theme.spacing(2),
     flex: 1,
@@ -714,9 +719,14 @@ function SearchForm() {
                     component="span"
                     classes={CustomButton}
                     onClick={async (event) => {
-                      if (selectedDepartureAirport === "" || selectedArrivalAirport === "") {
+                      if (
+                        selectedDepartureAirport === "" ||
+                        selectedArrivalAirport === ""
+                      ) {
                         setError(true);
-                        setErrorMessage("Please fill out both Departure and Arrival Airports.");
+                        setErrorMessage(
+                          "Please fill out both Departure and Arrival Airports."
+                        );
                       } else {
                         setReady(false);
                         setReservationsDialog(true);
@@ -1006,30 +1016,19 @@ function SearchForm() {
                       "," +
                       departureDate.toDateString().substring(10, 15)}
                 </Typography>
-                <Button
+                { oneWay && !(selectedGoingTicket === "") && <Button
                   autoFocus
                   color="inherit"
                   disabled={!nextButtonEnabled}
                   onClick={() => {
-                    if (oneWay && !secondPage) {
+                    if (!secondPage) {
                       setSecondPage(true);
                       setNextButtonEnabled(false);
-                    } else if (secondPage) {
-                      setAvailableReservationsGoing([]);
-                      setAvailableReservationsReturning([]);
-                      setSecondPage(false);
-                      setReservationsDialog(false);
-                      setSearch(false);
-                    } else {
-                      setAvailableReservationsGoing([]);
-                      setAvailableReservationsReturning([]);
-                      setReservationsDialog(false);
-                      setSearch(false);
-                    }
+                    } 
                   }}
                 >
-                  {secondPage ? "Book" : "Next"}
-                </Button>
+                  {"Next"}
+                </Button>}
               </Toolbar>
             </AppBar>
             {ready && !secondPage && (
@@ -1411,6 +1410,62 @@ function SearchForm() {
                 </Grid>
               </Grid>
             )}
+            <AppBar
+              position="fixed"
+              color="primary"
+              className={classes.appBarBottom}
+            >
+              <Toolbar>
+                <Typography variant="h6" className={classes.title}>
+                  {"Total fare: " +
+                    ((selectedGoingTicket === ""
+                      ? 0
+                      : Math.floor(
+                          adults * selectedGoingTicket.lowestPrice +
+                            children *
+                              ((selectedGoingTicket.lowestPrice -
+                                725 * 1) *
+                                0.75 +
+                                725 * 1) +
+                            infants *
+                              ((selectedGoingTicket.lowestPrice -
+                                725 * 1) *
+                                0.1 +
+                                200)
+                        )) +
+                      (selectedReturningTicket === ""
+                        ? 0
+                        : Math.floor(
+                            adults * selectedReturningTicket.lowestPrice +
+                              children *
+                                ((selectedReturningTicket.lowestPrice -
+                                  725 * 1) *
+                                  0.75 +
+                                  725 * 1) +
+                              infants *
+                                ((selectedReturningTicket.lowestPrice -
+                                  725 * 1) *
+                                  0.1 +
+                                  200)
+                          ))) +
+                    " BDT"}
+                </Typography>
+                <Button
+                  autoFocus
+                  color="inherit"
+                  disabled={!nextButtonEnabled}
+                  onClick={() => {
+                    setAvailableReservationsGoing([]);
+                    setAvailableReservationsReturning([]);
+                    setSecondPage(false);
+                    setReservationsDialog(false);
+                    setSearch(false);
+                  }}
+                >
+                  {"Book"}
+                </Button>
+              </Toolbar>
+            </AppBar>
           </Dialog>
           <Dialog
             open={error}

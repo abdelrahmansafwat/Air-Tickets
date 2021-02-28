@@ -20,7 +20,7 @@ import {
   MenuItem,
   InputLabel,
 } from "@material-ui/core";
-//import { Autocomplete } from "@material-ui/lab";
+import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import {
   Today,
@@ -441,7 +441,7 @@ function ReserveForm(props) {
     passengersTemp.push({
       firstName: "",
       lastName: "",
-      dateOfBirth: null,
+      dateOfBirth: "",
       email: "",
       phone: "",
       countryCode: "",
@@ -457,6 +457,9 @@ function ReserveForm(props) {
   const [confirm, setConfirm] = useState(false);
   const [arrivalDate, setArrivalDate] = useState(props.arrivalDate);
   const [departureDate, setDepartureDate] = useState(props.departureDate);
+  const [message, setMessage] = useState("");
+  const [messageDialog, setMessageDialog] = useState(false);
+  const [messageLevel, setMessageLevel] = useState("");
   const [selectedGoingTicket, setSelectedGoingTicket] = useState(
     props.selectedGoingTicket
   );
@@ -536,41 +539,39 @@ function ReserveForm(props) {
         </Grid>
         {index < adults && (
           <Grid item>
-            <FormControl variant="outlined" fullWidth>
-              <InputLabel id="title">Title</InputLabel>
-              <Select
-                labelId="title"
-                id="demo-mutiple-chip"
-                onChange={(selected) => {
-                  var temp = passengers;
-                  temp[index].title = selected.target.value;
-                  setPassengers(temp);
-                }}
-                input={
-                  <Input
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <PermIdentity className={classes.icon} />
-                        </InputAdornment>
-                      ),
-                    }}
-                    id="select-multiple-chip"
-                  />
-                }
-                MenuProps={MenuProps}
-              >
-                <MenuItem key={"Mr"} value={"Mr"}>
-                  <ListItemText primary={"Mr"} />
-                </MenuItem>
-                <MenuItem key={"Ms"} value={"Ms"}>
-                  <ListItemText primary={"Ms"} />
-                </MenuItem>
-                <MenuItem key={"Mrs"} value={"Mrs"}>
-                  <ListItemText primary={"Mrs"} />
-                </MenuItem>
-              </Select>
-            </FormControl>
+            <Autocomplete
+              id="combo-box-demo"
+              fullWidth
+              disableClearable
+              options={["Mr.", "Ms.", "Mrs."]}
+              getOptionLabel={(option) => option}
+              value={passengers[index].title}
+              onChange={(event, newValue) => {
+                var temp = passengers;
+                temp[index].title = newValue;
+                setPassengers(temp);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  //variant="outlined"
+                  classes={{ root: classes.textField }}
+                  {...params}
+                  margin="normal"
+                  fullWidth
+                  id="title"
+                  label="Title"
+                  name="title"
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PermIdentity className={classes.icon} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
           </Grid>
         )}
         <Grid item>
@@ -634,27 +635,39 @@ function ReserveForm(props) {
         </Grid>
 
         <Grid item>
-          <FormControl variant="outlined" fullWidth>
-            <InputLabel id="gender">Gender</InputLabel>
-            <Select
-              labelId="gender"
-              id="demo-mutiple-chip"
-              onChange={(selected) => {
-                var temp = passengers;
-                temp[index].gender = selected.target.value;
-                setPassengers(temp);
-              }}
-              input={<Input id="select-multiple-chip" />}
-              MenuProps={MenuProps}
-            >
-              <MenuItem key={"Male"} value={"Male"}>
-                <ListItemText primary={"Male"} />
-              </MenuItem>
-              <MenuItem key={"Female"} value={"Female"}>
-                <ListItemText primary={"Female"} />
-              </MenuItem>
-            </Select>
-          </FormControl>
+          <Autocomplete
+            id="combo-box-demo"
+            fullWidth
+            disableClearable
+            options={["Male", "Female"]}
+            getOptionLabel={(option) => option}
+            value={passengers[index].title}
+            onChange={(event, newValue) => {
+              var temp = passengers;
+              temp[index].title = newValue;
+              setPassengers(temp);
+            }}
+            renderInput={(params) => (
+              <TextField
+                //variant="outlined"
+                classes={{ root: classes.textField }}
+                {...params}
+                margin="normal"
+                fullWidth
+                id="title"
+                label="Title"
+                name="title"
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PermIdentity className={classes.icon} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
         </Grid>
 
         {index < adults && (
@@ -735,6 +748,7 @@ function ReserveForm(props) {
               autoOk
               openTo="year"
               views={["year", "month", "date"]}
+              format="dd/mm/yyyy"
               maxDate={
                 index < adults
                   ? dayjs().subtract(12, "year")
@@ -783,7 +797,7 @@ function ReserveForm(props) {
             spacing={3}
             className={classes.oneWayGrid}
           >
-            <Grid item xs={"auto"}>
+            <Grid item xs={6}>
               <Button
                 variant="contained"
                 color="primary"
@@ -791,9 +805,11 @@ function ReserveForm(props) {
                 classes={CustomButton}
                 onClick={async (event) => {
                   if (index === 0) {
-                    props.setSelectedGoingTicket("");
-                    props.setSelectedReturningTicket("");
-                    props.setSearch(true);
+                    setMessage(
+                      "Are you sure you want to cancel reservation and go back to search page?"
+                    );
+                    setMessageLevel("Cancel");
+                    setMessageDialog(true);
                   } else {
                     setIndex(index - 1);
                   }
@@ -802,17 +818,31 @@ function ReserveForm(props) {
                 {index === 0 ? "Cancel" : "Back"}
               </Button>
             </Grid>
-            <Grid item xs={"auto"}>
+            <Grid item xs={6}>
               <Button
                 variant="contained"
                 color="primary"
                 component="span"
                 classes={CustomButton}
                 onClick={async (event) => {
-                  if (index === adults + children + infants - 1) {
-                    setConfirm(true);
+                  if (
+                    (index < adults && passengers[index].title === "") ||
+                    (index < adults && passengers[index].email === "") ||
+                    (index < adults && passengers[index].phone === "") ||
+                    passengers[index].gender === "" ||
+                    passengers[index].firstName === "" ||
+                    passengers[index].lastName === "" ||
+                    passengers[index].dateOfBirth === ""
+                  ) {
+                    setMessage("Please fill all fields.");
+                    setMessageLevel("Error");
+                    setMessageDialog(true);
                   } else {
-                    setIndex(index + 1);
+                    if (index === adults + children + infants - 1) {
+                      setConfirm(true);
+                    } else {
+                      setIndex(index + 1);
+                    }
                   }
                 }}
               >
@@ -865,6 +895,38 @@ function ReserveForm(props) {
           >
             Confirm
           </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={messageDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setMessageDialog(false)}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">{messageLevel}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            {message}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setMessageDialog(false)} color="primary">
+            Close
+          </Button>
+          {messageLevel === "Cancel" && (
+            <Button
+              onClick={() => {
+                props.setSelectedGoingTicket("");
+                props.setSelectedReturningTicket("");
+                props.setSearch(true);
+              }}
+              color="primary"
+            >
+              Confirm
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Paper>
