@@ -344,7 +344,7 @@ function ReserveForm(props) {
             name="firstName"
             value={passengers[index].firstName}
             //placeholder="From where?"
-            onBlur={(value) => {
+            onChange={(value) => {
               //console.log(newValue);
               var temp = passengers;
               temp[index].firstName = value.target.value;
