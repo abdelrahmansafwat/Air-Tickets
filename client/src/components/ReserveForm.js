@@ -382,7 +382,7 @@ function ReserveForm(props) {
                 </InputAdornment>
               ),
             }}
-            onBlur={(value) => {
+            onChange={(value) => {
               //console.log(newValue);
               var temp = passengers;
               temp[index].lastName = value.target.value;
@@ -445,7 +445,7 @@ function ReserveForm(props) {
               name="email"
               //placeholder="From where?"
               value={passengers[index].email}
-              onBlur={(value) => {
+              onChange={(value) => {
                 //console.log(newValue);
                 var temp = passengers;
                 temp[index].email = value.target.value;
@@ -485,7 +485,7 @@ function ReserveForm(props) {
                   </InputAdornment>
                 ),
               }}
-              onBlur={(value) => {
+              onChange={(value) => {
                 //console.log(newValue);
                 var temp = passengers;
                 temp[index].phone = value.target.value;
