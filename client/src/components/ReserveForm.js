@@ -342,7 +342,7 @@ function ReserveForm(props) {
             id="firstName"
             label="First Name"
             name="firstName"
-            //value={passengers[index].firstName}
+            value={passengers[index].firstName}
             //placeholder="From where?"
             onBlur={(value) => {
               //console.log(newValue);
@@ -374,7 +374,7 @@ function ReserveForm(props) {
             label="Last Name"
             name="lastName"
             //placeholder="From where?"
-            //value={passengers[index].lastName}
+            value={passengers[index].lastName}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -444,7 +444,7 @@ function ReserveForm(props) {
               label="Email"
               name="email"
               //placeholder="From where?"
-              //value={passengers[index].email}
+              value={passengers[index].email}
               onBlur={(value) => {
                 //console.log(newValue);
                 var temp = passengers;
@@ -477,7 +477,7 @@ function ReserveForm(props) {
               label="Phone"
               name="phone"
               //placeholder="From where?"
-              //value={passengers[index].phone}
+              value={passengers[index].phone}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
