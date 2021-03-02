@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require("uuid")
 const reservationModel = require("../models/reservation");
 
 let settings = {
-  isSandboxMode: true, //false if live version
+  isSandboxMode: false, //false if live version
   store_id: process.env.STORE_ID,
   store_passwd: process.env.STORE_PASSWORD,
 };
