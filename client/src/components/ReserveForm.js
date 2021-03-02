@@ -661,12 +661,12 @@ function ReserveForm(props) {
                 <Grid item>
                   <Typography>{"Adult"}</Typography>
                 </Grid>
-                <Grid item>
+                { index >= adults && <Grid item>
                   <Typography>{"Child"}</Typography>
-                </Grid>
-                <Grid item>
+                </Grid>}
+                { index >= adults + children && <Grid item>
                   <Typography>{"Infant"}</Typography>
-                </Grid>
+                </Grid> }
                 <Grid item>
                   <Divider />
                   <Typography>{"Total Payable Fare"}</Typography>
@@ -689,7 +689,7 @@ function ReserveForm(props) {
                         (oneWay ? selectedGoingTicket.lowestPrice : 0))}
                   </Typography>
                 </Grid>
-                <Grid item>
+                { index >= adults && <Grid item>
                   <Typography align="right">
                     {children +
                       " x " +
@@ -713,8 +713,8 @@ function ReserveForm(props) {
                           : 0)
                     )}
                   </Typography>
-                </Grid>
-                <Grid item>
+                </Grid>}
+                { index >= adults + children && <Grid item>
                   <Typography align="right">
                     {infants +
                       " x " +
@@ -739,7 +739,7 @@ function ReserveForm(props) {
                           : 0)
                     )}
                   </Typography>
-                </Grid>
+                </Grid>}
                 <Grid item>
                   <Divider />
                   <Typography align="right">
