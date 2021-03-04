@@ -107,8 +107,8 @@ router.post("/reserve", async (req, res) => {
   post_body["currency"] = "BDT";
   post_body["tran_id"] = transactionId;
   post_body["success_url"] = req.body.url + "api/reservation/reserve/success";
-  post_body["fail_url"] = req.body.url + "api/reservation/reserve/success";
-  post_body["cancel_url"] = req.body.url + "api/reservation/reserve/success";
+  post_body["fail_url"] = req.body.url + "api/reservation/reserve/fail";
+  post_body["cancel_url"] = req.body.url + "api/reservation/reserve/cancel";
   post_body["emi_option"] = 0;
   post_body["cus_name"] = req.body.passengers[0].firstName + req.body.passengers[0].lastName;
   post_body["cus_email"] = req.body.passengers[0].email;
@@ -162,17 +162,19 @@ router.post("/reserve", async (req, res) => {
 //Reserve success route
 router.post("/reserve/success", async (req, res) => {
   console.log(req.body);
-  res.redirect("/success")
+  res.redirect("/success");
 });
 
 //Reserve fail route
 router.post("/reserve/fail", async (req, res) => {
   console.log(req.body);
+  res.redirect("/fail");
 });
 
-//Reserve cance; route
-router.post("/reserve/fail", async (req, res) => {
+//Reserve cancel route
+router.post("/reserve/cancel", async (req, res) => {
   console.log(req.body);
+  res.redirect("/cancel");
 });
 
 module.exports = router;
