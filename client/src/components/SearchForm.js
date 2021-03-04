@@ -1214,7 +1214,7 @@ function SearchForm() {
                               {selectedGoingTicket.planeCode.replace("-", "")}
                             </Typography>
                             <Typography style={{ textAlign: "center" }}>
-                                {departureDate}
+                                {departureDate.toLocaleDateString()}
                               </Typography>
                           </Grid>
                           <Grid xs={4} container direction={"column"}>
@@ -1353,7 +1353,7 @@ function SearchForm() {
                                 {data.planeCode.replace("-", "")}
                               </Typography>
                               <Typography style={{ textAlign: "center" }}>
-                                {arrivalDate}
+                                {arrivalDate.toLocaleDateString()}
                               </Typography>
                             </Grid>
                             <Grid xs={4} container direction={"column"}>
