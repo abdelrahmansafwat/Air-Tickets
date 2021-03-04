@@ -7,6 +7,8 @@ import Success from './components/Success';
 import Fail from './components/Fail';
 import Cancel from './components/Cancel';
 import Privacy from './components/Privacy';
+import Terms from './components/Terms';
+import Refund from './components/Refund';
 import history from './history';
 
 
@@ -22,6 +24,8 @@ export default class Routes extends Component {
                     <Route path="/fail" component={Fail} />
                     <Route path="/cancel" component={Cancel} />
                     <Route path="/privacy-policy" component={Privacy} />
+                    <Route path="/terms-and-conditions" component={Terms} />
+                    <Route path="/refund-and-return-policy" component={Refund} />
                 </Switch>
             </Router>
         )
