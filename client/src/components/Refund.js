@@ -132,7 +132,6 @@ function Success() {
 
     return (
         <Paper elevation={10} className={classes.form}>
-            <Typography style={{ textAlign: "center" }} variant="h5">Who we are</Typography>
             <Typography>
                 The refund and return policy presented on this page includes the possible scenario which may arise when you purchase one of the services offered by Travel Vela. At most of the cases, all payments made to Travel Vela is non-refundable or non-returnable unless it is subjected to any criteria mentioned below at this section. Please read through the below sections to learn more about refund and return policy before purchasing or making any payments to Travel Vela. Please note, all amounts mentioned will be charged in respect to the currency used for payment and don't correlates to any exchange rates available at the time of execution.
           </Typography>

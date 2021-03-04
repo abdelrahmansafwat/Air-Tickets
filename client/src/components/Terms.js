@@ -132,7 +132,6 @@ function Success() {
 
     return (
         <Paper elevation={10} className={classes.form}>
-            <Typography style={{ textAlign: "center" }} variant="h5">Who we are</Typography>
             <Typography>
                 This web site (the "Site") is published and maintained by business named Travel Vela ("travelvela"), which is incorporated and existing in accordance with the laws of Bangladesh. When you access, browse or use this Site you accept, without limitation or qualification, the terms and conditions set forth below. When you access any sub-site (whether belonging to an ‘associate’ of travelvela or otherwise) through this site, then such sub-site may have its own terms and conditions of use which is specific to such sub-site. Sub-sites may contain such additional terms and conditions of use as may be set out in such sub-site.
 
