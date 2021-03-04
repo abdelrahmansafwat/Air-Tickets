@@ -29,6 +29,7 @@ import {
   Card,
   CardActionArea,
   Hidden,
+  Link,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
@@ -54,6 +55,7 @@ import BG from "../resources/BG.png";
 import BS from "../resources/BS.png";
 import VQ from "../resources/VQ.png";
 import logo from "../resources/logo.png";
+import logoText from "../resources/logo-w-text.png";
 import history from "../history";
 import ReserveForm from "./ReserveForm";
 
@@ -135,6 +137,12 @@ const useStyles = makeStyles((theme) => ({
     top: "auto",
     bottom: 0,
     background: "#2193b0",
+  },
+  footer: {
+    top: "auto",
+    bottom: 0,
+    background: "linear-gradient(to right, #ece9e6, #ffffff);",
+    color: "#2193b0",
   },
   title: {
     marginLeft: theme.spacing(2),
@@ -445,6 +453,14 @@ function SearchForm() {
       {search ? (
         <Paper elevation={10} className={classes.form}>
           <Grid container direction={"column"} spacing={1}>
+            <Grid container direction={"row"} spacing={3} className={classes.oneWayGrid}>
+              <Grid item xs={"auto"}></Grid>
+              <Grid item xs={"auto"}>
+                <img src={logoText} alt={"logo"} style={{ width: "250px" }} />
+              </Grid>
+              <Grid item xs={"auto"}></Grid>
+            </Grid>
+
             <Grid
               container
               direction={"row"}
@@ -1217,8 +1233,8 @@ function SearchForm() {
                               {selectedGoingTicket.planeCode.replace("-", "")}
                             </Typography>
                             <Typography style={{ textAlign: "center" }}>
-                                {departureDate.toLocaleDateString()}
-                              </Typography>
+                              {departureDate.toLocaleDateString()}
+                            </Typography>
                           </Grid>
                           <Grid xs={4} container direction={"column"}>
                             <Grid
@@ -1499,7 +1515,11 @@ function SearchForm() {
                       }
                     }}
                   >
-                    { !oneWay ? "Book" : secondPage ? "Book" : "Select Return Flight" }
+                    {!oneWay
+                      ? "Book"
+                      : secondPage
+                      ? "Book"
+                      : "Select Return Flight"}
                   </Button>
                 </Toolbar>
               </AppBar>
@@ -1541,6 +1561,47 @@ function SearchForm() {
           setSelectedReturningTicket={setSelectedReturningTicket}
         />
       )}
+      <AppBar position="fixed" color="primary" className={classes.footer}>
+        <Toolbar>
+          <Grid container direction={"column"}>
+            <Grid container direction={"row"} style={{ marginTop: "1%" }}>
+              <Grid item xs={3}>
+                <Link color="inherit" href="/privacy-policy">
+                  <Typography style={{ textAlign: "center" }}>
+                    Privacy Policy
+                  </Typography>
+                </Link>
+              </Grid>
+              <Grid item xs={3}>
+                <Link color="inherit" href="/terms-and-conditions">
+                  <Typography style={{ textAlign: "center" }}>
+                    Terms and Conditions
+                  </Typography>
+                </Link>
+              </Grid>
+              <Grid item xs={3}>
+                <Link color="inherit" href="/refund-and-return-policy">
+                  <Typography style={{ textAlign: "center" }}>
+                    Refund and Return Policy
+                  </Typography>
+                </Link>
+              </Grid>
+              <Grid item xs={3}>
+                <Typography style={{ textAlign: "center" }}>
+                  Contact Us
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid item style={{ marginTop: "1%", marginBottom: "1%" }}>
+              <Typography variant="body2" style={{ textAlign: "center" }}>
+                {"Copyright © "}
+                {"Travel Vela"} {new Date().getFullYear()}
+                {"."}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
     </React.Fragment>
   );
 }
