@@ -1101,6 +1101,9 @@ function SearchForm() {
                               <Typography style={{ textAlign: "center" }}>
                                 {data.planeCode.replace("-", "")}
                               </Typography>
+                              <Typography style={{ textAlign: "center" }}>
+                                {departureDate.toLocaleDateString()}
+                              </Typography>
                             </Grid>
                             <Grid xs={4} container direction={"column"}>
                               <Grid
