@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const _ = require("underscore");
 const userModel = require("../models/user");
+const { v4: uuidv4 } = require("uuid");
 
 //Login route
 router.post("/login", async (req, res) => {
@@ -32,9 +33,9 @@ router.post("/login", async (req, res) => {
             { email: data.email, privilege: data.privilege },
             process.env.JWT_SECRET
           );
-          
+
           res.status(200).json({
-            accessToken: accessToken
+            accessToken: accessToken,
           });
         }
       });
@@ -161,8 +162,62 @@ router.post("/update", async (req, res) => {
   );
 });
 
+//Forgot user password route
+router.post("/forgot-password", async (req, res) => {
+  console.log(req.body);
+
+  userModel.findOneAndUpdate(
+    { email: req.body.email },
+    {
+      forgotPasswordToken: { token: uuidv4(), expiration: Date.now },
+    },
+    (err, data) => {
+      if (err) {
+        res.status(500).json({
+          message: err.message,
+        });
+        return;
+      }
+      res.json({
+        data,
+      });
+    }
+  );
+});
+
+//Forgot user password route
+router.post("/forgot-password/update", async (req, res) => {
+  console.log(req.body);
+
+  userModel.findOneAndUpdate(
+    { "forgotPasswordToken.token": req.params.token },
+    {
+      password: req.body.password,
+    },
+    (err, data) => {
+      if (err) {
+        res.status(500).json({
+          message: err.message,
+        });
+        return;
+      }
+      var hours = Math.floor(Math.abs(Date.now - data.expiration) / 36e5);
+      if (hours < 1) {
+        res.json({
+          data,
+        });
+      } else {
+        res.status(500).json({
+          message: "Token expired",
+        });
+        return;
+      }
+    }
+  );
+});
+
 //Update user password route
-router.post("/update", async (req, res) => {
+router.post("/update-password", async (req, res) => {
   console.log(req.body);
 
   userModel.findOneAndUpdate(

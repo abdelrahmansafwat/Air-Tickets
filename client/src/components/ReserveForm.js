@@ -23,6 +23,8 @@ import {
   Typography,
   Divider,
   Checkbox,
+  Container,
+  CssBaseline,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
@@ -88,10 +90,10 @@ const useStyles = makeStyles((theme) => ({
   },
   dialog: {
     [theme.breakpoints.up("md")]: {
-      width: "35%",
+      width: "100%",
     },
     [theme.breakpoints.down("md")]: {
-      width: "50%",
+      width: "100%",
     },
   },
   textField: {
@@ -154,6 +156,12 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 18,
     },
   },
+  root: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
 }));
 
 function ReserveForm(props) {
@@ -204,22 +212,410 @@ function ReserveForm(props) {
   console.log(passengers);
 
   return (
-    <Paper elevation={10} className={classes.form}>
-      <Grid container direction={"column"} spacing={1}>
-        <Grid
-          container
-          direction={"row"}
-          spacing={3}
-          className={classes.oneWayGrid}
-        >
-          <Grid item xs={"auto"}></Grid>
-          <Grid item xs={"auto"}>
-            {Array(adults)
-              .fill()
-              .map((value, number) => {
-                return (
-                  <IconButton
-                    onClick={(value) => {
+    <Container component="main" maxWidth="md">
+      <CssBaseline />
+      <div className={classes.root}>
+        <Paper elevation={10} className={classes.form}>
+          <Grid container direction={"column"} spacing={1}>
+            <Grid
+              container
+              direction={"row"}
+              spacing={3}
+              className={classes.oneWayGrid}
+            >
+              <Grid item xs={"auto"}></Grid>
+              <Grid item xs={"auto"}>
+                {Array(adults)
+                  .fill()
+                  .map((value, number) => {
+                    return (
+                      <IconButton
+                        onClick={(value) => {
+                          if (
+                            !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+                              passengers[index].email
+                            ) &&
+                            index < adults
+                          ) {
+                            setMessage("Invalid email format.");
+                            setMessageLevel("Error");
+                            setMessageDialog(true);
+                          } else if (
+                            (index < adults &&
+                              passengers[index].title === "") ||
+                            (index < adults &&
+                              passengers[index].email === "") ||
+                            (index < adults &&
+                              passengers[index].phone === "") ||
+                            passengers[index].gender === "" ||
+                            passengers[index].firstName === "" ||
+                            passengers[index].lastName === "" ||
+                            passengers[index].dateOfBirth === null
+                          ) {
+                            setMessage("Please fill all fields.");
+                            setMessageLevel("Error");
+                            setMessageDialog(true);
+                          } else {
+                            if (index === adults + children + infants - 1) {
+                              setConfirm(true);
+                            } else {
+                              setIndex(number);
+                            }
+                          }
+                        }}
+                      >
+                        <Person
+                          className={classes.passengerIcons}
+                          fontSize={number === index ? "large" : ""}
+                        />{" "}
+                      </IconButton>
+                    );
+                  })}
+                {Array(children)
+                  .fill()
+                  .map((value, number) => {
+                    return (
+                      <IconButton
+                        onClick={(value) => {
+                          setIndex(number + adults);
+                        }}
+                      >
+                        <ChildCare
+                          className={classes.passengerIcons}
+                          fontSize={number + adults === index ? "large" : ""}
+                        />{" "}
+                      </IconButton>
+                    );
+                  })}
+                {Array(infants)
+                  .fill()
+                  .map((value, number) => {
+                    return (
+                      <IconButton
+                        onClick={(value) => {
+                          setIndex(number + adults + children);
+                        }}
+                      >
+                        <ChildFriendly
+                          className={classes.passengerIcons}
+                          fontSize={
+                            number + adults + children === index ? "large" : ""
+                          }
+                        />{" "}
+                      </IconButton>
+                    );
+                  })}
+              </Grid>
+              <Grid item xs={"auto"}></Grid>
+            </Grid>
+            {index < adults && (
+              <Grid item>
+                <Autocomplete
+                  id="combo-box-demo"
+                  fullWidth
+                  disableClearable
+                  filterOptions={(x) => x}
+                  options={["Mr.", "Ms.", "Mrs."]}
+                  getOptionLabel={(option) => option}
+                  value={passengers[index].title}
+                  onChange={(event, newValue) => {
+                    var temp = passengers;
+                    temp[index].title = newValue;
+                    setPassengers(temp);
+                    setRender(!render);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      //variant="outlined"
+                      classes={{ root: classes.textField }}
+                      {...params}
+                      margin="normal"
+                      fullWidth
+                      id="title"
+                      label="Title"
+                      name="title"
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PermIdentity className={classes.icon} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+              </Grid>
+            )}
+            <Grid item>
+              <TextField
+                //variant="outlined"
+                classes={{ root: classes.textField }}
+                margin="normal"
+                fullWidth
+                id="firstName"
+                label="First Name"
+                name="firstName"
+                value={passengers[index].firstName}
+                //placeholder="From where?"
+                onChange={(value) => {
+                  //console.log(newValue);
+                  var temp = passengers;
+                  temp[index].firstName = value.target.value;
+                  setPassengers(temp);
+                  setRender(!render);
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PermIdentity className={classes.icon} />
+                    </InputAdornment>
+                  ),
+                }}
+                onFocus={() => {
+                  //setSelectedDepartureAirport("");
+                }}
+              />
+            </Grid>
+
+            <Grid item>
+              <TextField
+                //variant="outlined"
+                classes={{ root: classes.textField }}
+                margin="normal"
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                //placeholder="From where?"
+                value={passengers[index].lastName}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PermIdentity className={classes.icon} />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={(value) => {
+                  //console.log(newValue);
+                  var temp = passengers;
+                  temp[index].lastName = value.target.value;
+                  setPassengers(temp);
+                  setRender(!render);
+                }}
+                onFocus={() => {
+                  //setSelectedDepartureAirport("");
+                }}
+              />
+            </Grid>
+
+            <Grid item>
+              <Autocomplete
+                id="combo-box-demo"
+                fullWidth
+                disableClearable
+                options={["Male", "Female"]}
+                filterOptions={(x) => x}
+                getOptionLabel={(option) => option}
+                value={passengers[index].gender}
+                onChange={(event, newValue) => {
+                  var temp = passengers;
+                  temp[index].gender = newValue;
+                  setPassengers(temp);
+                  setRender(!render);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    //variant="outlined"
+                    classes={{ root: classes.textField }}
+                    {...params}
+                    margin="normal"
+                    fullWidth
+                    id="gender"
+                    label="Gender"
+                    name="gender"
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <PermIdentity className={classes.icon} />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+
+            {index < adults && (
+              <Grid item>
+                <TextField
+                  //variant="outlined"
+                  classes={{ root: classes.textField }}
+                  margin="normal"
+                  fullWidth
+                  id="email"
+                  label="Email"
+                  name="email"
+                  //placeholder="From where?"
+                  value={passengers[index].email}
+                  onChange={(value) => {
+                    //console.log(newValue);
+                    var temp = passengers;
+                    temp[index].email = value.target.value;
+                    setPassengers(temp);
+                    setRender(!render);
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Email className={classes.icon} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  onFocus={() => {
+                    //setSelectedDepartureAirport("");
+                  }}
+                />
+              </Grid>
+            )}
+
+            {index < adults && (
+              <Grid item>
+                <TextField
+                  //variant="outlined"
+                  classes={{ root: classes.textField }}
+                  margin="normal"
+                  fullWidth
+                  id="phone"
+                  label="Phone"
+                  name="phone"
+                  //placeholder="From where?"
+                  value={passengers[index].phone}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Phone className={classes.icon} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  onChange={(value) => {
+                    //console.log(newValue);
+                    var temp = passengers;
+                    temp[index].phone = value.target.value;
+                    setPassengers(temp);
+                    setRender(!render);
+                    console.log(passengers);
+                  }}
+                  onFocus={() => {
+                    //setSelectedDepartureAirport("");
+                  }}
+                />
+              </Grid>
+            )}
+
+            <Grid item>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <DatePicker
+                  classes={{ root: classes.textField }}
+                  fullWidth
+                  variant="outlined"
+                  margin="normal"
+                  id="date"
+                  label="Date of Birth"
+                  disableFuture
+                  autoOk
+                  openTo="year"
+                  views={["year", "month", "date"]}
+                  format="dd/MM/yyyy"
+                  initialFocusedDate={
+                    index < adults
+                      ? dayjs().subtract(12, "year")
+                      : index >= adults && index < adults + children
+                      ? dayjs().subtract(2, "year")
+                      : dayjs()
+                  }
+                  maxDate={
+                    index < adults
+                      ? dayjs().subtract(12, "year")
+                      : index >= adults && index < adults + children
+                      ? dayjs().subtract(2, "year")
+                      : dayjs()
+                  }
+                  minDate={
+                    index < adults
+                      ? dayjs("1900-01-01")
+                      : index >= adults && index < adults + children
+                      ? dayjs().subtract(12, "year")
+                      : dayjs().subtract(2, "year")
+                  }
+                  value={passengers[index].dateOfBirth}
+                  onChange={(value) => {
+                    //console.log(newValue);
+                    console.log(value);
+                    var temp = passengers;
+                    temp[index].dateOfBirth = value;
+                    setPassengers(temp);
+                    setRender(!render);
+                    /*
+                if (index === adults + children + infants - 1) {
+                  setConfirm(true);
+                } else {
+                  setIndex(index + 1);
+                }
+                */
+                  }}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Today className={classes.icon} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+            </Grid>
+
+            <Grid item className={classes.field}>
+              <Grid
+                container
+                direction={"row"}
+                spacing={3}
+                className={classes.oneWayGrid}
+              >
+                <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    component="span"
+                    fullWidth
+                    classes={CustomButton}
+                    onClick={async (event) => {
+                      if (index === 0) {
+                        setMessage(
+                          "Are you sure you want to cancel reservation and go back to search page?"
+                        );
+                        setMessageLevel("Cancel");
+                        setMessageDialog(true);
+                      } else {
+                        setIndex(index - 1);
+                      }
+                    }}
+                  >
+                    {index === 0 ? "Cancel" : "Back"}
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    component="span"
+                    fullWidth
+                    classes={CustomButton}
+                    onClick={async (event) => {
                       if (
                         !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
                           passengers[index].email
@@ -245,644 +641,288 @@ function ReserveForm(props) {
                         if (index === adults + children + infants - 1) {
                           setConfirm(true);
                         } else {
-                          setIndex(number);
+                          setIndex(index + 1);
+                          setRender(!render);
                         }
                       }
                     }}
                   >
-                    <Person
-                      className={classes.passengerIcons}
-                      fontSize={number === index ? "large" : ""}
-                    />{" "}
-                  </IconButton>
-                );
-              })}
-            {Array(children)
-              .fill()
-              .map((value, number) => {
-                return (
-                  <IconButton
-                    onClick={(value) => {
-                      setIndex(number + adults);
-                    }}
-                  >
-                    <ChildCare
-                      className={classes.passengerIcons}
-                      fontSize={number + adults === index ? "large" : ""}
-                    />{" "}
-                  </IconButton>
-                );
-              })}
-            {Array(infants)
-              .fill()
-              .map((value, number) => {
-                return (
-                  <IconButton
-                    onClick={(value) => {
-                      setIndex(number + adults + children);
-                    }}
-                  >
-                    <ChildFriendly
-                      className={classes.passengerIcons}
-                      fontSize={
-                        number + adults + children === index ? "large" : ""
-                      }
-                    />{" "}
-                  </IconButton>
-                );
-              })}
+                    Next
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={"auto"}></Grid>
-        </Grid>
-        {index < adults && (
-          <Grid item>
-            <Autocomplete
-              id="combo-box-demo"
-              fullWidth
-              disableClearable
-              filterOptions={(x) => x}
-              options={["Mr.", "Ms.", "Mrs."]}
-              getOptionLabel={(option) => option}
-              value={passengers[index].title}
-              onChange={(event, newValue) => {
-                var temp = passengers;
-                temp[index].title = newValue;
-                setPassengers(temp);
-                setRender(!render);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  //variant="outlined"
-                  classes={{ root: classes.textField }}
-                  {...params}
-                  margin="normal"
-                  fullWidth
-                  id="title"
-                  label="Title"
-                  name="title"
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <PermIdentity className={classes.icon} />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              )}
-            />
-          </Grid>
-        )}
-        <Grid item>
-          <TextField
-            //variant="outlined"
-            classes={{ root: classes.textField }}
-            margin="normal"
-            fullWidth
-            id="firstName"
-            label="First Name"
-            name="firstName"
-            value={passengers[index].firstName}
-            //placeholder="From where?"
-            onChange={(value) => {
-              //console.log(newValue);
-              var temp = passengers;
-              temp[index].firstName = value.target.value;
-              setPassengers(temp);
-              setRender(!render);
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PermIdentity className={classes.icon} />
-                </InputAdornment>
-              ),
-            }}
-            onFocus={() => {
-              //setSelectedDepartureAirport("");
-            }}
-          />
-        </Grid>
 
-        <Grid item>
-          <TextField
-            //variant="outlined"
-            classes={{ root: classes.textField }}
-            margin="normal"
-            fullWidth
-            id="lastName"
-            label="Last Name"
-            name="lastName"
-            //placeholder="From where?"
-            value={passengers[index].lastName}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PermIdentity className={classes.icon} />
-                </InputAdornment>
-              ),
-            }}
-            onChange={(value) => {
-              //console.log(newValue);
-              var temp = passengers;
-              temp[index].lastName = value.target.value;
-              setPassengers(temp);
-              setRender(!render);
-            }}
-            onFocus={() => {
-              //setSelectedDepartureAirport("");
-            }}
-          />
-        </Grid>
-
-        <Grid item>
-          <Autocomplete
-            id="combo-box-demo"
-            fullWidth
-            disableClearable
-            options={["Male", "Female"]}
-            filterOptions={(x) => x}
-            getOptionLabel={(option) => option}
-            value={passengers[index].gender}
-            onChange={(event, newValue) => {
-              var temp = passengers;
-              temp[index].gender = newValue;
-              setPassengers(temp);
-              setRender(!render);
-            }}
-            renderInput={(params) => (
-              <TextField
-                //variant="outlined"
-                classes={{ root: classes.textField }}
-                {...params}
-                margin="normal"
-                fullWidth
-                id="gender"
-                label="Gender"
-                name="gender"
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <PermIdentity className={classes.icon} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
-          />
-        </Grid>
-
-        {index < adults && (
-          <Grid item>
-            <TextField
-              //variant="outlined"
-              classes={{ root: classes.textField }}
-              margin="normal"
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              //placeholder="From where?"
-              value={passengers[index].email}
-              onChange={(value) => {
-                //console.log(newValue);
-                var temp = passengers;
-                temp[index].email = value.target.value;
-                setPassengers(temp);
-                setRender(!render);
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Email className={classes.icon} />
-                  </InputAdornment>
-                ),
-              }}
-              onFocus={() => {
-                //setSelectedDepartureAirport("");
-              }}
-            />
-          </Grid>
-        )}
-
-        {index < adults && (
-          <Grid item>
-            <TextField
-              //variant="outlined"
-              classes={{ root: classes.textField }}
-              margin="normal"
-              fullWidth
-              id="phone"
-              label="Phone"
-              name="phone"
-              //placeholder="From where?"
-              value={passengers[index].phone}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Phone className={classes.icon} />
-                  </InputAdornment>
-                ),
-              }}
-              onChange={(value) => {
-                //console.log(newValue);
-                var temp = passengers;
-                temp[index].phone = value.target.value;
-                setPassengers(temp);
-                setRender(!render);
-                console.log(passengers);
-              }}
-              onFocus={() => {
-                //setSelectedDepartureAirport("");
-              }}
-            />
-          </Grid>
-        )}
-
-        <Grid item>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <DatePicker
-              classes={{ root: classes.textField }}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              id="date"
-              label="Date of Birth"
-              disableFuture
-              autoOk
-              openTo="year"
-              views={["year", "month", "date"]}
-              format="dd/MM/yyyy"
-              initialFocusedDate={
-                index < adults
-                  ? dayjs().subtract(12, "year")
-                  : index >= adults && index < adults + children
-                  ? dayjs().subtract(2, "year")
-                  : dayjs()
-              }
-              maxDate={
-                index < adults
-                  ? dayjs().subtract(12, "year")
-                  : index >= adults && index < adults + children
-                  ? dayjs().subtract(2, "year")
-                  : dayjs()
-              }
-              minDate={
-                index < adults
-                  ? dayjs("1900-01-01")
-                  : index >= adults && index < adults + children
-                  ? dayjs().subtract(12, "year")
-                  : dayjs().subtract(2, "year")
-              }
-              value={passengers[index].dateOfBirth}
-              onChange={(value) => {
-                //console.log(newValue);
-                console.log(value);
-                var temp = passengers;
-                temp[index].dateOfBirth = value;
-                setPassengers(temp);
-                setRender(!render);
-                /*
-                if (index === adults + children + infants - 1) {
-                  setConfirm(true);
-                } else {
-                  setIndex(index + 1);
-                }
-                */
-              }}
-              KeyboardButtonProps={{
-                "aria-label": "change date",
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Today className={classes.icon} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </MuiPickersUtilsProvider>
-        </Grid>
-
-        <Grid item className={classes.field}>
-          <Grid
-            container
-            direction={"row"}
-            spacing={3}
-            className={classes.oneWayGrid}
+          <Dialog
+            open={confirm}
+            TransitionComponent={Transition}
+            keepMounted
+            fullWidth={true}
+            maxWidth={"sm"}
+            onClose={() => setConfirm(false)}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
           >
-            <Grid item xs={6}>
-              <Button
-                variant="contained"
-                color="primary"
-                component="span"
-                fullWidth
-                classes={CustomButton}
-                onClick={async (event) => {
-                  if (index === 0) {
-                    setMessage(
-                      "Are you sure you want to cancel reservation and go back to search page?"
-                    );
-                    setMessageLevel("Cancel");
-                    setMessageDialog(true);
-                  } else {
-                    setIndex(index - 1);
-                  }
-                }}
-              >
-                {index === 0 ? "Cancel" : "Back"}
-              </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                variant="contained"
-                color="primary"
-                component="span"
-                fullWidth
-                classes={CustomButton}
-                onClick={async (event) => {
-                  if (
-                    !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-                      passengers[index].email
-                    ) &&
-                    index < adults
-                  ) {
-                    setMessage("Invalid email format.");
-                    setMessageLevel("Error");
-                    setMessageDialog(true);
-                  } else if (
-                    (index < adults && passengers[index].title === "") ||
-                    (index < adults && passengers[index].email === "") ||
-                    (index < adults && passengers[index].phone === "") ||
-                    passengers[index].gender === "" ||
-                    passengers[index].firstName === "" ||
-                    passengers[index].lastName === "" ||
-                    passengers[index].dateOfBirth === null
-                  ) {
-                    setMessage("Please fill all fields.");
-                    setMessageLevel("Error");
-                    setMessageDialog(true);
-                  } else {
-                    if (index === adults + children + infants - 1) {
-                      setConfirm(true);
-                    } else {
-                      setIndex(index + 1);
-                      setRender(!render);
-                    }
-                  }
-                }}
-              >
-                Next
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+            <DialogTitle id="alert-dialog-slide-title">{"Confirm"}</DialogTitle>
+            <DialogContent>
+              <Grid container direction={"row"}>
+                <Grid container direction={"row"}>
+                  <Grid container xs={6} direction={"column"}>
+                    <Grid item>
+                      <Typography>{"Type of Fare"}</Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography>{"Adult"}</Typography>
+                    </Grid>
+                    {children > 0 && (
+                      <Grid item>
+                        <Typography>{"Child"}</Typography>
+                      </Grid>
+                    )}
+                    {infants > 0 && (
+                      <Grid item>
+                        <Typography>{"Infant"}</Typography>
+                      </Grid>
+                    )}
+                    <Grid item>
+                      <Divider />
+                      <Typography>{"Total Payable Fare"}</Typography>
+                    </Grid>
+                  </Grid>
 
-      <Dialog
-        open={confirm}
-        TransitionComponent={Transition}
-        keepMounted
-        fullWidth={true}
-        maxWidth={"sm"}
-        onClose={() => setConfirm(false)}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle id="alert-dialog-slide-title">{"Confirm"}</DialogTitle>
-        <DialogContent>
-          <Grid container direction={"row"}>
-            <Grid container direction={"row"}>
-              <Grid container xs={6} direction={"column"}>
-                <Grid item>
-                  <Typography>{"Type of Fare"}</Typography>
-                </Grid>
-                <Grid item>
-                  <Typography>{"Adult"}</Typography>
-                </Grid>
-                { children > 0 && <Grid item>
-                  <Typography>{"Child"}</Typography>
-                </Grid>}
-                { infants > 0 && <Grid item>
-                  <Typography>{"Infant"}</Typography>
-                </Grid> }
-                <Grid item>
-                  <Divider />
-                  <Typography>{"Total Payable Fare"}</Typography>
-                </Grid>
-              </Grid>
-
-              <Grid container xs={6} direction={"column"}>
-                <Grid item>
-                  <Typography align="right">{"Total"}</Typography>
-                </Grid>
-                <Grid item>
-                  <Typography align="right">
-                    {adults +
-                      " x " +
-                      (selectedGoingTicket.lowestPrice +
-                        (oneWay ? selectedGoingTicket.lowestPrice : 0)) +
-                      " = "}
-                    {adults *
-                      (selectedGoingTicket.lowestPrice +
-                        (oneWay ? selectedGoingTicket.lowestPrice : 0))}
-                  </Typography>
-                </Grid>
-                { children > 0 && <Grid item>
-                  <Typography align="right">
-                    {children +
-                      " x " +
-                      Math.floor(
-                        (selectedGoingTicket.lowestPrice - 725 * 1) * 0.75 +
-                          725 * 1 +
-                          (oneWay
-                            ? (selectedGoingTicket.lowestPrice - 725 * 1) *
+                  <Grid container xs={6} direction={"column"}>
+                    <Grid item>
+                      <Typography align="right">{"Total"}</Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography align="right">
+                        {adults +
+                          " x " +
+                          (selectedGoingTicket.lowestPrice +
+                            (oneWay ? selectedGoingTicket.lowestPrice : 0)) +
+                          " = "}
+                        {adults *
+                          (selectedGoingTicket.lowestPrice +
+                            (oneWay ? selectedGoingTicket.lowestPrice : 0))}
+                      </Typography>
+                    </Grid>
+                    {children > 0 && (
+                      <Grid item>
+                        <Typography align="right">
+                          {children +
+                            " x " +
+                            Math.floor(
+                              (selectedGoingTicket.lowestPrice - 725 * 1) *
                                 0.75 +
-                              725 * 1
-                            : 0)
-                      ) +
-                      " = "}
-                    {Math.floor(
-                      children *
-                        ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.75 +
-                          725 * 1) +
-                        (oneWay
-                          ? (selectedGoingTicket.lowestPrice - 725 * 1) * 0.75 +
-                            725 * 1
-                          : 0)
-                    )}
-                  </Typography>
-                </Grid>}
-                { infants > 0 && <Grid item>
-                  <Typography align="right">
-                    {infants +
-                      " x " +
-                      Math.floor(
-                        (selectedGoingTicket.lowestPrice - 725 * 1) * 0.1 +
-                          200 +
-                          (oneWay
-                            ? (selectedReturningTicket.lowestPrice - 725 * 1) *
-                                0.1 +
-                              200
-                            : 0)
-                      ) +
-                      " = "}
-                    {Math.floor(
-                      infants *
-                        ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.1 +
-                          200) +
-                        (oneWay
-                          ? (selectedReturningTicket.lowestPrice - 725 * 1) *
-                              0.1 +
-                            200
-                          : 0)
-                    )}
-                  </Typography>
-                </Grid>}
-                <Grid item>
-                  <Divider />
-                  <Typography align="right">
-                    {Math.floor(
-                      adults * selectedGoingTicket.lowestPrice +
-                        children *
-                          ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.75 +
-                            725 * 1) +
-                        infants *
-                          ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.1 +
-                            200)
-                    ) +
-                      (oneWay
-                        ? Math.floor(
-                            adults * selectedReturningTicket.lowestPrice +
-                              children *
-                                ((selectedReturningTicket.lowestPrice -
-                                  725 * 1) *
-                                  0.75 +
-                                  725 * 1) +
-                              infants *
-                                ((selectedReturningTicket.lowestPrice -
-                                  725 * 1) *
-                                  0.1 +
-                                  200)
-                          )
-                        : 0)}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid item>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={terms}
-                    onChange={(event) => setTerms(event.target.checked)}
-                    name="checkedF"
-                    color="primary"
-                  />
-                }
-                className={classes.checkBox}
-                label="By proceeding with the payment, I have read and agree to the
-                Terms & Conditions, Privacy Policy, Refund and Change Policy"
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            disabled={!terms}
-            onClick={async () => {
-              axios.create({ baseURL: window.location.origin });
-
-              await axios
-                .post("/api/reservation/reserve/", {
-                  url: window.location.href,
-                  email: passengers[0].email,
-                  passengers: passengers,
-                  selectedGoingTicket: selectedGoingTicket,
-                  selectedReturningTicket: selectedReturningTicket,
-                  oneWay: !oneWay,
-                  departureDate: departureDate,
-                  arrivalDate: arrivalDate,
-                  numberOfTickets:
-                    adults * (oneWay ? 2 : 1) +
-                    children * (oneWay ? 2 : 1) +
-                    infants * (oneWay ? 2 : 1),
-                  total:
-                    Math.floor(
-                      adults * selectedGoingTicket.lowestPrice +
-                        children *
-                          ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.75 +
-                            725 * 1) +
-                        infants *
-                          ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.1 +
-                            200)
-                    ) +
-                    (oneWay
-                      ? Math.floor(
-                          adults * selectedReturningTicket.lowestPrice +
+                                725 * 1 +
+                                (oneWay
+                                  ? (selectedGoingTicket.lowestPrice -
+                                      725 * 1) *
+                                      0.75 +
+                                    725 * 1
+                                  : 0)
+                            ) +
+                            " = "}
+                          {Math.floor(
                             children *
-                              ((selectedReturningTicket.lowestPrice - 725 * 1) *
+                              ((selectedGoingTicket.lowestPrice - 725 * 1) *
+                                0.75 +
+                                725 * 1) +
+                              (oneWay
+                                ? (selectedGoingTicket.lowestPrice - 725 * 1) *
+                                    0.75 +
+                                  725 * 1
+                                : 0)
+                          )}
+                        </Typography>
+                      </Grid>
+                    )}
+                    {infants > 0 && (
+                      <Grid item>
+                        <Typography align="right">
+                          {infants +
+                            " x " +
+                            Math.floor(
+                              (selectedGoingTicket.lowestPrice - 725 * 1) *
+                                0.1 +
+                                200 +
+                                (oneWay
+                                  ? (selectedReturningTicket.lowestPrice -
+                                      725 * 1) *
+                                      0.1 +
+                                    200
+                                  : 0)
+                            ) +
+                            " = "}
+                          {Math.floor(
+                            infants *
+                              ((selectedGoingTicket.lowestPrice - 725 * 1) *
+                                0.1 +
+                                200) +
+                              (oneWay
+                                ? (selectedReturningTicket.lowestPrice -
+                                    725 * 1) *
+                                    0.1 +
+                                  200
+                                : 0)
+                          )}
+                        </Typography>
+                      </Grid>
+                    )}
+                    <Grid item>
+                      <Divider />
+                      <Typography align="right">
+                        {Math.floor(
+                          adults * selectedGoingTicket.lowestPrice +
+                            children *
+                              ((selectedGoingTicket.lowestPrice - 725 * 1) *
                                 0.75 +
                                 725 * 1) +
                             infants *
-                              ((selectedReturningTicket.lowestPrice - 725 * 1) *
+                              ((selectedGoingTicket.lowestPrice - 725 * 1) *
                                 0.1 +
                                 200)
-                        )
-                      : 0),
-                })
-                .then(function (response) {
-                  console.log(response.data);
-                  setConfirm(false);
-                  window.location.href = response.data.gateWayUrl;
-                })
-                .catch(function (error) {
-                  console.log(error);
-                  if (error) {
-                  }
-                });
-            }}
-            color="primary"
+                        ) +
+                          (oneWay
+                            ? Math.floor(
+                                adults * selectedReturningTicket.lowestPrice +
+                                  children *
+                                    ((selectedReturningTicket.lowestPrice -
+                                      725 * 1) *
+                                      0.75 +
+                                      725 * 1) +
+                                  infants *
+                                    ((selectedReturningTicket.lowestPrice -
+                                      725 * 1) *
+                                      0.1 +
+                                      200)
+                              )
+                            : 0)}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid item>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={terms}
+                        onChange={(event) => setTerms(event.target.checked)}
+                        name="checkedF"
+                        color="primary"
+                      />
+                    }
+                    className={classes.checkBox}
+                    label="By proceeding with the payment, I have read and agree to the
+                Terms & Conditions, Privacy Policy, Refund and Change Policy"
+                  />
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                disabled={!terms}
+                onClick={async () => {
+                  axios.create({ baseURL: window.location.origin });
+
+                  await axios
+                    .post("/api/reservation/reserve/", {
+                      url: window.location.href,
+                      email: passengers[0].email,
+                      passengers: passengers,
+                      selectedGoingTicket: selectedGoingTicket,
+                      selectedReturningTicket: selectedReturningTicket,
+                      oneWay: !oneWay,
+                      departureDate: departureDate,
+                      arrivalDate: arrivalDate,
+                      numberOfTickets:
+                        adults * (oneWay ? 2 : 1) +
+                        children * (oneWay ? 2 : 1) +
+                        infants * (oneWay ? 2 : 1),
+                      total:
+                        Math.floor(
+                          adults * selectedGoingTicket.lowestPrice +
+                            children *
+                              ((selectedGoingTicket.lowestPrice - 725 * 1) *
+                                0.75 +
+                                725 * 1) +
+                            infants *
+                              ((selectedGoingTicket.lowestPrice - 725 * 1) *
+                                0.1 +
+                                200)
+                        ) +
+                        (oneWay
+                          ? Math.floor(
+                              adults * selectedReturningTicket.lowestPrice +
+                                children *
+                                  ((selectedReturningTicket.lowestPrice -
+                                    725 * 1) *
+                                    0.75 +
+                                    725 * 1) +
+                                infants *
+                                  ((selectedReturningTicket.lowestPrice -
+                                    725 * 1) *
+                                    0.1 +
+                                    200)
+                            )
+                          : 0),
+                    })
+                    .then(function (response) {
+                      console.log(response.data);
+                      setConfirm(false);
+                      window.location.href = response.data.gateWayUrl;
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                      if (error) {
+                      }
+                    });
+                }}
+                color="primary"
+              >
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            open={messageDialog}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={() => setMessageDialog(false)}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
           >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={messageDialog}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={() => setMessageDialog(false)}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle id="alert-dialog-slide-title">{messageLevel}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            {message}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setMessageDialog(false)} color="primary">
-            Close
-          </Button>
-          {messageLevel === "Cancel" && (
-            <Button
-              onClick={() => {
-                props.setSelectedGoingTicket("");
-                props.setSelectedReturningTicket("");
-                props.setSearch(true);
-              }}
-              color="primary"
-            >
-              Confirm
-            </Button>
-          )}
-        </DialogActions>
-      </Dialog>
-    </Paper>
+            <DialogTitle id="alert-dialog-slide-title">
+              {messageLevel}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                {message}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setMessageDialog(false)} color="primary">
+                Close
+              </Button>
+              {messageLevel === "Cancel" && (
+                <Button
+                  onClick={() => {
+                    props.setSelectedGoingTicket("");
+                    props.setSelectedReturningTicket("");
+                    props.setSearch(true);
+                  }}
+                  color="primary"
+                >
+                  Confirm
+                </Button>
+              )}
+            </DialogActions>
+          </Dialog>
+        </Paper>
+      </div>
+    </Container>
   );
 }
 

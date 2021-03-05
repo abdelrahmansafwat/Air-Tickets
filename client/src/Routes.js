@@ -9,6 +9,10 @@ import Cancel from './components/Cancel';
 import Privacy from './components/Privacy';
 import Terms from './components/Terms';
 import Refund from './components/Refund';
+import Login from './components/Login';
+import Register from './components/Register';
+import Forgot from './components/Forgot';
+import Dashboard from './components/Dashboard';
 import history from './history';
 
 
@@ -23,6 +27,10 @@ export default class Routes extends Component {
                     <Route path="/success" component={Success} />
                     <Route path="/fail" component={Fail} />
                     <Route path="/cancel" component={Cancel} />
+                    <Route path="/login" component={Login} />
+                    <Route path="/register" component={Register} />
+                    <Route path="/forgot" component={Forgot} />
+                    <Route path="/dashboard" component={Dashboard} />
                     <Route path="/privacy-policy" component={Privacy} />
                     <Route path="/terms-and-conditions" component={Terms} />
                     <Route path="/refund-and-return-policy" component={Refund} />

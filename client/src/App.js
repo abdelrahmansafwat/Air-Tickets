@@ -18,9 +18,9 @@ function App() {
   const classes = useStyles();
   
   return (
-    <div className={classes.root}>
+    <div>
       <BrowserRouter>
-        <div className={classes.root}>
+        <div>
           <Routes />
         </div>
       </BrowserRouter>
