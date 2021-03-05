@@ -11,6 +11,8 @@ let reservationSchema = new Schema({
     oneWay: { type: Boolean, required: true },
     departureDate: { type: Date, required: true },
     arrivalDate: { type: Date, required: true },
+    reservationId: { type: String, required: true },
+    reservationDate: { type: Date, default: Date.now }
 });
 
 

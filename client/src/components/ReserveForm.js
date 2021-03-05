@@ -798,6 +798,7 @@ function ReserveForm(props) {
               await axios
                 .post("/api/reservation/reserve/", {
                   url: window.location.href,
+                  email: passengers[0].email,
                   passengers: passengers,
                   selectedGoingTicket: selectedGoingTicket,
                   selectedReturningTicket: selectedReturningTicket,

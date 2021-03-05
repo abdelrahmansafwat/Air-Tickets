@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 const airport = require("./routes/airport")
 const reservation = require("./routes/reservation")
+const user = require("./routes/user")
 const path = require("path");
 
 app.use(express.urlencoded({extended: true}));
@@ -15,8 +16,9 @@ app.use(express.static("public"));
 //Initializing routes
 app.use('/api/airport', airport);     //Route for all airport related functions
 app.use('/api/reservation', reservation);     //Route for all reservation related functions
+app.use('/api/user', user);     //Route for all user related functions
 
-//For testing the root when deployed to cloud
+//For sending frontend
 app.get('*', async (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });

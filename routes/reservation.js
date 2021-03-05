@@ -134,13 +134,14 @@ router.post("/reserve", async (req, res) => {
     });
 
   let newReservation = new reservationModel({
+    email: req.body.email,
     passengers: req.body.passengers,
     selectedGoingTicket: req.body.selectedGoingTicket,
     selectedReturningTicket: req.body.selectedReturningTicket,
     oneWay: req.body.oneWay,
     departureDate: req.body.departureDate,
     arrivalDate: req.body.arrivalDate,
-    gateWayUrl: gateWayUrl
+    reservationId: transactionId
   });
 
   console.log(gateWayUrl);
