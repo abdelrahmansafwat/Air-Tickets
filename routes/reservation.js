@@ -141,7 +141,9 @@ router.post("/reserve", async (req, res) => {
     oneWay: req.body.oneWay,
     departureDate: req.body.departureDate,
     arrivalDate: req.body.arrivalDate,
-    reservationId: transactionId
+    reservationId: transactionId,
+    total: req.body.total,
+    numberOfTickets: req.body.passengers[0].numberOfTickets
   });
 
   console.log(gateWayUrl);
@@ -163,6 +165,23 @@ router.post("/reserve", async (req, res) => {
 //Reserve success route
 router.post("/reserve/success", async (req, res) => {
   console.log(req.body);
+  reservationModel.findOneAndUpdate(
+    { reservationId: req.body.tran_id },
+    {
+      details: req.body
+    },
+    (err, data) => {
+      if (err) {
+        res.status(500).json({
+          message: err.message,
+        });
+        return;
+      }
+      res.json({
+        data,
+      });
+    }
+  );
   res.redirect("/success");
 });
 
@@ -176,6 +195,23 @@ router.post("/reserve/fail", async (req, res) => {
 router.post("/reserve/cancel", async (req, res) => {
   console.log(req.body);
   res.redirect("/cancel");
+});
+
+//All reservations route
+router.get('/all', async (req, res) => {
+  reservationModel.find({}, (err, data) => {
+      if (err) {
+          res.status(500).json({
+            message: err.message,
+          });
+          return;
+      }
+      //dataWithoutPasswords = data.map(x => _.omit(x, 'password'))
+      res.status(200).json({
+          message: "Retrieved all reservations",
+          reservations: data,
+      });
+  })
 });
 
 module.exports = router;

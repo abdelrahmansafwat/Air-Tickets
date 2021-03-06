@@ -12,7 +12,10 @@ let reservationSchema = new Schema({
     departureDate: { type: Date, required: true },
     arrivalDate: { type: Date, required: true },
     reservationId: { type: String, required: true },
-    reservationDate: { type: Date, default: Date.now }
+    reservationDate: { type: Date, default: Date.now },
+    details: { type: [Schema.Types.Mixed] },
+    total: { type: Number, required: true },
+    numberOfTickets: { type: Number, required: true }
 });
 
 

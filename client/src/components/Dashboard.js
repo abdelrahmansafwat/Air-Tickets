@@ -8,6 +8,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
+import MUIDataTable from "mui-datatables";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
@@ -29,7 +30,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Slide from "@material-ui/core/Slide";
 import Grid from "@material-ui/core/Grid";
 import RefreshIcon from "@material-ui/icons/Refresh";
@@ -87,7 +87,6 @@ function Copyright() {
 const drawerWidth = 250;
 
 export default function Dashboard() {
-
   const useStyles = makeStyles((theme) => ({
     root: {
       display: "flex",
@@ -152,7 +151,7 @@ export default function Dashboard() {
     },
     content: {
       flexGrow: 1,
-      height: "100vh",
+      //height: "100vh",
       overflow: "auto",
     },
     container: {
@@ -162,9 +161,9 @@ export default function Dashboard() {
     paper: {
       padding: theme.spacing(2),
       display: "flex",
-      overflow: "hidden",
+      //overflow: "hidden",
       flexDirection: "column",
-      height: "75vh",
+      //height: "75vh",
     },
     fixedHeight: {
       height: 240,
@@ -190,10 +189,12 @@ export default function Dashboard() {
 
   const classes = useStyles();
 
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const [lightTheme, setLightTheme] = useState(true);
   const [ready, setReady] = useState(false);
   const [privilege, setPrivilege] = useState(3);
+  const [reservations, setReservations] = useState([]);
+  const [constructorHasRun, setConstructorHasRun] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -204,15 +205,95 @@ export default function Dashboard() {
 
   const appliedTheme = createMuiTheme(lightTheme ? light : dark);
 
-  /*
+  const reservationsColumns = [
+    { name: "id", label: "ID", options: { searchable: false, } },
+    { name: "firstName", label: "First Name" },
+    { name: "lastName", label: "Last Name" },
+    { name: "from", label: "From" },
+    { name: "to", label: "To" },
+    { name: "oneWay", label: "One Way" },
+    {
+      name: "departureDate",
+      label: "Departure Date",
+      type: "date",
+    },
+    { name: "arrivalDate", label: "Arrival Date", type: "date" },
+    {
+      name: "reservationDate",
+      label: "Reservation Date",
+      type: "date",
+    },
+    { name: "reservationId", label: "Reservation ID" },
+    {
+      name: "deleteButton",
+      label: "Delete",
+      options: {
+        sort: false,
+        searchable: false,
+        filter: false,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          //console.log(params.row.viewButton);
+          //var index = params.row.id;
+
+          return (
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={privilege < 2}
+            >
+              Delete
+            </Button>
+          );
+        },
+      },
+    },
+  ];
+
+  const getAllReservations = async () => {
+    //console.log(history.location.state.privilege);
+    setReady(false);
+    await axios
+      .get("/api/reservation/all")
+      .then(function (response) {
+        console.log(response);
+        var modifedReservations = response.data.reservations;
+        modifedReservations.forEach((value, index) => {
+          modifedReservations[index].id = index + 1;
+          modifedReservations[index].departureDate = modifedReservations[index].departureDate.split("T")[0];
+          modifedReservations[index].arrivalDate = modifedReservations[index].arrivalDate.split("T")[0];
+          modifedReservations[index].reservationDate = modifedReservations[index].reservationDate.split("T")[0];
+          modifedReservations[index].firstName =
+            modifedReservations[index].passengers[0].firstName;
+          modifedReservations[index].lastName =
+            modifedReservations[index].passengers[0].lastName;
+          modifedReservations[index].from =
+            modifedReservations[index].selectedGoingTicket[0].from;
+          modifedReservations[index].to =
+            modifedReservations[index].selectedGoingTicket[0].into;
+          if (!modifedReservations[index].oneWay) {
+            modifedReservations[index].oneWay = "Yes";
+            modifedReservations[index].arrivalDate = "N/A";
+          } else {
+            modifedReservations[index].oneWay = "No";
+          }
+        });
+        setReservations(modifedReservations);
+      })
+      .catch(function (error) {
+        console.log(error);
+        //setError(true);
+        //setErrorMessage("An error occured. Please try again.");
+      });
+    setReady(true);
+  };
+
   const constructor = async () => {
     if (constructorHasRun) return;
     setConstructorHasRun(true);
-    await getAllDecisions();
+    await getAllReservations();
   };
 
   constructor();
-  */
 
   return (
     <ThemeProvider theme={appliedTheme}>
@@ -312,7 +393,13 @@ export default function Dashboard() {
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
-            <Paper className={classes.paper}></Paper>
+            <Paper className={classes.paper}>
+              <MUIDataTable
+                title={"Reservations"}
+                data={reservations}
+                columns={reservationsColumns}
+              />
+            </Paper>
           </Container>
         </main>
       </div>
