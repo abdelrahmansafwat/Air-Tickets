@@ -195,6 +195,9 @@ export default function Dashboard() {
   const [privilege, setPrivilege] = useState(3);
   const [reservations, setReservations] = useState([]);
   const [constructorHasRun, setConstructorHasRun] = useState(false);
+  const [currentReservation, setCurrentReservation] = useState("");
+  const [viewDialog, setViewDialog] = useState(false);
+  const [showPassengers, setShowPassengers] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -206,24 +209,13 @@ export default function Dashboard() {
   const appliedTheme = createMuiTheme(lightTheme ? light : dark);
 
   const reservationsColumns = [
-    { name: "id", label: "ID", options: { searchable: false, } },
-    { name: "firstName", label: "First Name" },
-    { name: "lastName", label: "Last Name" },
-    { name: "from", label: "From" },
-    { name: "to", label: "To" },
-    { name: "oneWay", label: "One Way" },
-    {
-      name: "departureDate",
-      label: "Departure Date",
-      type: "date",
-    },
-    { name: "arrivalDate", label: "Arrival Date", type: "date" },
+    { name: "id", label: "ID", options: { searchable: false } },
+    { name: "reservationId", label: "Reservation ID" },
     {
       name: "reservationDate",
       label: "Reservation Date",
       type: "date",
     },
-    { name: "reservationId", label: "Reservation ID" },
     {
       name: "deleteButton",
       label: "Delete",
@@ -259,9 +251,15 @@ export default function Dashboard() {
         var modifedReservations = response.data.reservations;
         modifedReservations.forEach((value, index) => {
           modifedReservations[index].id = index + 1;
-          modifedReservations[index].departureDate = modifedReservations[index].departureDate.split("T")[0];
-          modifedReservations[index].arrivalDate = modifedReservations[index].arrivalDate.split("T")[0];
-          modifedReservations[index].reservationDate = modifedReservations[index].reservationDate.split("T")[0];
+          modifedReservations[index].departureDate = modifedReservations[
+            index
+          ].departureDate.split("T")[0];
+          modifedReservations[index].arrivalDate = modifedReservations[
+            index
+          ].arrivalDate.split("T")[0];
+          modifedReservations[index].reservationDate = modifedReservations[
+            index
+          ].reservationDate.split("T")[0];
           modifedReservations[index].firstName =
             modifedReservations[index].passengers[0].firstName;
           modifedReservations[index].lastName =
@@ -277,6 +275,8 @@ export default function Dashboard() {
             modifedReservations[index].oneWay = "No";
           }
         });
+        console.log(modifedReservations[0]);
+        setCurrentReservation(modifedReservations[0]);
         setReservations(modifedReservations);
       })
       .catch(function (error) {
@@ -394,15 +394,126 @@ export default function Dashboard() {
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
             <Paper className={classes.paper}>
-              <MUIDataTable
-                title={"Reservations"}
-                data={reservations}
-                columns={reservationsColumns}
-              />
+                <MUIDataTable
+                  title={"Reservations"}
+                  data={reservations}
+                  columns={reservationsColumns}
+                  options={{
+                    onRowClick: (rowData, rowMeta) => {
+                      console.log(rowMeta.rowIndex);
+                      console.log(rowMeta.dataIndex);
+                      console.log(rowData);
+                      console.log(reservations[rowMeta.dataIndex]);
+                      //setCurrentReservation(reservations[rowMeta.dataIndex]);
+                      setViewDialog(true);
+                    },
+                  }}
+                />
             </Paper>
           </Container>
         </main>
       </div>
+      {ready && (
+        <Dialog
+          fullScreen
+          open={viewDialog}
+          onClose={() => setViewDialog(false)}
+          TransitionComponent={Transition}
+        >
+          <AppBar className={classes.appBar}>
+            <Toolbar>
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={() => setViewDialog(false)}
+                aria-label="close"
+              >
+                <CloseIcon />
+              </IconButton>
+              <Typography variant="h6" className={classes.title}>
+                View Reservation
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <List className={classes.viewDialog}>
+            <ListItem button>
+              <ListItemText
+                primary="Passengers"
+                onClick={ () => setShowPassengers(!showPassengers) }
+                secondary={showPassengers ? currentReservation.passengers.map((data, index) => {
+                      return (
+                        <Typography>{`Passenger #${index+1} --- Name: ${data.firstName} ${data.lastName} --- Gender: ${data.gender} --- Date of Birth: ${data.dateOfBirth.split("T")[0]}`}</Typography>
+                      );
+                    }) : currentReservation.passengers.length }
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="Departure Plane Code"
+                secondary={currentReservation.selectedGoingTicket[0].planeCode.replace(
+                  "-",
+                  ""
+                )}
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="From"
+                secondary={currentReservation.selectedGoingTicket[0].from}
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="To"
+                secondary={currentReservation.selectedGoingTicket[0].into}
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="Departure Date"
+                secondary={currentReservation.departureDate}
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="One Way"
+                secondary={currentReservation.oneWay ? "Yes" : "No"}
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="Arrival Plane Code"
+                secondary={
+                  currentReservation.oneWay
+                    ? "N/A"
+                    : currentReservation.selectedReturningTicket[0].planeCode.replace(
+                        "-",
+                        ""
+                      )
+                }
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="Arrival Date"
+                secondary={
+                  currentReservation.oneWay
+                    ? "N/A"
+                    : currentReservation.arrivalDate
+                }
+              />
+            </ListItem>
+            <Divider />
+          </List>
+        </Dialog>
+      )}
     </ThemeProvider>
   );
 }
