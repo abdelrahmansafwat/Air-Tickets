@@ -273,7 +273,9 @@ export default function Dashboard() {
     //console.log(history.location.state.privilege);
     var loggedIn = localStorage.getItem("token");
     var privilege = localStorage.getItem("privilege");
-    if (loggedIn && privilege === 6) {
+    console.log(privilege);
+    console.log(loggedIn);
+    if (loggedIn != null && privilege == 6) {
       setReady(false);
       await axios
         .get("/api/reservation/all", {
