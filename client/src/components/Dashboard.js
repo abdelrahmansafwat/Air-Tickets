@@ -505,7 +505,7 @@ export default function Dashboard() {
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Departure Plane Code"
+                primary="Departure Flight Code"
                 secondary={currentReservation.selectedGoingTicket[0].planeCode.replace(
                   "-",
                   ""
@@ -543,7 +543,7 @@ export default function Dashboard() {
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Arrival Plane Code"
+                primary="Arrival Flight Code"
                 secondary={
                   currentReservation.oneWay
                     ? "N/A"
