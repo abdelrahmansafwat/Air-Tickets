@@ -826,6 +826,34 @@ function ReserveForm(props) {
                 disabled={!terms}
                 onClick={async () => {
                   axios.create({ baseURL: window.location.origin });
+                  var numberOfTickets =
+                    adults * (oneWay ? 2 : 1) +
+                    children * (oneWay ? 2 : 1) +
+                    infants * (oneWay ? 2 : 1);
+
+                  var total =
+                    Math.floor(
+                      adults * selectedGoingTicket.lowestPrice +
+                        children *
+                          ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.75 +
+                            725 * 1) +
+                        infants *
+                          ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.1 +
+                            200)
+                    ) +
+                    (oneWay
+                      ? Math.floor(
+                          adults * selectedReturningTicket.lowestPrice +
+                            children *
+                              ((selectedReturningTicket.lowestPrice - 725 * 1) *
+                                0.75 +
+                                725 * 1) +
+                            infants *
+                              ((selectedReturningTicket.lowestPrice - 725 * 1) *
+                                0.1 +
+                                200)
+                        )
+                      : 0);
 
                   await axios
                     .post("/api/reservation/reserve/", {
@@ -837,37 +865,8 @@ function ReserveForm(props) {
                       oneWay: !oneWay,
                       departureDate: departureDate,
                       arrivalDate: arrivalDate,
-                      numberOfTickets:
-                        adults * (oneWay ? 2 : 1) +
-                        children * (oneWay ? 2 : 1) +
-                        infants * (oneWay ? 2 : 1),
-                      total:
-                        Math.floor(
-                          adults * selectedGoingTicket.lowestPrice +
-                            children *
-                              ((selectedGoingTicket.lowestPrice - 725 * 1) *
-                                0.75 +
-                                725 * 1) +
-                            infants *
-                              ((selectedGoingTicket.lowestPrice - 725 * 1) *
-                                0.1 +
-                                200)
-                        ) +
-                        (oneWay
-                          ? Math.floor(
-                              adults * selectedReturningTicket.lowestPrice +
-                                children *
-                                  ((selectedReturningTicket.lowestPrice -
-                                    725 * 1) *
-                                    0.75 +
-                                    725 * 1) +
-                                infants *
-                                  ((selectedReturningTicket.lowestPrice -
-                                    725 * 1) *
-                                    0.1 +
-                                    200)
-                            )
-                          : 0),
+                      numberOfTickets: numberOfTickets,
+                      total: total,
                     })
                     .then(function (response) {
                       console.log(response.data);

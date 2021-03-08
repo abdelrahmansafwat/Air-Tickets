@@ -106,9 +106,9 @@ router.post("/reserve", async (req, res) => {
   post_body["total_amount"] = req.body.total;
   post_body["currency"] = "BDT";
   post_body["tran_id"] = transactionId;
-  post_body["success_url"] = req.body.url + "api/reservation/reserve/success";
-  post_body["fail_url"] = req.body.url + "api/reservation/reserve/fail";
-  post_body["cancel_url"] = req.body.url + "api/reservation/reserve/cancel";
+  post_body["success_url"] = req.body.url.replace("applive", "") + "api/reservation/reserve/success";
+  post_body["fail_url"] = req.body.url.replace("applive", "") + "api/reservation/reserve/fail";
+  post_body["cancel_url"] = req.body.url.replace("applive", "") + "api/reservation/reserve/cancel";
   post_body["emi_option"] = 0;
   post_body["cus_name"] = req.body.passengers[0].firstName + req.body.passengers[0].lastName;
   post_body["cus_email"] = req.body.passengers[0].email;
@@ -143,7 +143,7 @@ router.post("/reserve", async (req, res) => {
     arrivalDate: req.body.arrivalDate,
     reservationId: transactionId,
     total: req.body.total,
-    numberOfTickets: req.body.passengers[0].numberOfTickets
+    numberOfTickets: req.body.numberOfTickets
   });
 
   console.log(gateWayUrl);

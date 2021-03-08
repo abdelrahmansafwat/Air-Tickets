@@ -209,12 +209,26 @@ export default function Dashboard() {
   const appliedTheme = createMuiTheme(lightTheme ? light : dark);
 
   const reservationsColumns = [
-    { name: "id", label: "ID", options: { searchable: false } },
-    { name: "reservationId", label: "Reservation ID" },
+    {
+      name: "id",
+      label: "ID",
+      options: {
+        searchable: false,
+        filter: false,
+      },
+    },
+    {
+      name: "reservationId",
+      label: "Reservation ID",
+      options: {
+        sort: false,
+        searchable: false,
+        filter: false,
+      },
+    },
     {
       name: "reservationDate",
       label: "Reservation Date",
-      type: "date",
     },
     {
       name: "deleteButton",
@@ -394,21 +408,21 @@ export default function Dashboard() {
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
             <Paper className={classes.paper}>
-                <MUIDataTable
-                  title={"Reservations"}
-                  data={reservations}
-                  columns={reservationsColumns}
-                  options={{
-                    onRowClick: (rowData, rowMeta) => {
-                      console.log(rowMeta.rowIndex);
-                      console.log(rowMeta.dataIndex);
-                      console.log(rowData);
-                      console.log(reservations[rowMeta.dataIndex]);
-                      //setCurrentReservation(reservations[rowMeta.dataIndex]);
-                      setViewDialog(true);
-                    },
-                  }}
-                />
+              <MUIDataTable
+                title={"Reservations"}
+                data={reservations}
+                columns={reservationsColumns}
+                options={{
+                  onRowClick: (rowData, rowMeta) => {
+                    console.log(rowMeta.rowIndex);
+                    console.log(rowMeta.dataIndex);
+                    console.log(rowData);
+                    console.log(reservations[rowMeta.dataIndex]);
+                    //setCurrentReservation(reservations[rowMeta.dataIndex]);
+                    setViewDialog(true);
+                  },
+                }}
+              />
             </Paper>
           </Container>
         </main>
@@ -439,12 +453,24 @@ export default function Dashboard() {
             <ListItem button>
               <ListItemText
                 primary="Passengers"
-                onClick={ () => setShowPassengers(!showPassengers) }
-                secondary={showPassengers ? currentReservation.passengers.map((data, index) => {
-                      return (
-                        <Typography>{`Passenger #${index+1} --- Name: ${data.firstName} ${data.lastName} --- Gender: ${data.gender} --- Date of Birth: ${data.dateOfBirth.split("T")[0]} --- Email:  ${data.email} --- Phone: ${data.phone}`}</Typography>
-                      );
-                    }) : currentReservation.passengers.length }
+                onClick={() => setShowPassengers(!showPassengers)}
+                secondary={
+                  showPassengers
+                    ? currentReservation.passengers.map((data, index) => {
+                        return (
+                          <Typography>{`Passenger #${index + 1} --- Name: ${
+                            data.firstName
+                          } ${data.lastName} --- Gender: ${
+                            data.gender
+                          } --- Date of Birth: ${
+                            data.dateOfBirth.split("T")[0]
+                          } --- Email:  ${data.email} --- Phone: ${
+                            data.phone
+                          }`}</Typography>
+                        );
+                      })
+                    : currentReservation.passengers.length
+                }
               />
             </ListItem>
             <Divider />
