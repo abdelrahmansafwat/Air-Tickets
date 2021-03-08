@@ -15,7 +15,8 @@ let reservationSchema = new Schema({
     reservationDate: { type: Date, default: Date.now },
     details: { type: [Schema.Types.Mixed] },
     total: { type: Number, required: true },
-    numberOfTickets: { type: Number, required: true }
+    numberOfTickets: { type: Number, required: true },
+    status: { type: String }
 });
 
 

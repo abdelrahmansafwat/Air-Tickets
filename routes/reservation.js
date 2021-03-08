@@ -143,7 +143,8 @@ router.post("/reserve", async (req, res) => {
     arrivalDate: req.body.arrivalDate,
     reservationId: transactionId,
     total: req.body.total,
-    numberOfTickets: req.body.numberOfTickets
+    numberOfTickets: req.body.numberOfTickets,
+    status: "Pending"
   });
 
   console.log(gateWayUrl);
@@ -168,7 +169,8 @@ router.post("/reserve/success", async (req, res) => {
   reservationModel.findOneAndUpdate(
     { reservationId: req.body.tran_id },
     {
-      details: req.body
+      details: req.body,
+      status: "Processing"
     },
     (err, data) => {
       if (err) {
@@ -188,12 +190,46 @@ router.post("/reserve/success", async (req, res) => {
 //Reserve fail route
 router.post("/reserve/fail", async (req, res) => {
   console.log(req.body);
+  reservationModel.findOneAndUpdate(
+    { reservationId: req.body.tran_id },
+    {
+      details: req.body,
+      status: "Failed"
+    },
+    (err, data) => {
+      if (err) {
+        res.status(500).json({
+          message: err.message,
+        });
+        return;
+      }
+      res.json({
+        data,
+      });
+    });
   res.redirect("/fail");
 });
 
 //Reserve cancel route
 router.post("/reserve/cancel", async (req, res) => {
   console.log(req.body);
+  reservationModel.findOneAndUpdate(
+    { reservationId: req.body.tran_id },
+    {
+      details: req.body,
+      status: "Cancelled"
+    },
+    (err, data) => {
+      if (err) {
+        res.status(500).json({
+          message: err.message,
+        });
+        return;
+      }
+      res.json({
+        data,
+      });
+    });
   res.redirect("/cancel");
 });
 
@@ -212,6 +248,27 @@ router.get('/all', async (req, res) => {
           reservations: data,
       });
   })
+});
+
+//Reserve status route
+router.post("/reserve/status", async (req, res) => {
+  console.log(req.body);
+  reservationModel.findOneAndUpdate(
+    { reservationId: req.body.reservationId },
+    {
+      status: req.body.status
+    },
+    (err, data) => {
+      if (err) {
+        res.status(500).json({
+          message: err.message,
+        });
+        return;
+      }
+      res.json({
+        data,
+      });
+    });
 });
 
 module.exports = router;

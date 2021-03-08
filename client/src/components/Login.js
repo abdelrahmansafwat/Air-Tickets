@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   formPaper: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
-      width: "50%",
+      width: "90%",
       padding: "2%",
       margin: "10%",
     },
@@ -93,7 +93,7 @@ export default function SignIn() {
   const CustomButton = CustomButtonStyles({ chubby: true });
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="md">
       <CssBaseline />
       <div className={classes.root}>
         <Paper elevation={10} className={classes.formPaper}>

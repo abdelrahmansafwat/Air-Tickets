@@ -64,8 +64,10 @@ router.post("/register", async (req, res) => {
     let newUser = new userModel({
       email: req.body.email,
       password: req.body.password,
-      firstName: req.body.firstname,
-      lastName: req.body.lastname,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      phone: req.body.phone,
+      address: req.body.address,
     });
 
     newUser.save((err, data) => {

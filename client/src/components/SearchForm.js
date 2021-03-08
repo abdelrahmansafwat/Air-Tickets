@@ -53,6 +53,7 @@ import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import _ from "underscore";
+import money from "money";
 import BG from "../resources/BG.png";
 import BS from "../resources/BS.png";
 import VQ from "../resources/VQ.png";
@@ -259,9 +260,9 @@ function SearchForm() {
     var returning = [];
     var lowestPrice = [];
 
-    console.log(!_.isNull(birman));
-    console.log(!_.isNull(flynovoair));
-    console.log(!_.isNull(usbair));
+    //console.log(!_.isNull(birman));
+    //console.log(!_.isNull(flynovoair));
+    //console.log(!_.isNull(usbair));
 
     if (!oneWay) {
       if (!_.isNull(birman) && !birman.hasOwnProperty("Error")) {
@@ -272,7 +273,13 @@ function SearchForm() {
             birman[ticketKey]["prices"][priceKey] = price
               .split(" ")[1]
               .replace(",", "");
+            console.log(price.split(" ")[0]);
             if (!isNaN(birman[ticketKey]["prices"][priceKey])) {
+              if (price.split(" ")[0] !== "BDT") {
+                birman[ticketKey]["prices"][priceKey] = money(price.split(" ")[1].replace(",", ""))
+                .from(price.split(" ")[0])
+                .to("BDT");
+              }
               lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
             }
           }
@@ -340,10 +347,16 @@ function SearchForm() {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
+            console.log(price);
             birman[ticketKey]["prices"][priceKey] = price
               .split(" ")[1]
               .replace(",", "");
             if (!isNaN(birman[ticketKey]["prices"][priceKey])) {
+              if (price.split(" ")[0] !== "BDT") {
+                birman[ticketKey]["prices"][priceKey] = money(price.split(" ")[1].replace(",", ""))
+                .from(price.split(" ")[0])
+                .to("BDT");
+              }
               lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
             }
           }

@@ -15,6 +15,11 @@ import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import Link from "@material-ui/core/Link";
 import MenuIcon from "@material-ui/icons/Menu";
+import Collapse from "@material-ui/core/Collapse";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -198,6 +203,9 @@ export default function Dashboard() {
   const [currentReservation, setCurrentReservation] = useState("");
   const [viewDialog, setViewDialog] = useState(false);
   const [showPassengers, setShowPassengers] = useState(false);
+  const [reservationStatus, setReservationStatus] = useState("");
+  const [statusOpen, setStatusOpen] = React.useState(false);
+  const [refresh, setRefresh] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -231,6 +239,10 @@ export default function Dashboard() {
       label: "Reservation Date",
     },
     {
+      name: "status",
+      label: "Status",
+    },
+    /*{
       name: "deleteButton",
       label: "Delete",
       options: {
@@ -253,52 +265,58 @@ export default function Dashboard() {
         },
       },
     },
+    */
   ];
 
   const getAllReservations = async () => {
     //console.log(history.location.state.privilege);
-    setReady(false);
-    await axios
-      .get("/api/reservation/all")
-      .then(function (response) {
-        console.log(response);
-        var modifedReservations = response.data.reservations;
-        modifedReservations.forEach((value, index) => {
-          modifedReservations[index].id = index + 1;
-          modifedReservations[index].departureDate = modifedReservations[
-            index
-          ].departureDate.split("T")[0];
-          modifedReservations[index].arrivalDate = modifedReservations[
-            index
-          ].arrivalDate.split("T")[0];
-          modifedReservations[index].reservationDate = modifedReservations[
-            index
-          ].reservationDate.split("T")[0];
-          modifedReservations[index].firstName =
-            modifedReservations[index].passengers[0].firstName;
-          modifedReservations[index].lastName =
-            modifedReservations[index].passengers[0].lastName;
-          modifedReservations[index].from =
-            modifedReservations[index].selectedGoingTicket[0].from;
-          modifedReservations[index].to =
-            modifedReservations[index].selectedGoingTicket[0].into;
-          if (!modifedReservations[index].oneWay) {
-            modifedReservations[index].oneWay = "Yes";
-            modifedReservations[index].arrivalDate = "N/A";
-          } else {
-            modifedReservations[index].oneWay = "No";
-          }
+    var loggedIn = localStorage.getItem("token");
+    if (loggedIn) {
+      setReady(false);
+      await axios
+        .get("/api/reservation/all")
+        .then(function (response) {
+          console.log(response);
+          var modifedReservations = response.data.reservations;
+          modifedReservations.forEach((value, index) => {
+            modifedReservations[index].id = index + 1;
+            modifedReservations[index].departureDate = modifedReservations[
+              index
+            ].departureDate.split("T")[0];
+            modifedReservations[index].arrivalDate = modifedReservations[
+              index
+            ].arrivalDate.split("T")[0];
+            modifedReservations[index].reservationDate = modifedReservations[
+              index
+            ].reservationDate.split("T")[0];
+            modifedReservations[index].firstName =
+              modifedReservations[index].passengers[0].firstName;
+            modifedReservations[index].lastName =
+              modifedReservations[index].passengers[0].lastName;
+            modifedReservations[index].from =
+              modifedReservations[index].selectedGoingTicket[0].from;
+            modifedReservations[index].to =
+              modifedReservations[index].selectedGoingTicket[0].into;
+            if (!modifedReservations[index].oneWay) {
+              modifedReservations[index].oneWay = "Yes";
+              modifedReservations[index].arrivalDate = "N/A";
+            } else {
+              modifedReservations[index].oneWay = "No";
+            }
+          });
+          console.log(modifedReservations[0]);
+          setCurrentReservation(modifedReservations[0]);
+          setReservations(modifedReservations);
+        })
+        .catch(function (error) {
+          console.log(error);
+          //setError(true);
+          //setErrorMessage("An error occured. Please try again.");
         });
-        console.log(modifedReservations[0]);
-        setCurrentReservation(modifedReservations[0]);
-        setReservations(modifedReservations);
-      })
-      .catch(function (error) {
-        console.log(error);
-        //setError(true);
-        //setErrorMessage("An error occured. Please try again.");
-      });
-    setReady(true);
+      setReady(true);
+    } else {
+      history.push("/login");
+    }
   };
 
   const constructor = async () => {
@@ -418,7 +436,10 @@ export default function Dashboard() {
                     console.log(rowMeta.dataIndex);
                     console.log(rowData);
                     console.log(reservations[rowMeta.dataIndex]);
-                    //setCurrentReservation(reservations[rowMeta.dataIndex]);
+                    setCurrentReservation(reservations[rowMeta.dataIndex]);
+                    setReservationStatus(
+                      reservations[rowMeta.dataIndex].status
+                    );
                     setViewDialog(true);
                   },
                 }}
@@ -431,7 +452,11 @@ export default function Dashboard() {
         <Dialog
           fullScreen
           open={viewDialog}
-          onClose={() => setViewDialog(false)}
+          onClose={() => {
+            setViewDialog(false);
+            setStatusOpen(false);
+            setReservationStatus("");
+          }}
           TransitionComponent={Transition}
         >
           <AppBar className={classes.appBar}>
@@ -439,7 +464,11 @@ export default function Dashboard() {
               <IconButton
                 edge="start"
                 color="inherit"
-                onClick={() => setViewDialog(false)}
+                onClick={() => {
+                  setViewDialog(false);
+                  setStatusOpen(false);
+                  setReservationStatus("");
+                }}
                 aria-label="close"
               >
                 <CloseIcon />
@@ -536,6 +565,145 @@ export default function Dashboard() {
                 }
               />
             </ListItem>
+            <Divider />
+            <ListItem
+              button
+              onClick={() => {
+                setStatusOpen(!statusOpen);
+              }}
+            >
+              <ListItemText
+                primary="Status"
+                secondary={currentReservation.status}
+              />
+              {statusOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse in={statusOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios
+                      .post("/api/reservation/reserve/status", {
+                        reservationId: currentReservation.reservationId,
+                        status: "ticketing",
+                      })
+                      .then(function (response) {
+                        var temp = reservations;
+                        temp[currentReservation.id-1].status = "ticketing";
+                        setReservations(temp);
+                        setRefresh(!refresh);
+                      });
+                    setReservationStatus("ticketing");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={reservationStatus === "ticketing"}
+                    value="ticketing"
+                    control={<Radio color="primary" />}
+                    label="Ticketing"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios.post("/api/reservation/reserve/status", {
+                      reservationId: currentReservation.reservationId,
+                      status: "ticketed",
+                    }).then(function (response) {
+                        var temp = reservations;
+                        temp[currentReservation.id-1].status = "ticketed";
+                        setReservations(temp);
+                        setRefresh(!refresh);
+                      });
+                    setReservationStatus("ticketed");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={reservationStatus === "ticketed"}
+                    value="ticketed"
+                    control={<Radio color="primary" />}
+                    label="Ticketed"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios.post("/api/reservation/reserve/status", {
+                      reservationId: currentReservation.reservationId,
+                      status: "refundSubmitted",
+                    }).then(function (response) {
+                        var temp = reservations;
+                        temp[currentReservation.id-1].status = "refundSubmitted";
+                        setReservations(temp);
+                        setRefresh(!refresh);
+                      });
+                    setReservationStatus("refundSubmitted");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={reservationStatus === "refundSubmitted"}
+                    value="refundSubmitted"
+                    control={<Radio color="primary" />}
+                    label="Refund Submitted"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios.post("/api/reservation/reserve/status", {
+                      reservationId: currentReservation.reservationId,
+                      status: "refundToBeVerified",
+                    }).then(function (response) {
+                        var temp = reservations;
+                        temp[currentReservation.id-1].status = "refundToBeVerified";
+                        setReservations(temp);
+                        setRefresh(!refresh);
+                      });
+                    setReservationStatus("refundToBeVerified");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={reservationStatus === "refundToBeVerified"}
+                    value="refundToBeVerified"
+                    control={<Radio color="primary" />}
+                    label="Refund To Be Verified"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios.post("/api/reservation/reserve/status", {
+                      reservationId: currentReservation.reservationId,
+                      status: "refunded",
+                    }).then(function (response) {
+                        var temp = reservations;
+                        temp[currentReservation.id-1].status = "refunded";
+                        setReservations(temp);
+                        setRefresh(!refresh);
+                      });
+                    setReservationStatus("refunded");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={reservationStatus === "refunded"}
+                    value="refunded"
+                    control={<Radio color="primary" />}
+                    label="Refunded"
+                  />
+                </ListItem>
+              </List>
+            </Collapse>
             <Divider />
           </List>
         </Dialog>
