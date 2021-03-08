@@ -442,7 +442,7 @@ export default function Dashboard() {
                 onClick={ () => setShowPassengers(!showPassengers) }
                 secondary={showPassengers ? currentReservation.passengers.map((data, index) => {
                       return (
-                        <Typography>{`Passenger #${index+1} --- Name: ${data.firstName} ${data.lastName} --- Gender: ${data.gender} --- Date of Birth: ${data.dateOfBirth.split("T")[0]}`}</Typography>
+                        <Typography>{`Passenger #${index+1} --- Name: ${data.firstName} ${data.lastName} --- Gender: ${data.gender} --- Date of Birth: ${data.dateOfBirth.split("T")[0]} --- Email:  ${data.email} --- Phone: ${data.phone}`}</Typography>
                       );
                     }) : currentReservation.passengers.length }
               />
