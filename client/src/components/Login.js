@@ -192,7 +192,11 @@ export default function SignIn() {
                               console.log(response);
                               localStorage.setItem(
                                 "token",
-                                response.accessToken
+                                response.data.accessToken
+                              );
+                              localStorage.setItem(
+                                "privilege",
+                                response.data.privilege
                               );
                               history.push({
                                 pathname: "/dashboard",

@@ -35,6 +35,7 @@ router.post("/login", async (req, res) => {
           );
 
           res.status(200).json({
+            privilege: data.privilege,
             accessToken: accessToken,
           });
         }

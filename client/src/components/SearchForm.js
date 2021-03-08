@@ -53,7 +53,7 @@ import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import _ from "underscore";
-import money from "money";
+import { exchange } from "exchangify"
 import BG from "../resources/BG.png";
 import BS from "../resources/BS.png";
 import VQ from "../resources/VQ.png";
@@ -145,7 +145,7 @@ const useStyles = makeStyles((theme) => ({
     bottom: 0,
     background: "linear-gradient(to right, #ece9e6, #ffffff);",
     color: "#2193b0",
-    marginTop: "5%"
+    marginTop: "5%",
   },
   title: {
     marginLeft: theme.spacing(2),
@@ -252,7 +252,7 @@ function SearchForm() {
     }
   };
 
-  const preprocessData = (data) => {
+  const preprocessData = async (data) => {
     var birman = data.birman;
     var flynovoair = data.flynovoair;
     var usbair = data.usbair;
@@ -273,13 +273,18 @@ function SearchForm() {
             birman[ticketKey]["prices"][priceKey] = price
               .split(" ")[1]
               .replace(",", "");
+              birman[ticketKey]["prices"].currency = price.split(" ")[0];
             console.log(price.split(" ")[0]);
             if (!isNaN(birman[ticketKey]["prices"][priceKey])) {
-              if (price.split(" ")[0] !== "BDT") {
-                birman[ticketKey]["prices"][priceKey] = money(price.split(" ")[1].replace(",", ""))
-                .from(price.split(" ")[0])
-                .to("BDT");
+              console.log(price.split(" ")[1].replace(",", ""));
+              console.log(price.split(" ")[0]);
+              /*
+              if (price.split(" ")[0] !== "BDT" && !isNaN(price.split(" ")[1].replace(",", ""))) {
+                birman[ticketKey]["prices"][priceKey] = await exchange(
+                  price.split(" ")[1].replace(",", ""), price.split(" ")[0], "BDT"
+                )
               }
+              */
               lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
             }
           }
@@ -288,7 +293,9 @@ function SearchForm() {
             0,
             5
           );
-          going.push(birman[ticketKey]);
+          if(!isNaN(birman[ticketKey]["lowestPrice"]) && birman[ticketKey]["prices"].currency === "BDT"){
+            going.push(birman[ticketKey]);
+          }
         }
       }
 
@@ -347,16 +354,20 @@ function SearchForm() {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
           for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            console.log(price);
+            console.log(price.split(" ")[1].replace(",", ""));
+            console.log(price.split(" ")[0]);
             birman[ticketKey]["prices"][priceKey] = price
               .split(" ")[1]
               .replace(",", "");
+            birman[ticketKey]["prices"].currency = price.split(" ")[0];
             if (!isNaN(birman[ticketKey]["prices"][priceKey])) {
-              if (price.split(" ")[0] !== "BDT") {
-                birman[ticketKey]["prices"][priceKey] = money(price.split(" ")[1].replace(",", ""))
-                .from(price.split(" ")[0])
-                .to("BDT");
+              /*
+              if (price.split(" ")[0] !== "BDT" && !isNaN(price.split(" ")[1].replace(",", ""))) {
+                birman[ticketKey]["prices"][priceKey] = await exchange(
+                  price.split(" ")[1].replace(",", ""), price.split(" ")[0], "BDT"
+                )
               }
+              */
               lowestPrice.push(parseInt(birman[ticketKey]["prices"][priceKey]));
             }
           }
@@ -365,10 +376,12 @@ function SearchForm() {
             5
           );
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
-          if (ticket["from"] === String(selectedDepartureAirport.code)) {
-            going.push(birman[ticketKey]);
-          } else {
-            returning.push(birman[ticketKey]);
+          if(!isNaN(birman[ticketKey]["lowestPrice"]) && birman[ticketKey]["prices"].currency === "BDT"){
+            if (ticket["from"] === String(selectedDepartureAirport.code)) {
+              going.push(birman[ticketKey]);
+            } else {
+              returning.push(birman[ticketKey]);
+            }
           }
         }
       }

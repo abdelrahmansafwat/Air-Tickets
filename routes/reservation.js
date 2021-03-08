@@ -6,6 +6,7 @@ const router = express.Router();
 const SSLCommerz = require("sslcommerz-nodejs");
 const { v4: uuidv4 } = require("uuid")
 const reservationModel = require("../models/reservation");
+const authenticate = require("../middlewares/authenticate");
 
 let settings = {
   isSandboxMode: false, //false if live version

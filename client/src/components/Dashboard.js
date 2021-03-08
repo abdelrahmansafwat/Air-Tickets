@@ -194,10 +194,11 @@ export default function Dashboard() {
 
   const classes = useStyles();
 
+  //const [privilege, setPrivilege] = useState(history.location.state.privilege);
   const [open, setOpen] = React.useState(false);
   const [lightTheme, setLightTheme] = useState(true);
   const [ready, setReady] = useState(false);
-  const [privilege, setPrivilege] = useState(3);
+  //const [privilege, setPrivilege] = useState(3);
   const [reservations, setReservations] = useState([]);
   const [constructorHasRun, setConstructorHasRun] = useState(false);
   const [currentReservation, setCurrentReservation] = useState("");
@@ -271,10 +272,15 @@ export default function Dashboard() {
   const getAllReservations = async () => {
     //console.log(history.location.state.privilege);
     var loggedIn = localStorage.getItem("token");
-    if (loggedIn) {
+    var privilege = localStorage.getItem("privilege");
+    if (loggedIn && privilege === 6) {
       setReady(false);
       await axios
-        .get("/api/reservation/all")
+        .get("/api/reservation/all", {
+          headers: {
+            Authorization: `Bearer ${loggedIn}`,
+          },
+        })
         .then(function (response) {
           console.log(response);
           var modifedReservations = response.data.reservations;
@@ -411,6 +417,7 @@ export default function Dashboard() {
                   event.preventDefault();
                   event.stopPropagation();
                   localStorage.removeItem("token");
+                  localStorage.removeItem("privilege");
                   history.push("/login");
                 }}
               >
@@ -592,7 +599,7 @@ export default function Dashboard() {
                       })
                       .then(function (response) {
                         var temp = reservations;
-                        temp[currentReservation.id-1].status = "ticketing";
+                        temp[currentReservation.id - 1].status = "ticketing";
                         setReservations(temp);
                         setRefresh(!refresh);
                       });
@@ -611,12 +618,14 @@ export default function Dashboard() {
                   className={classes.nested}
                   onClick={() => {
                     axios.create({ baseURL: window.location.origin });
-                    axios.post("/api/reservation/reserve/status", {
-                      reservationId: currentReservation.reservationId,
-                      status: "ticketed",
-                    }).then(function (response) {
+                    axios
+                      .post("/api/reservation/reserve/status", {
+                        reservationId: currentReservation.reservationId,
+                        status: "ticketed",
+                      })
+                      .then(function (response) {
                         var temp = reservations;
-                        temp[currentReservation.id-1].status = "ticketed";
+                        temp[currentReservation.id - 1].status = "ticketed";
                         setReservations(temp);
                         setRefresh(!refresh);
                       });
@@ -635,12 +644,15 @@ export default function Dashboard() {
                   className={classes.nested}
                   onClick={() => {
                     axios.create({ baseURL: window.location.origin });
-                    axios.post("/api/reservation/reserve/status", {
-                      reservationId: currentReservation.reservationId,
-                      status: "refundSubmitted",
-                    }).then(function (response) {
+                    axios
+                      .post("/api/reservation/reserve/status", {
+                        reservationId: currentReservation.reservationId,
+                        status: "refundSubmitted",
+                      })
+                      .then(function (response) {
                         var temp = reservations;
-                        temp[currentReservation.id-1].status = "refundSubmitted";
+                        temp[currentReservation.id - 1].status =
+                          "refundSubmitted";
                         setReservations(temp);
                         setRefresh(!refresh);
                       });
@@ -659,12 +671,15 @@ export default function Dashboard() {
                   className={classes.nested}
                   onClick={() => {
                     axios.create({ baseURL: window.location.origin });
-                    axios.post("/api/reservation/reserve/status", {
-                      reservationId: currentReservation.reservationId,
-                      status: "refundToBeVerified",
-                    }).then(function (response) {
+                    axios
+                      .post("/api/reservation/reserve/status", {
+                        reservationId: currentReservation.reservationId,
+                        status: "refundToBeVerified",
+                      })
+                      .then(function (response) {
                         var temp = reservations;
-                        temp[currentReservation.id-1].status = "refundToBeVerified";
+                        temp[currentReservation.id - 1].status =
+                          "refundToBeVerified";
                         setReservations(temp);
                         setRefresh(!refresh);
                       });
@@ -683,12 +698,14 @@ export default function Dashboard() {
                   className={classes.nested}
                   onClick={() => {
                     axios.create({ baseURL: window.location.origin });
-                    axios.post("/api/reservation/reserve/status", {
-                      reservationId: currentReservation.reservationId,
-                      status: "refunded",
-                    }).then(function (response) {
+                    axios
+                      .post("/api/reservation/reserve/status", {
+                        reservationId: currentReservation.reservationId,
+                        status: "refunded",
+                      })
+                      .then(function (response) {
                         var temp = reservations;
-                        temp[currentReservation.id-1].status = "refunded";
+                        temp[currentReservation.id - 1].status = "refunded";
                         setReservations(temp);
                         setRefresh(!refresh);
                       });

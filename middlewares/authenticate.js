@@ -8,14 +8,14 @@ const authenticate = (req, res, next) => {
 
         jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
             if (err) {
-                return res.sendStatus(403);
+                return res.redirect("/login");
             }
 
             req.user = user;
             next();
         });
     } else {
-        res.sendStatus(401);
+        res.redirect("/login");
     }
 };
 
