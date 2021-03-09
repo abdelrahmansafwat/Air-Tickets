@@ -243,6 +243,10 @@ export default function Dashboard() {
       name: "status",
       label: "Status",
     },
+    {
+      name: "total",
+      label: "Total",
+    },
     /*{
       name: "deleteButton",
       label: "Delete",
@@ -572,6 +576,15 @@ export default function Dashboard() {
                   currentReservation.oneWay
                     ? "N/A"
                     : currentReservation.arrivalDate
+                }
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="Total"
+                secondary={
+                  currentReservation.total + " BDT"
                 }
               />
             </ListItem>
