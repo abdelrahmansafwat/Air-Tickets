@@ -687,6 +687,12 @@ function ReserveForm(props) {
                     )}
                     <Grid item>
                       <Divider />
+                      <Typography>{"Total Fare"}</Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography>{"Discount"}</Typography>
+                    </Grid>
+                    <Grid item>
                       <Typography>{"Total Payable Fare"}</Typography>
                     </Grid>
                   </Grid>
@@ -799,6 +805,56 @@ function ReserveForm(props) {
                                       200)
                               )
                             : 0)}
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography align="right">
+                        {(window.location.href.split("/").includes("applive")
+                          ? 200
+                          : 100) *
+                          (adults + children)}
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography align="right">
+                        {(selectedGoingTicket === ""
+                          ? 0
+                          : Math.floor(
+                              adults * selectedGoingTicket.lowestPrice +
+                                children *
+                                  ((selectedGoingTicket.lowestPrice - 725 * 1) *
+                                    0.75 +
+                                    725 * 1) +
+                                infants *
+                                  ((selectedGoingTicket.lowestPrice - 725 * 1) *
+                                    0.1 +
+                                    200)
+                            ) -
+                            (window.location.href.split("/").includes("applive")
+                              ? 200
+                              : 100) *
+                              (adults + children)) +
+                          (selectedReturningTicket === ""
+                            ? 0
+                            : Math.floor(
+                                adults * selectedReturningTicket.lowestPrice +
+                                  children *
+                                    ((selectedReturningTicket.lowestPrice -
+                                      725 * 1) *
+                                      0.75 +
+                                      725 * 1) +
+                                  infants *
+                                    ((selectedReturningTicket.lowestPrice -
+                                      725 * 1) *
+                                      0.1 +
+                                      200)
+                              ) -
+                              (window.location.href
+                                .split("/")
+                                .includes("applive")
+                                ? 200
+                                : 100) *
+                                (adults + children))}
                       </Typography>
                     </Grid>
                   </Grid>
