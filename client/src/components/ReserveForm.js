@@ -840,7 +840,11 @@ function ReserveForm(props) {
                         infants *
                           ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.1 +
                             200)
-                    ) +
+                    ) -
+                    (window.location.href.split("/").includes("applive")
+                      ? 200
+                      : 100) *
+                      (adults + children) +
                     (oneWay
                       ? Math.floor(
                           adults * selectedReturningTicket.lowestPrice +
@@ -852,7 +856,11 @@ function ReserveForm(props) {
                               ((selectedReturningTicket.lowestPrice - 725 * 1) *
                                 0.1 +
                                 200)
-                        )
+                        ) -
+                        (window.location.href.split("/").includes("applive")
+                          ? 200
+                          : 100) *
+                          (adults + children)
                       : 0);
 
                   await axios

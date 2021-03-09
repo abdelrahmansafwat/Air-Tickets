@@ -277,6 +277,7 @@ export default function Dashboard() {
     console.log(loggedIn);
     if (loggedIn != null && privilege == 6) {
       setReady(false);
+      axios.create({ baseURL: window.location.origin });
       await axios
         .get("/api/reservation/all", {
           headers: {

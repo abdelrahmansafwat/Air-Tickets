@@ -53,7 +53,7 @@ import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import _ from "underscore";
-import { exchange } from "exchangify"
+import { exchange } from "exchangify";
 import BG from "../resources/BG.png";
 import BS from "../resources/BS.png";
 import VQ from "../resources/VQ.png";
@@ -273,7 +273,7 @@ function SearchForm() {
             birman[ticketKey]["prices"][priceKey] = price
               .split(" ")[1]
               .replace(",", "");
-              birman[ticketKey]["prices"].currency = price.split(" ")[0];
+            birman[ticketKey]["prices"].currency = price.split(" ")[0];
             console.log(price.split(" ")[0]);
             if (!isNaN(birman[ticketKey]["prices"][priceKey])) {
               console.log(price.split(" ")[1].replace(",", ""));
@@ -293,7 +293,10 @@ function SearchForm() {
             0,
             5
           );
-          if(!isNaN(birman[ticketKey]["lowestPrice"]) && birman[ticketKey]["prices"].currency === "BDT"){
+          if (
+            !isNaN(birman[ticketKey]["lowestPrice"]) &&
+            birman[ticketKey]["prices"].currency === "BDT"
+          ) {
             going.push(birman[ticketKey]);
           }
         }
@@ -376,7 +379,10 @@ function SearchForm() {
             5
           );
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
-          if(!isNaN(birman[ticketKey]["lowestPrice"]) && birman[ticketKey]["prices"].currency === "BDT"){
+          if (
+            !isNaN(birman[ticketKey]["lowestPrice"]) &&
+            birman[ticketKey]["prices"].currency === "BDT"
+          ) {
             if (ticket["from"] === String(selectedDepartureAirport.code)) {
               going.push(birman[ticketKey]);
             } else {
@@ -490,22 +496,24 @@ function SearchForm() {
           {search ? (
             <Paper elevation={10} className={classes.form}>
               <Grid container direction={"column"} spacing={1}>
-                <Grid
-                  container
-                  direction={"row"}
-                  spacing={3}
-                  className={classes.oneWayGrid}
-                >
-                  <Grid item xs={"auto"}></Grid>
-                  <Grid item xs={"auto"}>
-                    <img
-                      src={logoText}
-                      alt={"logo"}
-                      style={{ width: "250px" }}
-                    />
+                {!window.location.href.split("/").includes("applive") && (
+                  <Grid
+                    container
+                    direction={"row"}
+                    spacing={3}
+                    className={classes.oneWayGrid}
+                  >
+                    <Grid item xs={"auto"}></Grid>
+                    <Grid item xs={"auto"}>
+                      <img
+                        src={logoText}
+                        alt={"logo"}
+                        style={{ width: "250px" }}
+                      />
+                    </Grid>
+                    <Grid item xs={"auto"}></Grid>
                   </Grid>
-                  <Grid item xs={"auto"}></Grid>
-                </Grid>
+                )}
 
                 <Grid
                   container
@@ -1225,7 +1233,9 @@ function SearchForm() {
                                   </Grid>
                                 </Grid>
                                 <Grid xs={4} item>
-                                  <Typography>
+                                  <Typography
+                                    style={{ textDecoration: "line-through" }}
+                                  >
                                     {Math.floor(
                                       adults * data.lowestPrice +
                                         children *
@@ -1235,6 +1245,24 @@ function SearchForm() {
                                           ((data.lowestPrice - 725 * 1) * 0.1 +
                                             200)
                                     ) + " BDT"}
+                                  </Typography>
+                                  <Typography>
+                                    {Math.floor(
+                                      adults * data.lowestPrice +
+                                        children *
+                                          ((data.lowestPrice - 725 * 1) * 0.75 +
+                                            725 * 1) +
+                                        infants *
+                                          ((data.lowestPrice - 725 * 1) * 0.1 +
+                                            200)
+                                    ) -
+                                      (window.location.href
+                                        .split("/")
+                                        .includes("applive")
+                                        ? 200
+                                        : 100) *
+                                        (adults + children) +
+                                      " BDT"}
                                   </Typography>
                                 </Grid>
                               </Grid>
@@ -1357,7 +1385,9 @@ function SearchForm() {
                                 </Grid>
                               </Grid>
                               <Grid xs={4} item>
-                                <Typography>
+                                <Typography
+                                  style={{ textDecoration: "line-through" }}
+                                >
                                   {Math.floor(
                                     adults * selectedGoingTicket.lowestPrice +
                                       children *
@@ -1371,6 +1401,28 @@ function SearchForm() {
                                           0.1 +
                                           200)
                                   ) + " BDT"}
+                                </Typography>
+                                <Typography>
+                                  {Math.floor(
+                                    adults * selectedGoingTicket.lowestPrice +
+                                      children *
+                                        ((selectedGoingTicket.lowestPrice -
+                                          725 * 1) *
+                                          0.75 +
+                                          725 * 1) +
+                                      infants *
+                                        ((selectedGoingTicket.lowestPrice -
+                                          725 * 1) *
+                                          0.1 +
+                                          200)
+                                  ) -
+                                    (window.location.href
+                                      .split("/")
+                                      .includes("applive")
+                                      ? 200
+                                      : 100) *
+                                      (adults + children) +
+                                    " BDT"}
                                 </Typography>
                               </Grid>
                             </Grid>
@@ -1498,7 +1550,9 @@ function SearchForm() {
                                   </Grid>
                                 </Grid>
                                 <Grid xs={4} item>
-                                  <Typography>
+                                  <Typography
+                                    style={{ textDecoration: "line-through" }}
+                                  >
                                     {Math.floor(
                                       adults * data.lowestPrice +
                                         children *
@@ -1508,6 +1562,24 @@ function SearchForm() {
                                           ((data.lowestPrice - 725 * 1) * 0.1 +
                                             200)
                                     ) + " BDT"}
+                                  </Typography>
+                                  <Typography>
+                                    {Math.floor(
+                                      adults * data.lowestPrice +
+                                        children *
+                                          ((data.lowestPrice - 725 * 1) * 0.75 +
+                                            725 * 1) +
+                                        infants *
+                                          ((data.lowestPrice - 725 * 1) * 0.1 +
+                                            200)
+                                    ) -
+                                      (window.location.href
+                                        .split("/")
+                                        .includes("applive")
+                                        ? 200
+                                        : 100) *
+                                        (adults + children) +
+                                      " BDT"}
                                   </Typography>
                                 </Grid>
                               </Grid>
@@ -1565,7 +1637,13 @@ function SearchForm() {
                                       725 * 1) *
                                       0.1 +
                                       200)
-                              )) +
+                              ) -
+                              (window.location.href
+                                .split("/")
+                                .includes("applive")
+                                ? 200
+                                : 100) *
+                                (adults + children)) +
                             (selectedReturningTicket === ""
                               ? 0
                               : Math.floor(
@@ -1580,7 +1658,13 @@ function SearchForm() {
                                         725 * 1) *
                                         0.1 +
                                         200)
-                                ))) +
+                                ) -
+                                (window.location.href
+                                  .split("/")
+                                  .includes("applive")
+                                  ? 200
+                                  : 100) *
+                                  (adults + children))) +
                           " BDT"}
                       </Typography>
                       <Button
@@ -1651,47 +1735,49 @@ function SearchForm() {
           )}
         </div>
       </Container>
-      <AppBar position="relative" color="primary" className={classes.footer}>
-        <Toolbar>
-          <Grid container direction={"column"}>
-            <Grid container direction={"row"} style={{ marginTop: "1%" }}>
-              <Grid item xs={3}>
-                <Link color="inherit" href="/privacy-policy">
+      {!window.location.href.split("/").includes("applive") && (
+        <AppBar position="relative" color="primary" className={classes.footer}>
+          <Toolbar>
+            <Grid container direction={"column"}>
+              <Grid container direction={"row"} style={{ marginTop: "1%" }}>
+                <Grid item xs={3}>
+                  <Link color="inherit" href="/privacy-policy">
+                    <Typography style={{ textAlign: "center" }}>
+                      Privacy Policy
+                    </Typography>
+                  </Link>
+                </Grid>
+                <Grid item xs={3}>
+                  <Link color="inherit" href="/terms-and-conditions">
+                    <Typography style={{ textAlign: "center" }}>
+                      Terms and Conditions
+                    </Typography>
+                  </Link>
+                </Grid>
+                <Grid item xs={3}>
+                  <Link color="inherit" href="/refund-and-return-policy">
+                    <Typography style={{ textAlign: "center" }}>
+                      Refund and Return Policy
+                    </Typography>
+                  </Link>
+                </Grid>
+                <Grid item xs={3}>
                   <Typography style={{ textAlign: "center" }}>
-                    Privacy Policy
+                    Contact Us
                   </Typography>
-                </Link>
+                </Grid>
               </Grid>
-              <Grid item xs={3}>
-                <Link color="inherit" href="/terms-and-conditions">
-                  <Typography style={{ textAlign: "center" }}>
-                    Terms and Conditions
-                  </Typography>
-                </Link>
-              </Grid>
-              <Grid item xs={3}>
-                <Link color="inherit" href="/refund-and-return-policy">
-                  <Typography style={{ textAlign: "center" }}>
-                    Refund and Return Policy
-                  </Typography>
-                </Link>
-              </Grid>
-              <Grid item xs={3}>
-                <Typography style={{ textAlign: "center" }}>
-                  Contact Us
+              <Grid item style={{ marginTop: "1%", marginBottom: "1%" }}>
+                <Typography variant="body2" style={{ textAlign: "center" }}>
+                  {"Copyright © "}
+                  {"Travel Vela"} {new Date().getFullYear()}
+                  {"."}
                 </Typography>
               </Grid>
             </Grid>
-            <Grid item style={{ marginTop: "1%", marginBottom: "1%" }}>
-              <Typography variant="body2" style={{ textAlign: "center" }}>
-                {"Copyright © "}
-                {"Travel Vela"} {new Date().getFullYear()}
-                {"."}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
+          </Toolbar>
+        </AppBar>
+      )}
     </React.Fragment>
   );
 }
