@@ -1114,7 +1114,62 @@ function SearchForm() {
                     )}
                   </Toolbar>
                 </AppBar>
-                {ready && !secondPage && (
+                {ready &&
+                  !secondPage &&
+                  availableReservationsGoing.length === 0 && (
+                    <Grid
+                      container
+                      spacing={0}
+                      direction="column"
+                      alignItems="center"
+                      justify="center"
+                      style={{ position: "absolute", top: "50%" }}
+                    >
+                      <Grid item xs={12} md={3} style={{ color: "white" }}>
+                        <Typography
+                          wrap="nowrap"
+                          style={{ textAlign: "center" }}
+                        >
+                          {"No results found."}
+                        </Typography>
+                        <Typography
+                          wrap="nowrap"
+                          style={{ textAlign: "center" }}
+                        >
+                          {"Please try another search query or another date."}
+                        </Typography>
+                      </Grid>
+                      <Grid
+                        container
+                        direction={"row"}
+                        spacing={3}
+                        className={classes.oneWayGrid}
+                      >
+                        <Grid item xs={"auto"}></Grid>
+                        <Grid item xs={"auto"}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            style={{ width: "320px" }}
+                            classes={CustomButton}
+                            onClick={async (event) => {
+                              setSecondPage(false);
+                              setAvailableReservationsGoing([]);
+                              setAvailableReservationsReturning([]);
+                              setSelectedGoingTicket("");
+                              setSelectedReturningTicket("");
+                              setReservationsDialog(false);
+                            }}
+                          >
+                            Back to Search
+                          </Button>
+                        </Grid>
+                        <Grid item xs={"auto"}></Grid>
+                      </Grid>
+                    </Grid>
+                  )}
+                {ready && !secondPage && availableReservationsGoing.length > 0 && (
                   <List>
                     <Grid container>
                       <Grid item xs={1}></Grid>

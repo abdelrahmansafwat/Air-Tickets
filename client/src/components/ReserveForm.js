@@ -250,7 +250,7 @@ function ReserveForm(props) {
                             passengers[index].gender === "" ||
                             passengers[index].firstName === "" ||
                             passengers[index].lastName === "" ||
-                            passengers[index].dateOfBirth === null
+                            passengers[index].dateOfBirth == null
                           ) {
                             setMessage("Please fill all fields.");
                             setMessageLevel("Error");
@@ -277,7 +277,37 @@ function ReserveForm(props) {
                     return (
                       <IconButton
                         onClick={(value) => {
-                          setIndex(number + adults);
+                          if (
+                            !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+                              passengers[index].email
+                            ) &&
+                            index < adults
+                          ) {
+                            setMessage("Invalid email format.");
+                            setMessageLevel("Error");
+                            setMessageDialog(true);
+                          } else if (
+                            (index < adults &&
+                              passengers[index].title === "") ||
+                            (index < adults &&
+                              passengers[index].email === "") ||
+                            (index < adults &&
+                              passengers[index].phone === "") ||
+                            passengers[index].gender === "" ||
+                            passengers[index].firstName === "" ||
+                            passengers[index].lastName === "" ||
+                            passengers[index].dateOfBirth == null
+                          ) {
+                            setMessage("Please fill all fields.");
+                            setMessageLevel("Error");
+                            setMessageDialog(true);
+                          } else {
+                            if (index === adults + children + infants - 1) {
+                              setConfirm(true);
+                            } else {
+                              setIndex(number + adults);
+                            }
+                          }
                         }}
                       >
                         <ChildCare
@@ -293,7 +323,37 @@ function ReserveForm(props) {
                     return (
                       <IconButton
                         onClick={(value) => {
-                          setIndex(number + adults + children);
+                          if (
+                            !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+                              passengers[index].email
+                            ) &&
+                            index < adults
+                          ) {
+                            setMessage("Invalid email format.");
+                            setMessageLevel("Error");
+                            setMessageDialog(true);
+                          } else if (
+                            (index < adults &&
+                              passengers[index].title === "") ||
+                            (index < adults &&
+                              passengers[index].email === "") ||
+                            (index < adults &&
+                              passengers[index].phone === "") ||
+                            passengers[index].gender === "" ||
+                            passengers[index].firstName === "" ||
+                            passengers[index].lastName === "" ||
+                            passengers[index].dateOfBirth == null
+                          ) {
+                            setMessage("Please fill all fields.");
+                            setMessageLevel("Error");
+                            setMessageDialog(true);
+                          } else {
+                            if (index === adults + children + infants - 1) {
+                              setConfirm(true);
+                            } else {
+                              setIndex(number + adults + children);
+                            }
+                          }
                         }}
                       >
                         <ChildFriendly
@@ -632,7 +692,7 @@ function ReserveForm(props) {
                         passengers[index].gender === "" ||
                         passengers[index].firstName === "" ||
                         passengers[index].lastName === "" ||
-                        passengers[index].dateOfBirth === null
+                        passengers[index].dateOfBirth == null
                       ) {
                         setMessage("Please fill all fields.");
                         setMessageLevel("Error");
