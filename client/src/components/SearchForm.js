@@ -256,13 +256,27 @@ function SearchForm() {
     var birman = data.birman;
     var flynovoair = data.flynovoair;
     var usbair = data.usbair;
+    var intapi = data.intapi;
+    var intapiBS = [];
     var going = [];
     var returning = [];
     var lowestPrice = [];
 
-    //console.log(!_.isNull(birman));
+    console.log(intapi);
     //console.log(!_.isNull(flynovoair));
     //console.log(!_.isNull(usbair));
+
+    if (!_.isNull(intapi) && !intapi.hasOwnProperty("Error")) {
+      intapi.int_data.map((data) => {
+        if (data.depart.flight_segments[0].carrier.code === "BS") {
+          if(data.depart.flight_segments[0].source.localTime.split("T")[0] === departureDate
+            .toISOString()
+            .split("T")[0]){
+            intapiBS.push(data.depart.flight_segments[0].carrier.code);
+          }
+        }
+      });
+    }
 
     if (!oneWay) {
       if (!_.isNull(birman) && !birman.hasOwnProperty("Error")) {
@@ -295,7 +309,7 @@ function SearchForm() {
           );
           if (
             !isNaN(birman[ticketKey]["lowestPrice"]) &&
-            birman[ticketKey]["prices"].currency === "BDT"
+            birman[ticketKey]["prices"].currency === "BDT" && intapiBS.includes(ticketKey)
           ) {
             going.push(birman[ticketKey]);
           }

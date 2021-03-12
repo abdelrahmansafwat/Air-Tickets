@@ -21,10 +21,12 @@ router.post("/find", async (req, res) => {
   var birmanUrl = "http://api.tktbd.com/api/birman";
   var flynovoairUrl = "http://api.tktbd.com/api/flynovoair";
   var usbairUrl = "http://api.tktbd.com/api/usbair";
+  var intapiUrl = "http://api.tktbd.com/api/intapi";
 
   var birmanData = null;
   var flynovoairData = null;
   var usbairData = null;
+  var intapiData = null;
 
   await axios
     .post(birmanUrl, {
@@ -89,10 +91,32 @@ router.post("/find", async (req, res) => {
       }
     });
 
+    await axios
+    .post(intapiUrl, {
+      departure_code: req.body.departure_code,
+      arrival_code: req.body.arrival_code,
+      departure_date: req.body.departure_date,
+      arrival_date: req.body.arrival_date,
+      adult: req.body.adult,
+      child: req.body.child,
+      infant: req.body.infant,
+      oneway: req.body.oneway,
+    })
+    .then(function (response) {
+      console.log(response.data);
+      intapiData = response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      if (error) {
+      }
+    });
+
   res.status(200).json({
     flynovoair: flynovoairData,
     birman: birmanData,
     usbair: usbairData,
+    intapi: intapiData,
   });
 });
 
