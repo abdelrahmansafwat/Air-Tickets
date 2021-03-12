@@ -317,6 +317,24 @@ function SearchForm() {
       }
 
       if (!_.isNull(flynovoair) && !flynovoair.hasOwnProperty("Error")) {
+        flynovoair.map((ticket, ticketKey) => {
+          lowestPrice = [];
+          flynovoair[ticketKey]["planeCode"] = flynovoair[ticketKey].flight_blocks[0].flight;
+          for (const [priceKey, price] of Object.entries(ticket.prices)) {
+            if (!isNaN(flynovoair[ticketKey]["prices"][priceKey])) {
+              lowestPrice.push(
+                parseInt(flynovoair[ticketKey]["prices"][priceKey])
+              );
+            }
+          }
+          flynovoair[ticketKey]["landing"] = flynovoair[ticketKey].flight_blocks[0]["TOA"].split("T")[1].substring(0, 5);
+          flynovoair[ticketKey]["take_off"] = flynovoair[ticketKey].flight_blocks[0]["TOD"].split("T")[1].substring(0, 5);
+
+          flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+          going.push(flynovoair[ticketKey]);
+        })
+
+        /*
         for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
@@ -337,6 +355,7 @@ function SearchForm() {
           flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           going.push(flynovoair[ticketKey]);
         }
+        */
       }
 
       if (!_.isNull(usbair) && !usbair.hasOwnProperty("Error")) {
@@ -410,6 +429,30 @@ function SearchForm() {
       }
 
       if (!_.isNull(flynovoair) && !flynovoair.hasOwnProperty("Error")) {
+        flynovoair.map((ticket, ticketKey) => {
+          lowestPrice = [];
+          flynovoair[ticketKey]["planeCode"] = flynovoair[ticketKey].flight_blocks[0].flight;
+          for (const [priceKey, price] of Object.entries(ticket.prices)) {
+            if (!isNaN(flynovoair[ticketKey]["prices"][priceKey])) {
+              lowestPrice.push(
+                parseInt(flynovoair[ticketKey]["prices"][priceKey])
+              );
+            }
+          }
+          flynovoair[ticketKey]["landing"] = flynovoair[ticketKey].flight_blocks[0]["TOA"].split("T")[1].substring(0, 5);
+          flynovoair[ticketKey]["take_off"] = flynovoair[ticketKey].flight_blocks[0]["TOD"].split("T")[1].substring(0, 5);
+
+          flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+
+          if (ticket["from"] === String(selectedDepartureAirport.code)) {
+            going.push(flynovoair[ticketKey]);
+          } else {
+            returning.push(flynovoair[ticketKey]);
+          }
+        })
+
+
+        /*
         for (const [ticketKey, ticket] of Object.entries(flynovoair)) {
           lowestPrice = [];
           flynovoair[ticketKey]["planeCode"] = ticketKey;
@@ -433,6 +476,7 @@ function SearchForm() {
             returning.push(flynovoair[ticketKey]);
           }
         }
+        */
       }
 
       if (!_.isNull(usbair) && !usbair.hasOwnProperty("Error")) {
@@ -454,7 +498,9 @@ function SearchForm() {
           );
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
-            going.push(usbair[ticketKey]);
+            if(intapiBS.includes(ticketKey)){
+              going.push(usbair[ticketKey]);
+            }
           } else {
             returning.push(usbair[ticketKey]);
           }
