@@ -262,7 +262,7 @@ function SearchForm() {
     var returning = [];
     var lowestPrice = [];
 
-    console.log(intapi);
+    console.log(intapiBS.length);
     //console.log(!_.isNull(flynovoair));
     //console.log(!_.isNull(usbair));
 
@@ -272,7 +272,7 @@ function SearchForm() {
           if(data.depart.flight_segments[0].source.localTime.split("T")[0] === departureDate
             .toISOString()
             .split("T")[0]){
-            intapiBS.push(data.depart.flight_segments[0].carrier.code);
+            intapiBS.push(data.depart.flight_segments[0].carrier.code + data.depart.flight_segments[0].flight_code);
           }
         }
       });
@@ -309,7 +309,7 @@ function SearchForm() {
           );
           if (
             !isNaN(birman[ticketKey]["lowestPrice"]) &&
-            birman[ticketKey]["prices"].currency === "BDT" && intapiBS.includes(ticketKey)
+            birman[ticketKey]["prices"].currency === "BDT"
           ) {
             going.push(birman[ticketKey]);
           }
@@ -357,7 +357,10 @@ function SearchForm() {
             0,
             5
           );
-          going.push(usbair[ticketKey]);
+          if(intapiBS.includes(ticketKey)){
+            going.push(usbair[ticketKey]);
+          }
+          
         }
       }
 
