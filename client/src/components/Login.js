@@ -198,6 +198,10 @@ export default function SignIn() {
                                 "privilege",
                                 response.data.privilege
                               );
+                              localStorage.setItem(
+                                "email",
+                                response.data.email
+                              );
                               history.push({
                                 pathname: "/dashboard",
                                 state: {

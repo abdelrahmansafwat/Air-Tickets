@@ -76,19 +76,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="http://www.eelu.edu.eg/">
-        National Egyptian E-Learning University
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 const drawerWidth = 250;
 
 export default function Dashboard() {
@@ -156,7 +143,7 @@ export default function Dashboard() {
     },
     content: {
       flexGrow: 1,
-      //height: "100vh",
+      height: "100vh",
       overflow: "auto",
     },
     container: {
@@ -277,13 +264,64 @@ export default function Dashboard() {
     //console.log(history.location.state.privilege);
     var loggedIn = localStorage.getItem("token");
     var privilege = localStorage.getItem("privilege");
+    var email = localStorage.getItem("email");
     console.log(privilege);
     console.log(loggedIn);
+    console.log(email);
     if (loggedIn != null && privilege == 6) {
       setReady(false);
       axios.create({ baseURL: window.location.origin });
       await axios
         .get("/api/reservation/all", {
+          headers: {
+            Authorization: `Bearer ${loggedIn}`,
+          },
+        })
+        .then(function (response) {
+          console.log(response);
+          var modifedReservations = response.data.reservations;
+          modifedReservations.forEach((value, index) => {
+            modifedReservations[index].id = index + 1;
+            modifedReservations[index].departureDate = modifedReservations[
+              index
+            ].departureDate.split("T")[0];
+            modifedReservations[index].arrivalDate = modifedReservations[
+              index
+            ].arrivalDate.split("T")[0];
+            modifedReservations[index].reservationDate = modifedReservations[
+              index
+            ].reservationDate.split("T")[0];
+            modifedReservations[index].firstName =
+              modifedReservations[index].passengers[0].firstName;
+            modifedReservations[index].lastName =
+              modifedReservations[index].passengers[0].lastName;
+            modifedReservations[index].from =
+              modifedReservations[index].selectedGoingTicket[0].from;
+            modifedReservations[index].to =
+              modifedReservations[index].selectedGoingTicket[0].into;
+            if (!modifedReservations[index].oneWay) {
+              modifedReservations[index].oneWay = "Yes";
+              modifedReservations[index].arrivalDate = "N/A";
+            } else {
+              modifedReservations[index].oneWay = "No";
+            }
+          });
+          console.log(modifedReservations[0]);
+          setCurrentReservation(modifedReservations[0]);
+          setReservations(modifedReservations);
+        })
+        .catch(function (error) {
+          console.log(error);
+          //setError(true);
+          //setErrorMessage("An error occured. Please try again.");
+        });
+      setReady(true);
+    } else if (loggedIn != null && privilege == 1) {
+      setReady(false);
+      axios.create({ baseURL: window.location.origin });
+      await axios
+        .post("/api/reservation/all/specific-user", {
+          email: email,
           headers: {
             Authorization: `Bearer ${loggedIn}`,
           },
@@ -583,14 +621,13 @@ export default function Dashboard() {
             <ListItem>
               <ListItemText
                 primary="Total"
-                secondary={
-                  currentReservation.total + " BDT"
-                }
+                secondary={currentReservation.total + " BDT"}
               />
             </ListItem>
             <Divider />
             <ListItem
               button
+              disabled={ localStorage.getItem("privilege") != 6 }
               onClick={() => {
                 setStatusOpen(!statusOpen);
               }}

@@ -297,6 +297,7 @@ export default function SignUp() {
                               lastName,
                               phone,
                               address,
+                              privelege: 1
                             })
                             .then(function (response) {
                               console.log(response);
