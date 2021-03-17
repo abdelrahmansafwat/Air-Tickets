@@ -326,29 +326,31 @@ function SearchForm() {
 
       if (!_.isNull(flynovoair) && !flynovoair.hasOwnProperty("Error")) {
         flynovoair.map((ticket, ticketKey) => {
-          lowestPrice = [];
-          flynovoair[ticketKey]["planeCode"] =
-            flynovoair[ticketKey].flight_blocks[0].flight;
-          for (const [priceKey, price] of Object.entries(ticket.prices)) {
-            if (!isNaN(flynovoair[ticketKey]["prices"][priceKey])) {
-              lowestPrice.push(
-                parseInt(flynovoair[ticketKey]["prices"][priceKey])
-              );
+          if(flynovoair[ticketKey].flight_blocks.length < 2){
+            lowestPrice = [];
+            flynovoair[ticketKey]["planeCode"] =
+              flynovoair[ticketKey].flight_blocks[0].flight;
+            for (const [priceKey, price] of Object.entries(ticket.prices)) {
+              if (!isNaN(flynovoair[ticketKey]["prices"][priceKey])) {
+                lowestPrice.push(
+                  parseInt(flynovoair[ticketKey]["prices"][priceKey])
+                );
+              }
             }
+            flynovoair[ticketKey]["landing"] = flynovoair[
+              ticketKey
+            ].flight_blocks[0]["TOA"]
+              .split("T")[1]
+              .substring(0, 5);
+            flynovoair[ticketKey]["take_off"] = flynovoair[
+              ticketKey
+            ].flight_blocks[0]["TOD"]
+              .split("T")[1]
+              .substring(0, 5);
+  
+            flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
+            going.push(flynovoair[ticketKey]);
           }
-          flynovoair[ticketKey]["landing"] = flynovoair[
-            ticketKey
-          ].flight_blocks[0]["TOA"]
-            .split("T")[1]
-            .substring(0, 5);
-          flynovoair[ticketKey]["take_off"] = flynovoair[
-            ticketKey
-          ].flight_blocks[0]["TOD"]
-            .split("T")[1]
-            .substring(0, 5);
-
-          flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
-          going.push(flynovoair[ticketKey]);
         });
 
         /*
