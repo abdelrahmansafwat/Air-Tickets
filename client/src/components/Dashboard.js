@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
+import TextField from "@material-ui/core/TextField";
 import Box from "@material-ui/core/Box";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -20,6 +21,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
+import FlightIcon from "@material-ui/icons/Flight";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -51,6 +53,7 @@ import GavelIcon from "@material-ui/icons/Gavel";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import DateFnsUtils from "@date-io/date-fns";
+import { CustomButtonStyles } from "./CustomButton";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
@@ -58,6 +61,9 @@ import {
 import { ThemeProvider } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Print from "./Print";
+import { pdf } from "@react-pdf/renderer";
+import { saveAs } from 'file-saver';
 const axios = require("axios");
 
 const light = {
@@ -138,7 +144,7 @@ export default function Dashboard() {
       },
     },
     appBarSpacer: theme.mixins.toolbar,
-    viewDialog: {
+    reservationViewDialog: {
       top: "10%",
     },
     content: {
@@ -189,11 +195,27 @@ export default function Dashboard() {
   const [reservations, setReservations] = useState([]);
   const [constructorHasRun, setConstructorHasRun] = useState(false);
   const [currentReservation, setCurrentReservation] = useState("");
-  const [viewDialog, setViewDialog] = useState(false);
+  const [reservationViewDialog, setReservationViewDialog] = useState(false);
+  const [userDialog, setUserDialog] = useState(false);
   const [showPassengers, setShowPassengers] = useState(false);
   const [reservationStatus, setReservationStatus] = useState("");
   const [statusOpen, setStatusOpen] = React.useState(false);
+  const [privilegeOpen, setPrivilegeOpen] = React.useState(false);
   const [refresh, setRefresh] = React.useState(false);
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+  const [firstName, setFirstName] = useState(localStorage.getItem("firstName"));
+  const [lastName, setLastName] = useState(localStorage.getItem("lastName"));
+  const [phone, setPhone] = useState(localStorage.getItem("phone"));
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  const [currentUser, setCurrentUser] = useState("");
+  const [userPrivilege, setUserPrivilege] = useState("");
+  const [userViewDialog, setUserViewDialog] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [usersTable, setUsersTable] = useState(false);
+  const [authError, setAuthError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const CustomButton = CustomButtonStyles({ chubby: true });
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -234,14 +256,14 @@ export default function Dashboard() {
       name: "total",
       label: "Total",
     },
-    /*{
+    {
       name: "deleteButton",
       label: "Delete",
       options: {
         sort: false,
         searchable: false,
         filter: false,
-        customBodyRender: (value, tableMeta, updateValue) => {
+        customBodyRenderLite: (dataIndex, rowIndex) => {
           //console.log(params.row.viewButton);
           //var index = params.row.id;
 
@@ -249,7 +271,30 @@ export default function Dashboard() {
             <Button
               variant="contained"
               color="secondary"
-              disabled={privilege < 2}
+              onClick={async () => {
+                var reservation = reservations[dataIndex];
+                var allreservations = reservations;
+                axios
+                  .post("/api/reservation/delete", {
+                    _id: reservation._id,
+                  })
+                  .then(function (response) {
+                    console.log(response);
+                    console.log(allreservations.length);
+                    allreservations.splice(dataIndex, 1);
+                    console.log(allreservations.length);
+                    setReservations(allreservations);
+                    setRefresh(!refresh);
+                    //history.push("/dashboard");
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                    if (error) {
+                      setErrorMessage("An error occured. Please try again.");
+                      setAuthError(true);
+                    }
+                  });
+              }}
             >
               Delete
             </Button>
@@ -257,14 +302,96 @@ export default function Dashboard() {
         },
       },
     },
-    */
+    {
+      name: "viewButton",
+      label: "View",
+      options: {
+        sort: false,
+        searchable: false,
+        filter: false,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          //console.log(params.row.viewButton);
+          //var index = params.row.id;
+
+          return (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setCurrentReservation(reservations[dataIndex]);
+                setReservationStatus(reservations[dataIndex].status);
+                setReservationViewDialog(true);
+              }}
+            >
+              View
+            </Button>
+          );
+        },
+      },
+    },
+    {
+      name: "printButton",
+      label: "print",
+      options: {
+        sort: false,
+        searchable: false,
+        filter: false,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          //console.log(params.row.viewButton);
+          //var index = params.row.id;
+
+          return (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={async () => {
+                const blob = await pdf(<Print reservation={reservations[dataIndex]} />).toBlob();
+                saveAs(blob, reservations[dataIndex].reservationId + ".pdf");
+              }}
+            >
+              Print
+            </Button>
+          );
+        },
+      },
+    },
+  ];
+
+  const usersColumns = [
+    {
+      name: "id",
+      label: "ID",
+      options: {
+        searchable: false,
+        filter: false,
+      },
+    },
+    {
+      name: "firstName",
+      label: "First Name",
+    },
+    {
+      name: "lastName",
+      label: "Last Name",
+    },
+    {
+      name: "email",
+      label: "Email",
+    },
+    {
+      name: "phone",
+      label: "Phone",
+    },
+    {
+      name: "privilege",
+      label: "Privilege",
+    },
   ];
 
   const getAllReservations = async () => {
     //console.log(history.location.state.privilege);
     var loggedIn = localStorage.getItem("token");
     var privilege = localStorage.getItem("privilege");
-    var email = localStorage.getItem("email");
     console.log(privilege);
     console.log(loggedIn);
     console.log(email);
@@ -370,6 +497,42 @@ export default function Dashboard() {
     }
   };
 
+  const getAllUsers = async () => {
+    //console.log(history.location.state.privilege);
+    setReady(false);
+    await axios
+      .get("/api/user/all-information")
+      .then(function (response) {
+        var users = response.data.users;
+        users.forEach((value, index) => {
+          users[index].id = index + 1;
+          if (users[index].privilege === 0) {
+            users[index].privilege = "None";
+          } else if (users[index].privilege === 1) {
+            users[index].privilege = "Standard";
+          } else if (users[index].privilege === 2) {
+            users[index].privilege = "Elite Club";
+          } else if (users[index].privilege === 3) {
+            users[index].privilege = "Corporate";
+          } else if (users[index].privilege === 4) {
+            users[index].privilege = "Partner";
+          } else if (users[index].privilege === 5) {
+            users[index].privilege = "Moderator";
+          } else if (users[index].privilege === 6) {
+            users[index].privilege = "Admin";
+          }
+        });
+        console.log(users);
+        setUsers(users);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setAuthError(true);
+        setErrorMessage("An error occured. Please try again.");
+      });
+    setReady(true);
+  };
+
   const constructor = async () => {
     if (constructorHasRun) return;
     setConstructorHasRun(true);
@@ -442,13 +605,23 @@ export default function Dashboard() {
           <Divider />
           <List>
             <div>
-              <ListItem button>
-                <ListItemIcon>
-                  <SupervisorAccountIcon />
-                </ListItemIcon>
-                <ListItemText primary="Admin" />
-              </ListItem>
-
+              {localStorage.getItem("privilege") == 6 && (
+                <ListItem
+                  button
+                  onClick={() => {
+                    getAllUsers();
+                    setUsersTable(true);
+                  }}
+                >
+                  <ListItemIcon>
+                    {!usersTable && <SupervisorAccountIcon />}
+                    {usersTable && <FlightIcon />}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={usersTable ? "Reservations" : "All Users"}
+                  />
+                </ListItem>
+              )}
               <ListItem button>
                 <ListItemIcon>
                   <AccountCircleIcon />
@@ -478,34 +651,60 @@ export default function Dashboard() {
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
             <Paper className={classes.paper}>
-              <MUIDataTable
-                title={"Reservations"}
-                data={reservations}
-                columns={reservationsColumns}
-                options={{
-                  onRowClick: (rowData, rowMeta) => {
-                    console.log(rowMeta.rowIndex);
-                    console.log(rowMeta.dataIndex);
-                    console.log(rowData);
-                    console.log(reservations[rowMeta.dataIndex]);
-                    setCurrentReservation(reservations[rowMeta.dataIndex]);
-                    setReservationStatus(
-                      reservations[rowMeta.dataIndex].status
-                    );
-                    setViewDialog(true);
-                  },
-                }}
-              />
+              {!usersTable && (
+                <MUIDataTable
+                  title={"Reservations"}
+                  data={reservations}
+                  columns={reservationsColumns}
+                  options={{
+                    onCellClick: (rowData, cellMeta) => {
+                      if (cellMeta.colIndex <= 4) {
+                        console.log(cellMeta.rowIndex);
+                        console.log(cellMeta.dataIndex);
+                        console.log(rowData);
+                        console.log(reservations[cellMeta.dataIndex]);
+                        setCurrentReservation(reservations[cellMeta.dataIndex]);
+                        setReservationStatus(
+                          reservations[cellMeta.dataIndex].status
+                        );
+                        setReservationViewDialog(true);
+                      }
+                    },
+                  }}
+                />
+              )}
+              {usersTable && (
+                <MUIDataTable
+                  title={"Users"}
+                  data={users}
+                  columns={usersColumns}
+                  options={{
+                    onCellClick: (rowData, cellMeta) => {
+                      if (cellMeta.colIndex <= 4) {
+                        console.log(cellMeta.rowIndex);
+                        console.log(cellMeta.dataIndex);
+                        console.log(rowData);
+                        console.log(users[cellMeta.dataIndex]);
+                        setCurrentUser(users[cellMeta.dataIndex]);
+                        setUserPrivilege(
+                          reservations[cellMeta.dataIndex].status
+                        );
+                        setUserViewDialog(true);
+                      }
+                    },
+                  }}
+                />
+              )}
             </Paper>
           </Container>
         </main>
       </div>
-      {ready && (
+      {ready && reservations.length > 0 && (
         <Dialog
           fullScreen
-          open={viewDialog}
+          open={reservationViewDialog}
           onClose={() => {
-            setViewDialog(false);
+            setReservationViewDialog(false);
             setStatusOpen(false);
             setReservationStatus("");
           }}
@@ -517,7 +716,7 @@ export default function Dashboard() {
                 edge="start"
                 color="inherit"
                 onClick={() => {
-                  setViewDialog(false);
+                  setReservationViewDialog(false);
                   setStatusOpen(false);
                   setReservationStatus("");
                 }}
@@ -530,7 +729,7 @@ export default function Dashboard() {
               </Typography>
             </Toolbar>
           </AppBar>
-          <List className={classes.viewDialog}>
+          <List className={classes.reservationViewDialog}>
             <ListItem button>
               <ListItemText
                 primary="Passengers"
@@ -627,7 +826,7 @@ export default function Dashboard() {
             <Divider />
             <ListItem
               button
-              disabled={ localStorage.getItem("privilege") != 6 }
+              disabled={localStorage.getItem("privilege") != 6}
               onClick={() => {
                 setStatusOpen(!statusOpen);
               }}
@@ -778,6 +977,388 @@ export default function Dashboard() {
           </List>
         </Dialog>
       )}
+
+      {ready && users.length > 0 && (
+        <Dialog
+          fullScreen
+          open={userViewDialog}
+          onClose={() => {
+            setUserViewDialog(false);
+            setPrivilegeOpen(false);
+            setUserPrivilege("");
+          }}
+          TransitionComponent={Transition}
+        >
+          <AppBar className={classes.appBar}>
+            <Toolbar>
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={() => {
+                  setUserViewDialog(false);
+                  setPrivilegeOpen(false);
+                  setUserPrivilege("");
+                }}
+                aria-label="close"
+              >
+                <CloseIcon />
+              </IconButton>
+              <Typography variant="h6" className={classes.title}>
+                View User
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <List className={classes.reservationViewDialog}>
+            <ListItem>
+              <ListItemText
+                primary="First Name"
+                secondary={currentUser.firstName}
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="Last Name"
+                secondary={currentUser.lastName}
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText primary="Email" secondary={currentUser.email} />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText primary="Phone" secondary={currentUser.phone} />
+            </ListItem>
+            <Divider />
+            <ListItem
+              button
+              disabled={localStorage.getItem("privilege") != 6}
+              onClick={() => {
+                setPrivilegeOpen(!privilegeOpen);
+              }}
+            >
+              <ListItemText
+                primary="Status"
+                secondary={currentReservation.status}
+              />
+              {privilegeOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse in={privilegeOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios
+                      .post("/api/user/privilege", {
+                        email: currentUser.email,
+                        status: 0,
+                      })
+                      .then(function (response) {
+                        var temp = users;
+                        temp[currentUser.id - 1].privilege = "None";
+                        setUsers(temp);
+                        setRefresh(!refresh);
+                      });
+                    setUserPrivilege("None");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={userPrivilege === "None"}
+                    value="None"
+                    control={<Radio color="primary" />}
+                    label="None"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios
+                      .post("/api/user/privilege", {
+                        email: currentUser.email,
+                        status: 1,
+                      })
+                      .then(function (response) {
+                        var temp = users;
+                        temp[currentUser.id - 1].privilege = "Standard";
+                        setUsers(temp);
+                        setRefresh(!refresh);
+                      });
+                    setUserPrivilege("Standard");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={userPrivilege === "Standard"}
+                    value="Standard"
+                    control={<Radio color="primary" />}
+                    label="Standard"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios
+                      .post("/api/user/privilege", {
+                        email: currentUser.email,
+                        status: 2,
+                      })
+                      .then(function (response) {
+                        var temp = users;
+                        temp[currentUser.id - 1].privilege = "Elite Club";
+                        setUsers(temp);
+                        setRefresh(!refresh);
+                      });
+                    setUserPrivilege("Elite Club");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={userPrivilege === "Elite Club"}
+                    value="Elite Club"
+                    control={<Radio color="primary" />}
+                    label="Elite Club"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios
+                      .post("/api/user/privilege", {
+                        email: currentUser.email,
+                        status: 3,
+                      })
+                      .then(function (response) {
+                        var temp = users;
+                        temp[currentUser.id - 1].privilege = "Corporate";
+                        setUsers(temp);
+                        setRefresh(!refresh);
+                      });
+                    setUserPrivilege("Corporate");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={userPrivilege === "Corporate"}
+                    value="Corporate"
+                    control={<Radio color="primary" />}
+                    label="Corporate"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios
+                      .post("/api/user/privilege", {
+                        email: currentUser.email,
+                        status: 4,
+                      })
+                      .then(function (response) {
+                        var temp = users;
+                        temp[currentUser.id - 1].privilege = "Partner";
+                        setUsers(temp);
+                        setRefresh(!refresh);
+                      });
+                    setUserPrivilege("Partner");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={userPrivilege === "Partner"}
+                    value="Partner"
+                    control={<Radio color="primary" />}
+                    label="Partner"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios
+                      .post("/api/user/privilege", {
+                        email: currentUser.email,
+                        status: 5,
+                      })
+                      .then(function (response) {
+                        var temp = users;
+                        temp[currentUser.id - 1].privilege = "Moderator";
+                        setUsers(temp);
+                        setRefresh(!refresh);
+                      });
+                    setUserPrivilege("Moderator");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={userPrivilege === "Moderator"}
+                    value="Moderator"
+                    control={<Radio color="primary" />}
+                    label="Moderator"
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  className={classes.nested}
+                  onClick={() => {
+                    axios.create({ baseURL: window.location.origin });
+                    axios
+                      .post("/api/user/privilege", {
+                        email: currentUser.email,
+                        status: 6,
+                      })
+                      .then(function (response) {
+                        var temp = users;
+                        temp[currentUser.id - 1].privilege = "Admin";
+                        setUsers(temp);
+                        setRefresh(!refresh);
+                      });
+                    setUserPrivilege("Admin");
+                  }}
+                >
+                  <FormControlLabel
+                    checked={userPrivilege === "Admin"}
+                    value="Admin"
+                    control={<Radio color="primary" />}
+                    label="Admin"
+                  />
+                </ListItem>
+              </List>
+            </Collapse>
+            <Divider />
+          </List>
+        </Dialog>
+      )}
+
+      <Dialog
+        open={userDialog}
+        onClose={() => setUserDialog(false)}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Update User</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                autoComplete="fname"
+                name="firstName"
+                variant="outlined"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                autoFocus
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="lname"
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="phone"
+                label="Phone"
+                name="phone"
+                autoComplete="phone"
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                }}
+              />
+            </Grid>
+          </Grid>
+          <DialogActions>
+            <Button onClick={() => setUserDialog(false)} variant="contained">
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              classes={CustomButton}
+              onClick={() => {
+                axios.create({ baseURL: window.location.origin });
+                axios
+                  .post("/api/user/update", {
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    phone: phone,
+                    _id: userId,
+                  })
+                  .then(function (response) {
+                    console.log(response);
+                    setUserDialog(false);
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                    if (error) {
+                      setUserDialog(false);
+                      setErrorMessage("An error occured. Please try again.");
+                      setAuthError(true);
+                    }
+                  });
+              }}
+            >
+              Update
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={authError}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setAuthError(false)}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            {errorMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAuthError(false)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </ThemeProvider>
   );
 }

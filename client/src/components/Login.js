@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.down("md")]: {
       width: "90%",
-      padding: 5,
+      padding: theme.spacing(1),
     },
     alignItems: "center",
     justifyContent: "center",
@@ -170,8 +170,8 @@ export default function SignIn() {
                   direction={"row"}
                   className={classes.oneWayGrid}
                 >
-                  <Grid item xs={4}></Grid>
-                  <Grid item xs={4}>
+                  <Grid item md={4} xs={0}></Grid>
+                  <Grid item md={4} xs={12}>
                     <Button
                       type="submit"
                       variant="contained"
@@ -202,6 +202,22 @@ export default function SignIn() {
                                 "email",
                                 response.data.email
                               );
+                              localStorage.setItem(
+                                "phone",
+                                response.data.phone
+                              );
+                              localStorage.setItem(
+                                "firstName",
+                                response.data.firstName
+                              );
+                              localStorage.setItem(
+                                "lastName",
+                                response.data.lastName
+                              );
+                              localStorage.setItem(
+                                "userId",
+                                response.data.userId
+                              );
                               history.push({
                                 pathname: "/dashboard",
                                 state: {
@@ -209,6 +225,8 @@ export default function SignIn() {
                                   firstName: response.data.firstName,
                                   lastName: response.data.lastName,
                                   email: response.data.email,
+                                  phone: response.data.phone,
+                                  userId: response.data.userId
                                 },
                               });
                             })
@@ -237,7 +255,7 @@ export default function SignIn() {
                       Sign In
                     </Button>
                   </Grid>
-                  <Grid item xs={4}></Grid>
+                  <Grid item md={4} xs={0}></Grid>
                 </Grid>
 
                 <Dialog

@@ -89,12 +89,10 @@ export default function SignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
-  const [addressError, setAddressError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [authError, setAuthError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -218,31 +216,6 @@ export default function SignUp() {
                     variant="outlined"
                     required
                     fullWidth
-                    error={addressError}
-                    id="address"
-                    label="Address"
-                    name="address"
-                    autoComplete="address"
-                    onChange={(e) => {
-                      if (e.target.value === "") {
-                        setAddressError(true);
-                      } else {
-                        setAddressError(false);
-                        setAddress(e.target.value);
-                      }
-                    }}
-                    onBlur={() => {
-                      if (address === "") {
-                        setAddressError(true);
-                      }
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
                     error={passwordError}
                     name="password"
                     label="Password"
@@ -269,8 +242,8 @@ export default function SignUp() {
                   direction={"row"}
                   className={classes.oneWayGrid}
                 >
-                  <Grid item xs={4}></Grid>
-                  <Grid item xs={4}>
+                  <Grid item md={4} xs={0}></Grid>
+                  <Grid item md={4} xs={12}>
                     <Button
                       type="submit"
                       variant="contained"
@@ -285,7 +258,6 @@ export default function SignUp() {
                           password &&
                           firstName &&
                           lastName &&
-                          address &&
                           phone
                         ) {
                           axios.create({ baseURL: window.location.origin });
@@ -296,7 +268,6 @@ export default function SignUp() {
                               firstName,
                               lastName,
                               phone,
-                              address,
                               privelege: 1
                             })
                             .then(function (response) {
@@ -328,7 +299,7 @@ export default function SignUp() {
                       Register
                     </Button>
                   </Grid>
-                  <Grid item xs={4}></Grid>
+                  <Grid item md={4} xs={12}></Grid>
                 </Grid>
                 <Dialog
                   open={authError}
