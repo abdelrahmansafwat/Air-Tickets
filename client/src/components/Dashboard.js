@@ -207,6 +207,7 @@ export default function Dashboard() {
   const [lastName, setLastName] = useState(localStorage.getItem("lastName"));
   const [phone, setPhone] = useState(localStorage.getItem("phone"));
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  const [privilege, setprivilege] = useState(localStorage.getItem("privilege"));
   const [currentUser, setCurrentUser] = useState("");
   const [userPrivilege, setUserPrivilege] = useState("");
   const [userViewDialog, setUserViewDialog] = useState(false);
@@ -233,6 +234,7 @@ export default function Dashboard() {
       options: {
         searchable: false,
         filter: false,
+        display: false,
       },
     },
     {
@@ -263,6 +265,7 @@ export default function Dashboard() {
         sort: false,
         searchable: false,
         filter: false,
+        display: privilege == 6 ,
         customBodyRenderLite: (dataIndex, rowIndex) => {
           //console.log(params.row.viewButton);
           //var index = params.row.id;
@@ -364,6 +367,7 @@ export default function Dashboard() {
       options: {
         searchable: false,
         filter: false,
+        display: false
       },
     },
     {
