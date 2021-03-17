@@ -238,11 +238,9 @@ export default function Dashboard() {
       },
     },
     {
-      name: "reservationId",
-      label: "Reservation ID",
+      name: "ref",
+      label: "Ref",
       options: {
-        sort: false,
-        searchable: false,
         filter: false,
       },
     },
@@ -413,6 +411,10 @@ export default function Dashboard() {
           var modifedReservations = response.data.reservations;
           modifedReservations.forEach((value, index) => {
             modifedReservations[index].id = index + 1;
+            if(modifedReservations[index].ref){
+              modifedReservations[index].ref = "TVR" + modifedReservations[index].ref.toString().padStart(7, '0');
+            }
+            
             modifedReservations[index].departureDate = modifedReservations[
               index
             ].departureDate.split("T")[0];
