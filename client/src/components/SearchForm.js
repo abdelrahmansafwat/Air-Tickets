@@ -256,16 +256,17 @@ function SearchForm() {
     var birman = data.birman;
     var flynovoair = data.flynovoair;
     var usbair = data.usbair;
-    var intapi = data.intapi;
-    var intapiBS = [];
+    //var intapi = data.intapi;
+    //var intapiBS = [];
     var going = [];
     var returning = [];
     var lowestPrice = [];
 
-    console.log(intapiBS.length);
+    //console.log(intapiBS.length);
     //console.log(!_.isNull(flynovoair));
     //console.log(!_.isNull(usbair));
 
+    /*
     if (!_.isNull(intapi) && !intapi.hasOwnProperty("Error")) {
       intapi.int_data.map((data) => {
         console.log(
@@ -285,9 +286,10 @@ function SearchForm() {
         }
       });
     }
+    */
 
     if (!oneWay) {
-      if (!_.isNull(birman) && !birman.hasOwnProperty("Error")) {
+      if (!_.isNull(birman) && !birman.hasOwnProperty("Error") && !birman.hasOwnProperty("error")) {
         for (const [ticketKey, ticket] of Object.entries(birman)) {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
@@ -324,7 +326,7 @@ function SearchForm() {
         }
       }
 
-      if (!_.isNull(flynovoair) && !flynovoair.hasOwnProperty("Error")) {
+      if (!_.isNull(flynovoair) && !flynovoair.hasOwnProperty("Error") && !flynovoair.hasOwnProperty("error")) {
         flynovoair.map((ticket, ticketKey) => {
           if(flynovoair[ticketKey].flight_blocks.length < 2){
             lowestPrice = [];
@@ -377,7 +379,7 @@ function SearchForm() {
         */
       }
 
-      if (!_.isNull(usbair) && !usbair.hasOwnProperty("Error")) {
+      if (!_.isNull(usbair) && !usbair.hasOwnProperty("Error") && !usbair.hasOwnProperty("error")) {
         for (const [ticketKey, ticket] of Object.entries(usbair)) {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
@@ -395,7 +397,9 @@ function SearchForm() {
             0,
             5
           );
-          if (intapiBS.includes(ticketKey)) {
+          console.log(new Date(departureDate).getDate());
+          console.log(usbair[ticketKey].departure.split(" ")[1]);
+          if (usbair[ticketKey].departure.split(" ")[1] == new Date(departureDate).getDate()) {
             going.push(usbair[ticketKey]);
           }
         }
@@ -524,7 +528,7 @@ function SearchForm() {
           );
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
-            if (intapiBS.includes(ticketKey)) {
+            if (usbair[ticketKey].departure.split(" ")[1] == Date(departureDate).getDate()) {
               going.push(usbair[ticketKey]);
             }
           } else {
