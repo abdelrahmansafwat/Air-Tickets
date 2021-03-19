@@ -251,6 +251,10 @@ export default function Dashboard() {
       label: "Reservation Date",
     },
     {
+      name: "pnr",
+      label: "PNR",
+    },
+    {
       name: "status",
       label: "Status",
     },
@@ -339,6 +343,7 @@ export default function Dashboard() {
         sort: false,
         searchable: false,
         filter: false,
+        display: privilege == 6,
         customBodyRenderLite: (dataIndex, rowIndex) => {
           //console.log(params.row.viewButton);
           //var index = params.row.id;
@@ -802,7 +807,7 @@ export default function Dashboard() {
                 });
             }}
           >
-            Remove
+            Submit
           </Button>
         </DialogActions>
       </Dialog>
@@ -1080,6 +1085,13 @@ export default function Dashboard() {
                 </ListItem>
               </List>
             </Collapse>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="PNR"
+                secondary={currentReservation.pnr}
+              />
+            </ListItem>
             <Divider />
           </List>
         </Dialog>

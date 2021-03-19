@@ -412,7 +412,7 @@ function SearchForm() {
         }
       }
 
-      going = _.sortBy(going, "duration");
+      going = _.sortBy(going, "take_off");
       going = _.sortBy(going, "lowestPrice");
 
       console.log(going);
@@ -556,9 +556,9 @@ function SearchForm() {
       console.log(going);
       console.log(returning);
 
-      going = _.sortBy(going, "duration");
+      going = _.sortBy(going, "take_off");
       going = _.sortBy(going, "lowestPrice");
-      returning = _.sortBy(returning, "duration");
+      returning = _.sortBy(returning, "take_off");
       returning = _.sortBy(returning, "lowestPrice");
       //returning = _.sortBy(returning, "lowestPrice");
 
