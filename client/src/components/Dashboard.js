@@ -350,7 +350,7 @@ export default function Dashboard() {
               onClick={() => {
                 setCurrentReservation(reservations[dataIndex]);
                 //setReservationStatus(reservations[dataIndex].status);
-                setPNRViewDialog(true);
+                setPNRDialog(true);
               }}
             >
               PNR
