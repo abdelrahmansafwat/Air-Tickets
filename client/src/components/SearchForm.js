@@ -317,6 +317,8 @@ function SearchForm() {
             0,
             5
           );
+
+          birman[ticketKey]["duration"] = duration(birman[ticketKey]["take_off"], birman[ticketKey]["landing"])
           if (
             !isNaN(birman[ticketKey]["lowestPrice"]) &&
             birman[ticketKey]["prices"].currency === "BDT"
@@ -349,6 +351,8 @@ function SearchForm() {
             ].flight_blocks[0]["TOD"]
               .split("T")[1]
               .substring(0, 5);
+
+            flynovoair[ticketKey]["duration"] = duration(flynovoair[ticketKey]["take_off"], flynovoair[ticketKey]["landing"])
   
             flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
             going.push(flynovoair[ticketKey]);
@@ -397,6 +401,9 @@ function SearchForm() {
             0,
             5
           );
+
+          usbair[ticketKey]["duration"] = duration(usbair[ticketKey]["take_off"], usbair[ticketKey]["landing"])
+
           console.log(new Date(departureDate).getDate());
           console.log(usbair[ticketKey].departure.split(" ")[1]);
           if (usbair[ticketKey].departure.split(" ")[1] == new Date(departureDate).getDate()) {
@@ -405,6 +412,7 @@ function SearchForm() {
         }
       }
 
+      going = _.sortBy(going, "duration");
       going = _.sortBy(going, "lowestPrice");
 
       console.log(going);
@@ -436,6 +444,9 @@ function SearchForm() {
             0,
             5
           );
+
+          birman[ticketKey]["duration"] = duration(birman[ticketKey]["take_off"], birman[ticketKey]["landing"])
+
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (
             !isNaN(birman[ticketKey]["lowestPrice"]) &&
@@ -472,6 +483,8 @@ function SearchForm() {
           ].flight_blocks[0]["TOD"]
             .split("T")[1]
             .substring(0, 5);
+
+            flynovoair[ticketKey]["duration"] = duration(flynovoair[ticketKey]["take_off"], flynovoair[ticketKey]["landing"])
 
           flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
 
@@ -526,6 +539,9 @@ function SearchForm() {
             0,
             5
           );
+
+          usbair[ticketKey]["duration"] = duration(usbair[ticketKey]["take_off"], usbair[ticketKey]["landing"])
+
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
             if (usbair[ticketKey].departure.split(" ")[1] == Date(departureDate).getDate()) {
@@ -540,8 +556,11 @@ function SearchForm() {
       console.log(going);
       console.log(returning);
 
+      going = _.sortBy(going, "duration");
       going = _.sortBy(going, "lowestPrice");
+      returning = _.sortBy(returning, "duration");
       returning = _.sortBy(returning, "lowestPrice");
+      //returning = _.sortBy(returning, "lowestPrice");
 
       setAvailableReservationsGoing(going);
       setAvailableReservationsReturning(returning);
@@ -1374,7 +1393,7 @@ function SearchForm() {
                                       <Typography
                                         style={{ textAlign: "center" }}
                                       >
-                                        {duration(data.take_off, data.landing)}
+                                        {data.duration}
                                       </Typography>
                                     </Grid>
                                     <Grid xs={0} md={4}></Grid>
@@ -1691,7 +1710,7 @@ function SearchForm() {
                                       <Typography
                                         style={{ textAlign: "center" }}
                                       >
-                                        {duration(data.take_off, data.landing)}
+                                        {data.duration}
                                       </Typography>
                                     </Grid>
                                     <Grid xs={0} md={4}></Grid>

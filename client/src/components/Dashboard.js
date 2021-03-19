@@ -63,7 +63,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Print from "./Print";
 import { pdf } from "@react-pdf/renderer";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 const axios = require("axios");
 
 const light = {
@@ -215,6 +215,8 @@ export default function Dashboard() {
   const [usersTable, setUsersTable] = useState(false);
   const [authError, setAuthError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [pnr, setPNR] = useState("");
+  const [PNRDialog, setPNRDialog] = useState("");
 
   const CustomButton = CustomButtonStyles({ chubby: true });
 
@@ -263,7 +265,7 @@ export default function Dashboard() {
         sort: false,
         searchable: false,
         filter: false,
-        display: privilege == 6 ,
+        display: privilege == 6,
         customBodyRenderLite: (dataIndex, rowIndex) => {
           //console.log(params.row.viewButton);
           //var index = params.row.id;
@@ -331,6 +333,33 @@ export default function Dashboard() {
       },
     },
     {
+      name: "pnrButton",
+      label: "PNR",
+      options: {
+        sort: false,
+        searchable: false,
+        filter: false,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          //console.log(params.row.viewButton);
+          //var index = params.row.id;
+
+          return (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setCurrentReservation(reservations[dataIndex]);
+                //setReservationStatus(reservations[dataIndex].status);
+                setPNRViewDialog(true);
+              }}
+            >
+              PNR
+            </Button>
+          );
+        },
+      },
+    },
+    {
       name: "printButton",
       label: "print",
       options: {
@@ -346,7 +375,9 @@ export default function Dashboard() {
               variant="contained"
               color="secondary"
               onClick={async () => {
-                const blob = await pdf(<Print reservation={reservations[dataIndex]} />).toBlob();
+                const blob = await pdf(
+                  <Print reservation={reservations[dataIndex]} />
+                ).toBlob();
                 saveAs(blob, reservations[dataIndex].reservationId + ".pdf");
               }}
             >
@@ -365,7 +396,7 @@ export default function Dashboard() {
       options: {
         searchable: false,
         filter: false,
-        display: false
+        display: false,
       },
     },
     {
@@ -411,10 +442,12 @@ export default function Dashboard() {
           var modifedReservations = response.data.reservations;
           modifedReservations.forEach((value, index) => {
             modifedReservations[index].id = index + 1;
-            if(modifedReservations[index].ref){
-              modifedReservations[index].ref = "TVR" + modifedReservations[index].ref.toString().padStart(7, '0');
+            if (modifedReservations[index].ref) {
+              modifedReservations[index].ref =
+                "TVR" +
+                modifedReservations[index].ref.toString().padStart(7, "0");
             }
-            
+
             modifedReservations[index].departureDate = modifedReservations[
               index
             ].departureDate.split("T")[0];
@@ -705,6 +738,74 @@ export default function Dashboard() {
           </Container>
         </main>
       </div>
+      <Dialog
+        open={PNRDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setPNRDialog(false)}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">
+          {"Set PNR Status"}
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoComplete="pnr"
+            name="pnr"
+            variant="outlined"
+            required
+            fullWidth
+            id="pnr"
+            label="PNR"
+            autoFocus
+            onChange={(e) => {
+              setPNR(e.target.value);
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPNRDialog(false)} variant="contained">
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            component="span"
+            fullWidth
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              axios.create({ baseURL: window.location.origin });
+              axios
+                .post("/api/reservation/reserve/pnr", {
+                  reservationId: currentReservation.reservationId,
+                  pnr: pnr,
+                })
+                .then(function (response) {
+                  //console.log(newTagOrIssuer);
+                  setPNRDialog(false);
+                  var temp = reservations;
+                  temp[currentReservation.id - 1].pnr = pnr;
+                  setReservations(temp);
+                  setPNR("");
+                  setRefresh(!refresh);
+                })
+                .catch(function (error) {
+                  console.log(error);
+                  if (error) {
+                    setErrorMessage("An error occured. Please try again.");
+                    setPNRDialog(false);
+                    setPNR("");
+                    setAuthError(true);
+                  }
+                });
+            }}
+          >
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
       {ready && reservations.length > 0 && (
         <Dialog
           fullScreen
