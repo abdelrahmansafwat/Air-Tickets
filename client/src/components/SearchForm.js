@@ -544,7 +544,7 @@ function SearchForm() {
 
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
-            if (usbair[ticketKey].departure.split(" ")[1] == Date(departureDate).getDate()) {
+            if (usbair[ticketKey].departure.split(" ")[1] == new Date(departureDate).getDate()) {
               going.push(usbair[ticketKey]);
             }
           } else {

@@ -130,6 +130,11 @@ router.post("/delete", async (req, res) => {
         message: err.message,
       });
     }
+    else {
+      res.status(200).json({
+        message: "Deleted",
+      });
+    }
   });
 });
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -63,6 +63,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Print from "./Print";
 import { pdf } from "@react-pdf/renderer";
+import ReactToPrint from "react-to-print";
 import { saveAs } from "file-saver";
 const axios = require("axios");
 
@@ -217,6 +218,7 @@ export default function Dashboard() {
   const [errorMessage, setErrorMessage] = useState("");
   const [pnr, setPNR] = useState("");
   const [PNRDialog, setPNRDialog] = useState("");
+  const componentRef = useRef();
 
   const CustomButton = CustomButtonStyles({ chubby: true });
 
@@ -384,6 +386,7 @@ export default function Dashboard() {
                   <Print reservation={reservations[dataIndex]} />
                 ).toBlob();
                 saveAs(blob, reservations[dataIndex].reservationId + ".pdf");
+                setCurrentReservation(reservations[dataIndex]);
               }}
             >
               Print
@@ -444,7 +447,7 @@ export default function Dashboard() {
         })
         .then(function (response) {
           console.log(response);
-          var modifedReservations = response.data.reservations;
+          var modifedReservations = response.data.reservations.reverse();
           modifedReservations.forEach((value, index) => {
             modifedReservations[index].id = index + 1;
             if (modifedReservations[index].ref) {
@@ -499,9 +502,15 @@ export default function Dashboard() {
         })
         .then(function (response) {
           console.log(response);
-          var modifedReservations = response.data.reservations;
+          var modifedReservations = response.data.reservations.reverse();
           modifedReservations.forEach((value, index) => {
             modifedReservations[index].id = index + 1;
+            if (modifedReservations[index].ref) {
+              modifedReservations[index].ref =
+                "TVR" +
+                modifedReservations[index].ref.toString().padStart(7, "0");
+            }
+
             modifedReservations[index].departureDate = modifedReservations[
               index
             ].departureDate.split("T")[0];
@@ -730,9 +739,7 @@ export default function Dashboard() {
                         console.log(rowData);
                         console.log(users[cellMeta.dataIndex]);
                         setCurrentUser(users[cellMeta.dataIndex]);
-                        setUserPrivilege(
-                          reservations[cellMeta.dataIndex].status
-                        );
+                        setUserPrivilege(users[cellMeta.dataIndex].privilege);
                         setUserViewDialog(true);
                       }
                     },
@@ -743,6 +750,12 @@ export default function Dashboard() {
           </Container>
         </main>
       </div>
+      {currentReservation !== "" && (
+        <div style={{ display: "none" }}>
+          <Print reservation={currentReservation} ref={componentRef} />
+        </div>
+      )}
+
       <Dialog
         open={PNRDialog}
         TransitionComponent={Transition}
@@ -842,6 +855,10 @@ export default function Dashboard() {
             </Toolbar>
           </AppBar>
           <List className={classes.reservationViewDialog}>
+            <ListItem>
+              <ListItemText primary="PNR" secondary={currentReservation.pnr} />
+            </ListItem>
+            <Divider />
             <ListItem button>
               <ListItemText
                 primary="Passengers"
@@ -861,7 +878,14 @@ export default function Dashboard() {
                           }`}</Typography>
                         );
                       })
-                    : currentReservation.passengers.length
+                    : currentReservation.passengers.map((data, index) => {
+                        return (
+                          `${index + 1}: ${data.firstName} ${data.lastName}` +
+                          (index === currentReservation.passengers.length - 1
+                            ? ""
+                            : "---")
+                        );
+                      })
                 }
               />
             </ListItem>
@@ -1086,13 +1110,6 @@ export default function Dashboard() {
               </List>
             </Collapse>
             <Divider />
-            <ListItem>
-              <ListItemText
-                primary="PNR"
-                secondary={currentReservation.pnr}
-              />
-            </ListItem>
-            <Divider />
           </List>
         </Dialog>
       )}
@@ -1157,10 +1174,7 @@ export default function Dashboard() {
                 setPrivilegeOpen(!privilegeOpen);
               }}
             >
-              <ListItemText
-                primary="Status"
-                secondary={currentReservation.status}
-              />
+              <ListItemText primary="Status" secondary={userPrivilege} />
               {privilegeOpen ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse in={privilegeOpen} timeout="auto" unmountOnExit>
@@ -1173,7 +1187,7 @@ export default function Dashboard() {
                     axios
                       .post("/api/user/privilege", {
                         email: currentUser.email,
-                        status: 0,
+                        privilege: 0,
                       })
                       .then(function (response) {
                         var temp = users;
@@ -1199,7 +1213,7 @@ export default function Dashboard() {
                     axios
                       .post("/api/user/privilege", {
                         email: currentUser.email,
-                        status: 1,
+                        privilege: 1,
                       })
                       .then(function (response) {
                         var temp = users;
@@ -1225,7 +1239,7 @@ export default function Dashboard() {
                     axios
                       .post("/api/user/privilege", {
                         email: currentUser.email,
-                        status: 2,
+                        privilege: 2,
                       })
                       .then(function (response) {
                         var temp = users;
@@ -1251,7 +1265,7 @@ export default function Dashboard() {
                     axios
                       .post("/api/user/privilege", {
                         email: currentUser.email,
-                        status: 3,
+                        privilege: 3,
                       })
                       .then(function (response) {
                         var temp = users;
@@ -1277,7 +1291,7 @@ export default function Dashboard() {
                     axios
                       .post("/api/user/privilege", {
                         email: currentUser.email,
-                        status: 4,
+                        privilege: 4,
                       })
                       .then(function (response) {
                         var temp = users;
@@ -1303,7 +1317,7 @@ export default function Dashboard() {
                     axios
                       .post("/api/user/privilege", {
                         email: currentUser.email,
-                        status: 5,
+                        privilege: 5,
                       })
                       .then(function (response) {
                         var temp = users;
@@ -1329,7 +1343,7 @@ export default function Dashboard() {
                     axios
                       .post("/api/user/privilege", {
                         email: currentUser.email,
-                        status: 6,
+                        privilege: 6,
                       })
                       .then(function (response) {
                         var temp = users;

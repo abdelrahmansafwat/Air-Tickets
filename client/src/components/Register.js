@@ -268,7 +268,7 @@ export default function SignUp() {
                               firstName,
                               lastName,
                               phone,
-                              privelege: 1
+                              privilege: 1
                             })
                             .then(function (response) {
                               console.log(response);
