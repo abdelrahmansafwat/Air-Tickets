@@ -159,12 +159,6 @@ export default function SignIn() {
                     autoComplete="current-password"
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={<Checkbox value="remember" color="primary" />}
-                    label="Remember me"
-                  />
-                </Grid>
                 <Grid
                   container
                   direction={"row"}

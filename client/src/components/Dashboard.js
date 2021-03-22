@@ -410,22 +410,83 @@ export default function Dashboard() {
     {
       name: "firstName",
       label: "First Name",
+      options: {
+        searchable: false,
+        filter: false,
+      },
     },
     {
       name: "lastName",
       label: "Last Name",
+      options: {
+        searchable: false,
+        filter: false,
+      },
     },
     {
       name: "email",
       label: "Email",
+      options: {
+        filter: false,
+      },
     },
     {
       name: "phone",
       label: "Phone",
+      options: {
+        filter: false,
+      },
     },
     {
       name: "privilege",
       label: "Privilege",
+    },
+    {
+      name: "deleteButton",
+      label: "Delete",
+      options: {
+        sort: false,
+        searchable: false,
+        filter: false,
+        display: privilege == 6,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          //console.log(params.row.viewButton);
+          //var index = params.row.id;
+
+          return (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={async () => {
+                var user = users[dataIndex];
+                var allusers = users;
+                axios
+                  .post("/api/user/delete", {
+                    _id: user._id,
+                  })
+                  .then(function (response) {
+                    console.log(response);
+                    console.log(allusers.length);
+                    allusers.splice(dataIndex, 1);
+                    console.log(allusers.length);
+                    setUsers(allusers);
+                    setRefresh(!refresh);
+                    //history.push("/dashboard");
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                    if (error) {
+                      setErrorMessage("An error occured. Please try again.");
+                      setAuthError(true);
+                    }
+                  });
+              }}
+            >
+              Delete
+            </Button>
+          );
+        },
+      },
     },
   ];
 
@@ -663,7 +724,7 @@ export default function Dashboard() {
                   button
                   onClick={() => {
                     getAllUsers();
-                    setUsersTable(true);
+                    setUsersTable(!usersTable);
                   }}
                 >
                   <ListItemIcon>
@@ -675,7 +736,12 @@ export default function Dashboard() {
                   />
                 </ListItem>
               )}
-              <ListItem button>
+              <ListItem
+                button
+                onClick={() => {
+                  setUserDialog(true);
+                }}
+              >
                 <ListItemIcon>
                   <AccountCircleIcon />
                 </ListItemIcon>
@@ -710,6 +776,8 @@ export default function Dashboard() {
                   data={reservations}
                   columns={reservationsColumns}
                   options={{
+                    selectableRows: privilege == 6 ? "multiple" : "none",
+                    selectableRowsHeader: privilege == 6,
                     onCellClick: (rowData, cellMeta) => {
                       if (cellMeta.colIndex <= 4) {
                         console.log(cellMeta.rowIndex);
@@ -723,6 +791,35 @@ export default function Dashboard() {
                         setReservationViewDialog(true);
                       }
                     },
+                    onRowsDelete: (rowsDeleted, data, newTableData) => {
+                      console.log(rowsDeleted);
+                      rowsDeleted.data.map(async (data) => {
+                        var reservation = reservations[data.dataIndex];
+                        var allreservations = reservations;
+                        await axios
+                          .post("/api/reservation/delete", {
+                            _id: reservation._id,
+                          })
+                          .then(function (response) {
+                            console.log(response);
+                            console.log(allreservations.length);
+                            allreservations.splice(data.dataIndex, 1);
+                            console.log(allreservations.length);
+                            setReservations(allreservations);
+                            //history.push("/dashboard");
+                          })
+                          .catch(function (error) {
+                            console.log(error);
+                            if (error) {
+                              setErrorMessage(
+                                "An error occured. Please try again."
+                              );
+                              setAuthError(true);
+                            }
+                          });
+                      });
+                      setRefresh(!refresh);
+                    },
                   }}
                 />
               )}
@@ -732,6 +829,8 @@ export default function Dashboard() {
                   data={users}
                   columns={usersColumns}
                   options={{
+                    selectableRows: privilege == 6 ? "multiple" : "none",
+                    selectableRowsHeader: privilege == 6,
                     onCellClick: (rowData, cellMeta) => {
                       if (cellMeta.colIndex <= 4) {
                         console.log(cellMeta.rowIndex);
@@ -743,6 +842,35 @@ export default function Dashboard() {
                         setUserViewDialog(true);
                       }
                     },
+                    onRowsDelete: (rowsDeleted, data, newTableData) => {
+                      console.log(rowsDeleted);
+                      rowsDeleted.data.map(async (data) => {
+                        var user = users[data.dataIndex];
+                        var allusers = users;
+                        await axios
+                          .post("/api/user/delete", {
+                            _id: user._id,
+                          })
+                          .then(function (response) {
+                            console.log(response);
+                            console.log(allusers.length);
+                            allusers.splice(data.dataIndex, 1);
+                            console.log(allusers.length);
+                            setUsers(allusers);
+                            //history.push("/dashboard");
+                          })
+                          .catch(function (error) {
+                            console.log(error);
+                            if (error) {
+                              setErrorMessage(
+                                "An error occured. Please try again."
+                              );
+                              setAuthError(true);
+                            }
+                          });
+                      });
+                      setRefresh(!refresh);
+                    },
                   }}
                 />
               )}
@@ -750,11 +878,6 @@ export default function Dashboard() {
           </Container>
         </main>
       </div>
-      {currentReservation !== "" && (
-        <div style={{ display: "none" }}>
-          <Print reservation={currentReservation} ref={componentRef} />
-        </div>
-      )}
 
       <Dialog
         open={PNRDialog}
@@ -880,12 +1003,31 @@ export default function Dashboard() {
                       })
                     : currentReservation.passengers.map((data, index) => {
                         return (
-                          `${index + 1}: ${data.firstName} ${data.lastName}` +
+                          `${index + 1}. ${data.firstName} ${data.lastName}` +
                           (index === currentReservation.passengers.length - 1
                             ? ""
                             : "---")
                         );
                       })
+                }
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="Departure Airline"
+                secondary={
+                  currentReservation.selectedGoingTicket[0].planeCode.substring(
+                    0,
+                    2
+                  ) === "BG"
+                    ? "Biman Airlines"
+                    : currentReservation.selectedGoingTicket[0].planeCode.substring(
+                        0,
+                        2
+                      ) === "BS"
+                    ? "US Bangla"
+                    : "Novo Air"
                 }
               />
             </ListItem>
@@ -930,7 +1072,28 @@ export default function Dashboard() {
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Arrival Flight Code"
+                primary="Return Airline"
+                secondary={
+                  currentReservation.oneWay
+                    ? "N/A"
+                    : currentReservation.selectedReturningTicket[0].planeCode.substring(
+                        0,
+                        2
+                      ) === "BG"
+                    ? "Biman Airlines"
+                    : currentReservation.selectedReturningTicket[0].planeCode.substring(
+                        0,
+                        2
+                      ) === "BS"
+                    ? "US Bangla"
+                    : "Novo Air"
+                }
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary="Return Flight Code"
                 secondary={
                   currentReservation.oneWay
                     ? "N/A"
@@ -944,7 +1107,7 @@ export default function Dashboard() {
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Arrival Date"
+                primary="Return Date"
                 secondary={
                   currentReservation.oneWay
                     ? "N/A"
@@ -1442,7 +1605,6 @@ export default function Dashboard() {
               type="submit"
               variant="contained"
               color="primary"
-              classes={CustomButton}
               onClick={() => {
                 axios.create({ baseURL: window.location.origin });
                 axios
