@@ -5,6 +5,7 @@ const app = express();
 const airport = require("./routes/airport")
 const reservation = require("./routes/reservation")
 const user = require("./routes/user")
+const coupon = require("./routes/coupon")
 const path = require("path");
 
 app.use(express.urlencoded({extended: true}));
@@ -17,6 +18,7 @@ app.use(express.static("public"));
 app.use('/api/airport', airport);     //Route for all airport related functions
 app.use('/api/reservation', reservation);     //Route for all reservation related functions
 app.use('/api/user', user);     //Route for all user related functions
+app.use('/api/coupon', coupon);     //Route for all coupon related functions
 
 //For sending frontend
 app.get('*', async (req, res) => {

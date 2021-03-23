@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 //import clsx from "clsx";
@@ -49,9 +50,11 @@ import {
 } from "@material-ui/icons";
 import { CustomSwitchStyles } from "./CustomSwitch";
 import { CustomButtonStyles } from "./CustomButton";
-import DateFnsUtils from "@date-io/date-fns";
 //import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import _ from "underscore";
 import { exchange } from "exchangify";
 import BG from "../resources/BG.png";
@@ -61,6 +64,12 @@ import logo from "../resources/logo.png";
 import logoText from "../resources/logo-w-text.png";
 import history from "../history";
 import ReserveForm from "./ReserveForm";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("UTC");
+
+import DayjsUtils from "@date-io/dayjs";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -190,8 +199,8 @@ function SearchForm() {
   //const [arrivalAirport, setArrivalAirport] = useState("");
   const [selectedArrivalAirport, setSelectedArrivalAirport] = useState("");
   const [retrievedAirports, setRetrievedAirports] = useState([]);
-  const [departureDate, setDepartureDate] = useState(new Date());
-  const [arrivalDate, setArrivalDate] = useState(new Date());
+  const [departureDate, setDepartureDate] = useState(dayjs());
+  const [arrivalDate, setArrivalDate] = useState(dayjs());
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
@@ -805,7 +814,7 @@ function SearchForm() {
                   />
                 </Grid>
                 <Grid item>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <MuiPickersUtilsProvider utils={DayjsUtils}>
                     <DatePicker
                       disableToolbar
                       classes={{ root: classes.textField }}
@@ -835,7 +844,7 @@ function SearchForm() {
                   </MuiPickersUtilsProvider>
                 </Grid>
                 <Grid item>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <MuiPickersUtilsProvider utils={DayjsUtils}>
                     <DatePicker
                       disableToolbar
                       classes={{ root: classes.textField }}
@@ -1201,12 +1210,12 @@ function SearchForm() {
                         ? selectedDepartureAirport.cityName + " "
                         : selectedArrivalAirport.cityName + " "}
                       {secondPage
-                        ? arrivalDate.toDateString().substring(4, 10) +
+                        ? arrivalDate.toDate().toDateString().substring(4, 10) +
                           "," +
-                          arrivalDate.toDateString().substring(10, 15)
-                        : departureDate.toDateString().substring(4, 10) +
+                          arrivalDate.toDate().toDateString().substring(10, 15)
+                        : departureDate.toDate().toDateString().substring(4, 10) +
                           "," +
-                          departureDate.toDateString().substring(10, 15)}
+                          departureDate.toDate().toDateString().substring(10, 15)}
                     </Typography>
                     {oneWay && !(selectedGoingTicket === "") && (
                       <Button
@@ -1349,7 +1358,7 @@ function SearchForm() {
                                     {data.planeCode.replace("-", "")}
                                   </Typography>
                                   <Typography style={{ textAlign: "center" }}>
-                                    {departureDate.toLocaleDateString()}
+                                    {departureDate.toDate().toLocaleDateString()}
                                   </Typography>
                                 </Grid>
                                 <Grid xs={4} container direction={"column"}>
@@ -1498,7 +1507,7 @@ function SearchForm() {
                                   )}
                                 </Typography>
                                 <Typography style={{ textAlign: "center" }}>
-                                  {departureDate.toLocaleDateString()}
+                                  {departureDate.toDate().toLocaleDateString()}
                                 </Typography>
                               </Grid>
                               <Grid xs={4} container direction={"column"}>
@@ -1666,7 +1675,7 @@ function SearchForm() {
                                     {data.planeCode.replace("-", "")}
                                   </Typography>
                                   <Typography style={{ textAlign: "center" }}>
-                                    {arrivalDate.toLocaleDateString()}
+                                    {arrivalDate.toDate().toLocaleDateString()}
                                   </Typography>
                                 </Grid>
                                 <Grid xs={4} container direction={"column"}>
