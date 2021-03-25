@@ -41,7 +41,7 @@ router.post("/add", async (req, res) => {
 
   couponModel.findOne({ code: req.body.code }, function (err, docs) {
     //console.log("Checking if email exists...");
-    if (docs.length) {
+    if (docs) {
       exists = true;
 
       res.status(409).json({

@@ -879,7 +879,7 @@ export default function Dashboard() {
           <Divider />
           <List>
             <div>
-              <ListItem
+              { privilege == 6 && <ListItem
                 button
                 onClick={() => {
                   setCode("");
@@ -893,15 +893,15 @@ export default function Dashboard() {
               >
                 <ListItemIcon>
                   <AddCircleIcon />
-                </ListItemIcon>
+                </ListItemIcon> 
                 <ListItemText primary="Add Coupon" />
-              </ListItem>
+              </ListItem> }
               <ListItem button>
                 <ListItemIcon>
                   <RefreshIcon />
                 </ListItemIcon>
                 <ListItemText primary="Refresh" />
-              </ListItem>
+              </ListItem> 
             </div>
           </List>
           <Divider />
