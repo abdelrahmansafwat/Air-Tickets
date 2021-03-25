@@ -2039,7 +2039,7 @@ export default function Dashboard() {
                   expiration,
                   fixed,
                   value,
-                  ...(addOrUpdate ? { _id: couponId } : {}),
+                  ...(addOrUpdate ? {} : { _id: couponId }),
                 })
                 .then(function (response) {
                   console.log(response);
