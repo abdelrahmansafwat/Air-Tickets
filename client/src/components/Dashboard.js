@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 import React, { useState, useRef } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
@@ -49,7 +50,6 @@ import Chip from "@material-ui/core/Chip";
 import Checkbox from "@material-ui/core/Checkbox";
 import history from "../history";
 import CloseIcon from "@material-ui/icons/Close";
-import GavelIcon from "@material-ui/icons/Gavel";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import DateFnsUtils from "@date-io/date-fns";
@@ -57,6 +57,7 @@ import { CustomButtonStyles } from "./CustomButton";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
+  DatePicker,
 } from "@material-ui/pickers";
 import { ThemeProvider } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -66,6 +67,13 @@ import { pdf } from "@react-pdf/renderer";
 import ReactToPrint from "react-to-print";
 import { saveAs } from "file-saver";
 const axios = require("axios");
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("UTC");
+import DayjsUtils from "@date-io/dayjs";
 
 const light = {
   palette: {
@@ -194,10 +202,12 @@ export default function Dashboard() {
   const [ready, setReady] = useState(false);
   //const [privilege, setPrivilege] = useState(3);
   const [reservations, setReservations] = useState([]);
+  const [coupons, setCoupons] = useState([]);
   const [constructorHasRun, setConstructorHasRun] = useState(false);
   const [currentReservation, setCurrentReservation] = useState("");
   const [reservationViewDialog, setReservationViewDialog] = useState(false);
   const [userDialog, setUserDialog] = useState(false);
+  const [couponDialog, setCouponDialog] = useState(false);
   const [showPassengers, setShowPassengers] = useState(false);
   const [reservationStatus, setReservationStatus] = useState("");
   const [statusOpen, setStatusOpen] = React.useState(false);
@@ -210,17 +220,34 @@ export default function Dashboard() {
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const [privilege, setprivilege] = useState(localStorage.getItem("privilege"));
   const [currentUser, setCurrentUser] = useState("");
+  const [currentCoupon, setCurrentCoupon] = useState("");
   const [userPrivilege, setUserPrivilege] = useState("");
   const [userViewDialog, setUserViewDialog] = useState(false);
   const [users, setUsers] = useState([]);
-  const [usersTable, setUsersTable] = useState(false);
+  const [mode, setMode] = useState("reservations");
   const [authError, setAuthError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [pnr, setPNR] = useState("");
   const [PNRDialog, setPNRDialog] = useState("");
-  const componentRef = useRef();
+  const [code, setCode] = useState("");
+  const [expiration, setExpiration] = useState(dayjs());
+  const [fixed, setFixed] = useState(true);
+  const [value, setValue] = useState(true);
+  const [addOrUpdate, setAddOrUpdate] = useState(true);
+  const [couponId, setCouponId] = useState("");
 
   const CustomButton = CustomButtonStyles({ chubby: true });
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -490,6 +517,128 @@ export default function Dashboard() {
     },
   ];
 
+  const couponsColumns = [
+    {
+      name: "id",
+      label: "ID",
+      options: {
+        searchable: false,
+        filter: false,
+        display: false,
+      },
+    },
+    {
+      name: "code",
+      label: "Code",
+      options: {
+        filter: false,
+      },
+    },
+    {
+      name: "expiration",
+      label: "Expiration",
+      options: {
+        searchable: false,
+        filter: false,
+      },
+    },
+    {
+      name: "type",
+      label: "Type",
+      options: {
+        searchable: false,
+      },
+    },
+    {
+      name: "value",
+      label: "Value",
+      options: {
+        searchable: false,
+        filter: false,
+      },
+    },
+    {
+      name: "deleteButton",
+      label: "Delete",
+      options: {
+        sort: false,
+        searchable: false,
+        filter: false,
+        display: privilege == 6,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          //console.log(params.row.viewButton);
+          //var index = params.row.id;
+
+          return (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={async () => {
+                var coupon = coupons[dataIndex];
+                var allcoupons = coupons;
+                axios
+                  .post("/api/coupon/delete", {
+                    _id: coupon._id,
+                  })
+                  .then(function (response) {
+                    console.log(response);
+                    console.log(allcoupons.length);
+                    allcoupons.splice(dataIndex, 1);
+                    console.log(allcoupons.length);
+                    setCoupons(allcoupons);
+                    setRefresh(!refresh);
+                    //history.push("/dashboard");
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                    if (error) {
+                      setErrorMessage("An error occured. Please try again.");
+                      setAuthError(true);
+                    }
+                  });
+              }}
+            >
+              Delete
+            </Button>
+          );
+        },
+      },
+    },
+    {
+      name: "updateButton",
+      label: "Update",
+      options: {
+        sort: false,
+        searchable: false,
+        filter: false,
+        display: privilege == 6,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          //console.log(params.row.viewButton);
+          //var index = params.row.id;
+
+          return (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={async () => {
+                var coupon = coupons[dataIndex];
+                setCode(coupon.code);
+                setCouponId(coupon._id);
+                setExpiration(coupon.expiration);
+                setValue(coupon.value);
+                setFixed(coupon.fixed);
+                setCouponDialog(true);
+                setAddOrUpdate(false);
+              }}
+            >
+              Update
+            </Button>
+          );
+        },
+      },
+    },
+  ];
+
   const getAllReservations = async () => {
     //console.log(history.location.state.privilege);
     var loggedIn = localStorage.getItem("token");
@@ -647,6 +796,28 @@ export default function Dashboard() {
     setReady(true);
   };
 
+  const getAllCoupons = async () => {
+    //console.log(history.location.state.privilege);
+    setReady(false);
+    await axios
+      .get("/api/coupon/all")
+      .then(function (response) {
+        var coupons = response.data.coupons;
+        coupons.forEach((value, index) => {
+          coupons[index].id = index + 1;
+          coupons[index].type = coupons[index].fixed ? "Fixed" : "Percentage";
+        });
+        console.log(coupons);
+        setCoupons(coupons);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setAuthError(true);
+        setErrorMessage("An error occured. Please try again.");
+      });
+    setReady(true);
+  };
+
   const constructor = async () => {
     if (constructorHasRun) return;
     setConstructorHasRun(true);
@@ -708,6 +879,23 @@ export default function Dashboard() {
           <Divider />
           <List>
             <div>
+              <ListItem
+                button
+                onClick={() => {
+                  setCode("");
+                  setCouponId("");
+                  setExpiration(dayjs());
+                  setValue("");
+                  setFixed(true);
+                  setCouponDialog(true);
+                  setAddOrUpdate(true);
+                }}
+              >
+                <ListItemIcon>
+                  <AddCircleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Add Coupon" />
+              </ListItem>
               <ListItem button>
                 <ListItemIcon>
                   <RefreshIcon />
@@ -724,16 +912,41 @@ export default function Dashboard() {
                   button
                   onClick={() => {
                     getAllUsers();
-                    setUsersTable(!usersTable);
+                    setMode("users");
                   }}
                 >
                   <ListItemIcon>
-                    {!usersTable && <SupervisorAccountIcon />}
-                    {usersTable && <FlightIcon />}
+                    <SupervisorAccountIcon />
                   </ListItemIcon>
-                  <ListItemText
-                    primary={usersTable ? "Reservations" : "All Users"}
-                  />
+                  <ListItemText primary="All Users" />
+                </ListItem>
+              )}
+              {localStorage.getItem("privilege") == 6 && (
+                <ListItem
+                  button
+                  onClick={() => {
+                    getAllReservations();
+                    setMode("reservations");
+                  }}
+                >
+                  <ListItemIcon>
+                    <FlightIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="All Reservations" />
+                </ListItem>
+              )}
+              {localStorage.getItem("privilege") == 6 && (
+                <ListItem
+                  button
+                  onClick={() => {
+                    getAllCoupons();
+                    setMode("coupons");
+                  }}
+                >
+                  <ListItemIcon>
+                    <LocalOfferIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="All Coupons" />
                 </ListItem>
               )}
               <ListItem
@@ -770,7 +983,7 @@ export default function Dashboard() {
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
             <Paper className={classes.paper}>
-              {!usersTable && (
+              {mode === "reservations" && (
                 <MUIDataTable
                   title={"Reservations"}
                   data={reservations}
@@ -823,7 +1036,7 @@ export default function Dashboard() {
                   }}
                 />
               )}
-              {usersTable && (
+              {mode === "users" && (
                 <MUIDataTable
                   title={"Users"}
                   data={users}
@@ -874,11 +1087,60 @@ export default function Dashboard() {
                   }}
                 />
               )}
+              {mode === "coupons" && (
+                <MUIDataTable
+                  title={"Coupons"}
+                  data={coupons}
+                  columns={couponsColumns}
+                  options={{
+                    selectableRows: privilege == 6 ? "multiple" : "none",
+                    selectableRowsHeader: privilege == 6,
+                    onCellClick: (rowData, cellMeta) => {
+                      if (cellMeta.colIndex <= 4) {
+                        console.log(cellMeta.rowIndex);
+                        console.log(cellMeta.dataIndex);
+                        console.log(rowData);
+                        console.log(coupons[cellMeta.dataIndex]);
+                        setCurrentCoupon(coupons[cellMeta.dataIndex]);
+                        setCouponDialog(true);
+                      }
+                    },
+                    onRowsDelete: (rowsDeleted, data, newTableData) => {
+                      console.log(rowsDeleted);
+                      rowsDeleted.data.map(async (data) => {
+                        var coupon = coupons[data.dataIndex];
+                        var allcoupons = coupons;
+                        await axios
+                          .post("/api/user/delete", {
+                            _id: coupon._id,
+                          })
+                          .then(function (response) {
+                            console.log(response);
+                            console.log(allcoupons.length);
+                            coupons.splice(data.dataIndex, 1);
+                            console.log(coupons.length);
+                            setCoupons(coupons);
+                            //history.push("/dashboard");
+                          })
+                          .catch(function (error) {
+                            console.log(error);
+                            if (error) {
+                              setErrorMessage(
+                                "An error occured. Please try again."
+                              );
+                              setAuthError(true);
+                            }
+                          });
+                      });
+                      setRefresh(!refresh);
+                    },
+                  }}
+                />
+              )}
             </Paper>
           </Container>
         </main>
       </div>
-
       <Dialog
         open={PNRDialog}
         TransitionComponent={Transition}
@@ -1276,7 +1538,6 @@ export default function Dashboard() {
           </List>
         </Dialog>
       )}
-
       {ready && users.length > 0 && (
         <Dialog
           fullScreen
@@ -1530,7 +1791,6 @@ export default function Dashboard() {
           </List>
         </Dialog>
       )}
-
       <Dialog
         open={userDialog}
         onClose={() => setUserDialog(false)}
@@ -1651,6 +1911,153 @@ export default function Dashboard() {
         <DialogActions>
           <Button onClick={() => setAuthError(false)} color="primary">
             Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={couponDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => {
+          setCode("");
+          setCouponId("");
+          setExpiration(dayjs());
+          setValue("");
+          setFixed(true);
+          setCouponDialog(false);
+          setAddOrUpdate(true);
+        }}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">
+          {(addOrUpdate ? "Add" : "Update") + " Coupon"}
+        </DialogTitle>
+        <DialogContent>
+          <Grid container direction={"column"} spacing={1}>
+            <Grid item>
+              <TextField
+                autoComplete="code"
+                name="code"
+                variant="outlined"
+                required
+                fullWidth
+                id="code"
+                label="Code"
+                autoFocus
+                onChange={(e) => {
+                  setCode(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item>
+              <MuiPickersUtilsProvider utils={DayjsUtils}>
+                <DatePicker
+                  disableToolbar
+                  classes={{ root: classes.textField }}
+                  fullWidth
+                  variant="outlined"
+                  margin="normal"
+                  id="date"
+                  label="Expiration"
+                  disablePast
+                  autoOk
+                  value={expiration}
+                  onChange={(date) => {
+                    setExpiration(date);
+                  }}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+            </Grid>
+            <Grid item>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel id="demo-simple-select-outlined-label">
+                  Type
+                </InputLabel>
+                <Select
+                  labelId="demo-mutiple-chip-label"
+                  id="demo-mutiple-chip"
+                  value={fixed}
+                  onChange={(selected) => {
+                    //var newSelectedTags = tags;
+                    //newSelectedTags.push(selected.target.value);
+                    setFixed(selected.target.value);
+                  }}
+                  input={<Input id="select-multiple-chip" />}
+                  MenuProps={MenuProps}
+                >
+                  <MenuItem key={"fixed"} value={true}>
+                    <ListItemText primary={"Fixed"} />
+                  </MenuItem>
+                  <MenuItem key={"percentage"} value={false}>
+                    <ListItemText primary={"Percentage"} />
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <TextField
+                autoComplete="value"
+                name="value"
+                variant="outlined"
+                required
+                fullWidth
+                id="value"
+                label="Value"
+                autoFocus
+                onChange={(e) => {
+                  setValue(e.target.value);
+                }}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setCode("");
+              setCouponId("");
+              setExpiration(dayjs());
+              setValue("");
+              setFixed(true);
+              setCouponDialog(false);
+              setAddOrUpdate(true);
+            }}
+            variant="contained"
+          >
+            Close
+          </Button>
+          <Button
+            onClick={() => {
+              axios.create({ baseURL: window.location.origin });
+              axios
+                .post("/api/coupon/" + (addOrUpdate ? "add" : "update"), {
+                  code,
+                  expiration,
+                  fixed,
+                  value,
+                  ...(addOrUpdate ? { _id: couponId } : {}),
+                })
+                .then(function (response) {
+                  console.log(response);
+                  setCouponDialog(false);
+                })
+                .catch(function (error) {
+                  console.log(error);
+                  if (error) {
+                    setCouponDialog(false);
+                    setErrorMessage("An error occured. Please try again.");
+                    setAuthError(true);
+                  }
+                });
+            }}
+            color="primary"
+            variant="contained"
+          >
+            {"Submit"}
           </Button>
         </DialogActions>
       </Dialog>
