@@ -236,7 +236,7 @@ export default function Dashboard() {
   const [addOrUpdate, setAddOrUpdate] = useState(true);
   const [couponId, setCouponId] = useState("");
   const [messageDialog, setMessageDialog] = useState(false);
-  const [toBeDeleted, setToBeDeleted] = useState(false);
+  const [toBeDeleted, setToBeDeleted] = useState("");
   const [toBeDeletedId, setToBeDeletedId] = useState("");
   const [toBeDeletedIndex, setToBeDeletedIndex] = useState("");
 
@@ -2040,7 +2040,7 @@ export default function Dashboard() {
         <DialogTitle id="alert-dialog-slide-title">{"Confirm"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            {"Are you sure you want to delete this " + { toBeDeleted } + "?"}
+            {"Are you sure you want to delete this " + toBeDeleted + "?"}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -2081,6 +2081,7 @@ export default function Dashboard() {
                   setToBeDeleted("");
                   setToBeDeletedId("");
                   setToBeDeletedIndex("");
+                  setMessageDialog(false);
                   //history.push("/dashboard");
                 })
                 .catch(function (error) {
@@ -2088,6 +2089,7 @@ export default function Dashboard() {
                   if (error) {
                     setErrorMessage("An error occured. Please try again.");
                     setAuthError(true);
+                    setMessageDialog(false);
                   }
                 });
             }}
