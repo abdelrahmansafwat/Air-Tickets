@@ -17,6 +17,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { CustomButtonStyles } from "./CustomButton";
 import history from "../history";
 const axios = require("axios");
@@ -80,6 +81,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
   },
+  passengerIcons: {
+    color: "#2193b0",
+    width: "100px",
+    height: "100px",
+  },
 }));
 
 export default function SignUp() {
@@ -89,6 +95,7 @@ export default function SignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
+  const [success, setSuccess] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [firstNameError, setFirstNameError] = useState(false);
@@ -268,11 +275,10 @@ export default function SignUp() {
                               firstName,
                               lastName,
                               phone,
-                              privilege: 1
+                              privilege: 1,
                             })
                             .then(function (response) {
-                              console.log(response);
-                              history.push({ pathname: "/dashboard" });
+                              setSuccess(true);
                             })
                             .catch(function (error) {
                               console.log(error);
@@ -319,6 +325,39 @@ export default function SignUp() {
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={() => setAuthError(false)} color="primary">
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+                <Dialog
+                  open={success}
+                  TransitionComponent={Transition}
+                  keepMounted
+                  onClose={() => setSuccess(false)}
+                  aria-labelledby="alert-dialog-slide-title"
+                  aria-describedby="alert-dialog-slide-description"
+                >
+                  <DialogTitle id="alert-dialog-slide-title">
+                    {"Success"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <Grid
+                      container
+                      className={classes.oneWayGrid}
+                      direction={"column"}
+                    >
+                      <Grid xs={1} item></Grid>
+                      <Grid xs={10} item>
+                        <CheckCircleIcon className={classes.passengerIcons} />
+                        <Typography style={{ textAlign: "center" }}>
+                          Success!
+                        </Typography>
+                      </Grid>
+                      <Grid xs={1} item></Grid>
+                    </Grid>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => history.push("/login")} color="primary">
                       Close
                     </Button>
                   </DialogActions>

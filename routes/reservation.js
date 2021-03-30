@@ -176,7 +176,22 @@ router.post("/reserve", async (req, res) => {
       console.log(error);
     });
 
+  var ref = Math.floor(Math.random() * 1000000);
+  var duplicate = true;
+
+  while(duplicate){
+    await reservationModel.find({ ref: ref }, function (err, docs) {
+      //console.log("Checking if email exists...");
+      if (docs.length) {
+        ref = Math.floor(Math.random() * 1000000);
+      } else {
+        duplicate = false;
+      }
+    });
+  }
+
   let newReservation = new reservationModel({
+    ref: ref,
     email: req.body.email,
     passengers: req.body.passengers,
     selectedGoingTicket: req.body.selectedGoingTicket,
@@ -206,9 +221,33 @@ router.post("/reserve", async (req, res) => {
   });
 });
 
+//Validate route
+router.post("/validate", async (req, res) => {
+  console.log(req.body);
+
+  await sslcommerz
+    .validate_transaction_order(req.body.validation_id)
+    .then(function(response) {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
+
 //Reserve success route
 router.post("/reserve/success", async (req, res) => {
   console.log(req.body);
+
+  await sslcommerz
+    .validate_transaction_order(req.body.val_id)
+    .then(function(response) {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
   reservationModel.findOneAndUpdate(
     { reservationId: req.body.tran_id },
     {

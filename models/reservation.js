@@ -22,7 +22,7 @@ let reservationSchema = new Schema({
     pnr: { type: String },
 });
 
-reservationSchema.plugin(AutoIncrement, {inc_field: 'ref', start_seq: 1});
+//reservationSchema.plugin(AutoIncrement, {inc_field: 'ref', start_seq: 1});
 
 let reservationModel = mongoose.model("reservation", reservationSchema);
 

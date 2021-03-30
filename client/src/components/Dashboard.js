@@ -235,6 +235,10 @@ export default function Dashboard() {
   const [value, setValue] = useState(true);
   const [addOrUpdate, setAddOrUpdate] = useState(true);
   const [couponId, setCouponId] = useState("");
+  const [messageDialog, setMessageDialog] = useState(false);
+  const [toBeDeleted, setToBeDeleted] = useState(false);
+  const [toBeDeletedId, setToBeDeletedId] = useState("");
+  const [toBeDeletedIndex, setToBeDeletedIndex] = useState("");
 
   const CustomButton = CustomButtonStyles({ chubby: true });
 
@@ -284,7 +288,7 @@ export default function Dashboard() {
       label: "PNR",
     },
     {
-      name: "status",
+      name: "formattedStatus",
       label: "Status",
     },
     {
@@ -308,28 +312,10 @@ export default function Dashboard() {
               variant="contained"
               color="secondary"
               onClick={async () => {
-                var reservation = reservations[dataIndex];
-                var allreservations = reservations;
-                axios
-                  .post("/api/reservation/delete", {
-                    _id: reservation._id,
-                  })
-                  .then(function (response) {
-                    console.log(response);
-                    console.log(allreservations.length);
-                    allreservations.splice(dataIndex, 1);
-                    console.log(allreservations.length);
-                    setReservations(allreservations);
-                    setRefresh(!refresh);
-                    //history.push("/dashboard");
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                    if (error) {
-                      setErrorMessage("An error occured. Please try again.");
-                      setAuthError(true);
-                    }
-                  });
+                setMessageDialog(true);
+                setToBeDeletedIndex(dataIndex);
+                setToBeDeleted("reservation");
+                setToBeDeletedId(reservations[dataIndex]._id);
               }}
             >
               Delete
@@ -485,28 +471,10 @@ export default function Dashboard() {
               variant="contained"
               color="secondary"
               onClick={async () => {
-                var user = users[dataIndex];
-                var allusers = users;
-                axios
-                  .post("/api/user/delete", {
-                    _id: user._id,
-                  })
-                  .then(function (response) {
-                    console.log(response);
-                    console.log(allusers.length);
-                    allusers.splice(dataIndex, 1);
-                    console.log(allusers.length);
-                    setUsers(allusers);
-                    setRefresh(!refresh);
-                    //history.push("/dashboard");
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                    if (error) {
-                      setErrorMessage("An error occured. Please try again.");
-                      setAuthError(true);
-                    }
-                  });
+                setMessageDialog(true);
+                setToBeDeletedIndex(dataIndex);
+                setToBeDeleted("user");
+                setToBeDeletedId(users[dataIndex]._id);
               }}
             >
               Delete
@@ -574,28 +542,10 @@ export default function Dashboard() {
               variant="contained"
               color="secondary"
               onClick={async () => {
-                var coupon = coupons[dataIndex];
-                var allcoupons = coupons;
-                axios
-                  .post("/api/coupon/delete", {
-                    _id: coupon._id,
-                  })
-                  .then(function (response) {
-                    console.log(response);
-                    console.log(allcoupons.length);
-                    allcoupons.splice(dataIndex, 1);
-                    console.log(allcoupons.length);
-                    setCoupons(allcoupons);
-                    setRefresh(!refresh);
-                    //history.push("/dashboard");
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                    if (error) {
-                      setErrorMessage("An error occured. Please try again.");
-                      setAuthError(true);
-                    }
-                  });
+                setMessageDialog(true);
+                setToBeDeletedIndex(dataIndex);
+                setToBeDeleted("coupon");
+                setToBeDeletedId(coupons[dataIndex]._id);
               }}
             >
               Delete
@@ -639,6 +589,20 @@ export default function Dashboard() {
     },
   ];
 
+  const formatStatus = (status) => {
+    var formattedStatus = "";
+    for (var i = 0; i < status.length; i++) {
+      if (i === 0) {
+        formattedStatus += status.charAt(i).toUpperCase();
+      } else if (status.charAt(i) === status.charAt(i).toUpperCase()) {
+        formattedStatus = formattedStatus + " " + status.charAt(i);
+      } else {
+        formattedStatus += status.charAt(i);
+      }
+    }
+    return formattedStatus;
+  };
+
   const getAllReservations = async () => {
     //console.log(history.location.state.privilege);
     var loggedIn = localStorage.getItem("token");
@@ -665,7 +629,9 @@ export default function Dashboard() {
                 "TVR" +
                 modifedReservations[index].ref.toString().padStart(7, "0");
             }
-
+            modifedReservations[index].formattedStatus = formatStatus(
+              modifedReservations[index].status
+            );
             modifedReservations[index].departureDate = modifedReservations[
               index
             ].departureDate.split("T")[0];
@@ -879,29 +845,31 @@ export default function Dashboard() {
           <Divider />
           <List>
             <div>
-              { privilege == 6 && <ListItem
-                button
-                onClick={() => {
-                  setCode("");
-                  setCouponId("");
-                  setExpiration(dayjs());
-                  setValue("");
-                  setFixed(true);
-                  setCouponDialog(true);
-                  setAddOrUpdate(true);
-                }}
-              >
-                <ListItemIcon>
-                  <AddCircleIcon />
-                </ListItemIcon> 
-                <ListItemText primary="Add Coupon" />
-              </ListItem> }
+              {privilege == 6 && (
+                <ListItem
+                  button
+                  onClick={() => {
+                    setCode("");
+                    setCouponId("");
+                    setExpiration(dayjs());
+                    setValue("");
+                    setFixed(true);
+                    setCouponDialog(true);
+                    setAddOrUpdate(true);
+                  }}
+                >
+                  <ListItemIcon>
+                    <AddCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Add Coupon" />
+                </ListItem>
+              )}
               <ListItem button>
                 <ListItemIcon>
                   <RefreshIcon />
                 </ListItemIcon>
                 <ListItemText primary="Refresh" />
-              </ListItem> 
+              </ListItem>
             </div>
           </List>
           <Divider />
@@ -1111,7 +1079,7 @@ export default function Dashboard() {
                         var coupon = coupons[data.dataIndex];
                         var allcoupons = coupons;
                         await axios
-                          .post("/api/user/delete", {
+                          .post("/api/coupon/delete", {
                             _id: coupon._id,
                           })
                           .then(function (response) {
@@ -1296,11 +1264,11 @@ export default function Dashboard() {
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Departure Flight Code"
+                primary="Departure Flight Details"
                 secondary={currentReservation.selectedGoingTicket[0].planeCode.replace(
                   "-",
                   ""
-                )}
+                ) + " ( " + currentReservation.selectedGoingTicket[0].take_off + " - " + currentReservation.selectedGoingTicket[0].landing + " )"}
               />
             </ListItem>
             <Divider />
@@ -1355,14 +1323,14 @@ export default function Dashboard() {
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Return Flight Code"
+                primary="Return Flight Details"
                 secondary={
                   currentReservation.oneWay
                     ? "N/A"
                     : currentReservation.selectedReturningTicket[0].planeCode.replace(
                         "-",
                         ""
-                      )
+                      ) + " ( " + currentReservation.selectedReturningTicket[0].take_off + " - " + currentReservation.selectedReturningTicket[0].landing + " )"
                 }
               />
             </ListItem>
@@ -1394,7 +1362,7 @@ export default function Dashboard() {
             >
               <ListItemText
                 primary="Status"
-                secondary={currentReservation.status}
+                secondary={formatStatus(currentReservation.status)}
               />
               {statusOpen ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
@@ -2058,6 +2026,74 @@ export default function Dashboard() {
             variant="contained"
           >
             {"Submit"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={messageDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setMessageDialog(false)}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">{"Confirm"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            {"Are you sure you want to delete this " + { toBeDeleted } + "?"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setMessageDialog(false)} color="primary">
+            Close
+          </Button>
+          <Button
+            onClick={() => {
+              axios
+                .post("/api/" + toBeDeleted + "/delete", {
+                  _id: toBeDeletedId,
+                })
+                .then(function (response) {
+                  if (toBeDeleted === "reservation") {
+                    var allreservations = reservations;
+                    console.log(response);
+                    console.log(allreservations.length);
+                    allreservations.splice(toBeDeletedIndex, 1);
+                    console.log(allreservations.length);
+                    setReservations(allreservations);
+                    setRefresh(!refresh);
+                  } else if (toBeDeleted === "user") {
+                    var allusers = users;
+                    console.log(response);
+                    console.log(allreservations.length);
+                    allusers.splice(toBeDeletedIndex, 1);
+                    console.log(allusers.length);
+                    setUsers(allusers);
+                    setRefresh(!refresh);
+                  } else if (toBeDeleted === "coupon") {
+                    var allcoupons = coupons;
+                    console.log(response);
+                    console.log(allcoupons.length);
+                    coupons.splice(toBeDeletedIndex, 1);
+                    console.log(coupons.length);
+                    setCoupons(coupons);
+                  }
+                  setToBeDeleted("");
+                  setToBeDeletedId("");
+                  setToBeDeletedIndex("");
+                  //history.push("/dashboard");
+                })
+                .catch(function (error) {
+                  console.log(error);
+                  if (error) {
+                    setErrorMessage("An error occured. Please try again.");
+                    setAuthError(true);
+                  }
+                });
+            }}
+            color="primary"
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

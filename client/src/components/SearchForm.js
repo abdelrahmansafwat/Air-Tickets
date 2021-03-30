@@ -65,9 +65,9 @@ import logoText from "../resources/logo-w-text.png";
 import history from "../history";
 import ReserveForm from "./ReserveForm";
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.tz.setDefault("UTC");
+//dayjs.extend(utc);
+//dayjs.extend(timezone);
+//dayjs.tz.setDefault("UTC");
 
 import DayjsUtils from "@date-io/dayjs";
 
@@ -298,7 +298,11 @@ function SearchForm() {
     */
 
     if (!oneWay) {
-      if (!_.isNull(birman) && !birman.hasOwnProperty("Error") && !birman.hasOwnProperty("error")) {
+      if (
+        !_.isNull(birman) &&
+        !birman.hasOwnProperty("Error") &&
+        !birman.hasOwnProperty("error")
+      ) {
         for (const [ticketKey, ticket] of Object.entries(birman)) {
           lowestPrice = [];
           birman[ticketKey]["planeCode"] = ticketKey;
@@ -327,7 +331,10 @@ function SearchForm() {
             5
           );
 
-          birman[ticketKey]["duration"] = duration(birman[ticketKey]["take_off"], birman[ticketKey]["landing"])
+          birman[ticketKey]["duration"] = duration(
+            birman[ticketKey]["take_off"],
+            birman[ticketKey]["landing"]
+          );
           if (
             !isNaN(birman[ticketKey]["lowestPrice"]) &&
             birman[ticketKey]["prices"].currency === "BDT"
@@ -337,9 +344,13 @@ function SearchForm() {
         }
       }
 
-      if (!_.isNull(flynovoair) && !flynovoair.hasOwnProperty("Error") && !flynovoair.hasOwnProperty("error")) {
+      if (
+        !_.isNull(flynovoair) &&
+        !flynovoair.hasOwnProperty("Error") &&
+        !flynovoair.hasOwnProperty("error")
+      ) {
         flynovoair.map((ticket, ticketKey) => {
-          if(flynovoair[ticketKey].flight_blocks.length < 2){
+          if (flynovoair[ticketKey].flight_blocks.length < 2) {
             lowestPrice = [];
             flynovoair[ticketKey]["planeCode"] =
               flynovoair[ticketKey].flight_blocks[0].flight;
@@ -361,8 +372,11 @@ function SearchForm() {
               .split("T")[1]
               .substring(0, 5);
 
-            flynovoair[ticketKey]["duration"] = duration(flynovoair[ticketKey]["take_off"], flynovoair[ticketKey]["landing"])
-  
+            flynovoair[ticketKey]["duration"] = duration(
+              flynovoair[ticketKey]["take_off"],
+              flynovoair[ticketKey]["landing"]
+            );
+
             flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
             going.push(flynovoair[ticketKey]);
           }
@@ -392,7 +406,11 @@ function SearchForm() {
         */
       }
 
-      if (!_.isNull(usbair) && !usbair.hasOwnProperty("Error") && !usbair.hasOwnProperty("error")) {
+      if (
+        !_.isNull(usbair) &&
+        !usbair.hasOwnProperty("Error") &&
+        !usbair.hasOwnProperty("error")
+      ) {
         for (const [ticketKey, ticket] of Object.entries(usbair)) {
           lowestPrice = [];
           usbair[ticketKey]["planeCode"] = ticketKey;
@@ -411,11 +429,17 @@ function SearchForm() {
             5
           );
 
-          usbair[ticketKey]["duration"] = duration(usbair[ticketKey]["take_off"], usbair[ticketKey]["landing"])
+          usbair[ticketKey]["duration"] = duration(
+            usbair[ticketKey]["take_off"],
+            usbair[ticketKey]["landing"]
+          );
 
           console.log(new Date(departureDate).getDate());
           console.log(usbair[ticketKey].departure.split(" ")[1]);
-          if (usbair[ticketKey].departure.split(" ")[1] == new Date(departureDate).getDate()) {
+          if (
+            usbair[ticketKey].departure.split(" ")[1] ==
+            new Date(departureDate).getDate()
+          ) {
             going.push(usbair[ticketKey]);
           }
         }
@@ -454,7 +478,10 @@ function SearchForm() {
             5
           );
 
-          birman[ticketKey]["duration"] = duration(birman[ticketKey]["take_off"], birman[ticketKey]["landing"])
+          birman[ticketKey]["duration"] = duration(
+            birman[ticketKey]["take_off"],
+            birman[ticketKey]["landing"]
+          );
 
           birman[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (
@@ -493,7 +520,10 @@ function SearchForm() {
             .split("T")[1]
             .substring(0, 5);
 
-            flynovoair[ticketKey]["duration"] = duration(flynovoair[ticketKey]["take_off"], flynovoair[ticketKey]["landing"])
+          flynovoair[ticketKey]["duration"] = duration(
+            flynovoair[ticketKey]["take_off"],
+            flynovoair[ticketKey]["landing"]
+          );
 
           flynovoair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
 
@@ -549,11 +579,17 @@ function SearchForm() {
             5
           );
 
-          usbair[ticketKey]["duration"] = duration(usbair[ticketKey]["take_off"], usbair[ticketKey]["landing"])
+          usbair[ticketKey]["duration"] = duration(
+            usbair[ticketKey]["take_off"],
+            usbair[ticketKey]["landing"]
+          );
 
           usbair[ticketKey]["lowestPrice"] = Math.min(...lowestPrice);
           if (ticket["from"] === String(selectedDepartureAirport.cityName)) {
-            if (usbair[ticketKey].departure.split(" ")[1] == new Date(departureDate).getDate()) {
+            if (
+              usbair[ticketKey].departure.split(" ")[1] ==
+              new Date(departureDate).getDate()
+            ) {
               going.push(usbair[ticketKey]);
             }
           } else {
@@ -938,12 +974,10 @@ function SearchForm() {
                                 arrival_code: String(
                                   selectedArrivalAirport.code
                                 ),
-                                departure_date: departureDate
-                                  .toISOString()
-                                  .split("T")[0],
-                                arrival_date: arrivalDate
-                                  .toISOString()
-                                  .split("T")[0],
+                                departure_date: departureDate.format(
+                                  "YYYY-MM-DD"
+                                ),
+                                arrival_date: arrivalDate.format("YYYY-MM-DD"),
                                 adult: String(adults),
                                 child: String(children),
                                 infant: String(infants),
@@ -1213,9 +1247,15 @@ function SearchForm() {
                         ? arrivalDate.toDate().toDateString().substring(4, 10) +
                           "," +
                           arrivalDate.toDate().toDateString().substring(10, 15)
-                        : departureDate.toDate().toDateString().substring(4, 10) +
+                        : departureDate
+                            .toDate()
+                            .toDateString()
+                            .substring(4, 10) +
                           "," +
-                          departureDate.toDate().toDateString().substring(10, 15)}
+                          departureDate
+                            .toDate()
+                            .toDateString()
+                            .substring(10, 15)}
                     </Typography>
                     {oneWay && !(selectedGoingTicket === "") && (
                       <Button
@@ -1358,7 +1398,9 @@ function SearchForm() {
                                     {data.planeCode.replace("-", "")}
                                   </Typography>
                                   <Typography style={{ textAlign: "center" }}>
-                                    {departureDate.toDate().toLocaleDateString()}
+                                    {departureDate
+                                      .toDate()
+                                      .toLocaleDateString()}
                                   </Typography>
                                 </Grid>
                                 <Grid xs={4} container direction={"column"}>
