@@ -392,4 +392,9 @@ router.post("/reserve/pnr", async (req, res) => {
     });
 });
 
+//Reserve status route
+router.post("/reserve/print", async (req, res) => {
+  
+});
+
 module.exports = router;

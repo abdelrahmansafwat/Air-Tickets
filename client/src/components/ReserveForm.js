@@ -42,6 +42,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import dayjs from "dayjs";
+import history from "../history";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -699,7 +700,20 @@ function ReserveForm(props) {
                         setMessageDialog(true);
                       } else {
                         if (index === adults + children + infants - 1) {
-                          setConfirm(true);
+                          history.push({
+                            pathname: "/checkout",
+                            state: {
+                              adults: adults,
+                              children: children,
+                              infants: infants,
+                              oneWay: oneWay,
+                              arrivalDate: arrivalDate,
+                              departureDate: departureDate,
+                              selectedGoingTicket: selectedGoingTicket,
+                              selectedReturningTicket: selectedReturningTicket,
+                              passengers: passengers,
+                            },
+                          });
                         } else {
                           setIndex(index + 1);
                           setRender(!render);
@@ -941,67 +955,19 @@ function ReserveForm(props) {
               <Button
                 disabled={!terms}
                 onClick={async () => {
-                  axios.create({ baseURL: window.location.origin });
-                  var numberOfTickets =
-                    adults * (oneWay ? 2 : 1) +
-                    children * (oneWay ? 2 : 1) +
-                    infants * (oneWay ? 2 : 1);
-
-                  var total =
-                    Math.floor(
-                      adults * selectedGoingTicket.lowestPrice +
-                        children *
-                          ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.75 +
-                            725 * 1) +
-                        infants *
-                          ((selectedGoingTicket.lowestPrice - 725 * 1) * 0.1 +
-                            200)
-                    ) -
-                    (window.location.href.split("/").includes("applive")
-                      ? 200
-                      : 100) *
-                      (adults + children) +
-                    (oneWay
-                      ? Math.floor(
-                          adults * selectedReturningTicket.lowestPrice +
-                            children *
-                              ((selectedReturningTicket.lowestPrice - 725 * 1) *
-                                0.75 +
-                                725 * 1) +
-                            infants *
-                              ((selectedReturningTicket.lowestPrice - 725 * 1) *
-                                0.1 +
-                                200)
-                        ) -
-                        (window.location.href.split("/").includes("applive")
-                          ? 200
-                          : 100) *
-                          (adults + children)
-                      : 0);
-
-                  await axios
-                    .post("/api/reservation/reserve/", {
-                      url: window.location.href,
-                      email: passengers[0].email,
-                      passengers: passengers,
+                  history.push({
+                    pathname: "/checkout",
+                    state: {
+                      adults: adults,
+                      children: children,
+                      infants: infants,
+                      oneWay: oneWay,
+                      arrivalDate: arrivalDate,
+                      departureDate: departureDate,
                       selectedGoingTicket: selectedGoingTicket,
                       selectedReturningTicket: selectedReturningTicket,
-                      oneWay: !oneWay,
-                      departureDate: departureDate,
-                      arrivalDate: arrivalDate,
-                      numberOfTickets: numberOfTickets,
-                      total: total,
-                    })
-                    .then(function (response) {
-                      console.log(response.data);
-                      setConfirm(false);
-                      window.location.href = response.data.gateWayUrl;
-                    })
-                    .catch(function (error) {
-                      console.log(error);
-                      if (error) {
-                      }
-                    });
+                    },
+                  });
                 }}
                 color="primary"
               >

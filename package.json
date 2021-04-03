@@ -22,6 +22,7 @@
     "express": "^4.17.1",
     "form-data": "^4.0.0",
     "greenlock-express": "v4",
+    "html-pdf-node": "^1.0.7",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.17",
     "mongoose-fuzzy-searching": "^2.0.2",

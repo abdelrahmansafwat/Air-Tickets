@@ -1452,7 +1452,7 @@ function SearchForm() {
                                 </Grid>
                                 <Grid xs={4} item>
                                   <Typography
-                                    style={{ textDecoration: "line-through" }}
+                                    
                                   >
                                     {Math.floor(
                                       adults * data.lowestPrice +
@@ -1464,24 +1464,7 @@ function SearchForm() {
                                             200)
                                     ) + " BDT"}
                                   </Typography>
-                                  <Typography>
-                                    {Math.floor(
-                                      adults * data.lowestPrice +
-                                        children *
-                                          ((data.lowestPrice - 725 * 1) * 0.75 +
-                                            725 * 1) +
-                                        infants *
-                                          ((data.lowestPrice - 725 * 1) * 0.1 +
-                                            200)
-                                    ) -
-                                      (window.location.href
-                                        .split("/")
-                                        .includes("applive")
-                                        ? 200
-                                        : 100) *
-                                        (adults + children) +
-                                      " BDT"}
-                                  </Typography>
+                                  
                                 </Grid>
                               </Grid>
                             </CardActionArea>
@@ -1604,7 +1587,6 @@ function SearchForm() {
                               </Grid>
                               <Grid xs={4} item>
                                 <Typography
-                                  style={{ textDecoration: "line-through" }}
                                 >
                                   {Math.floor(
                                     adults * selectedGoingTicket.lowestPrice +
@@ -1620,28 +1602,7 @@ function SearchForm() {
                                           200)
                                   ) + " BDT"}
                                 </Typography>
-                                <Typography>
-                                  {Math.floor(
-                                    adults * selectedGoingTicket.lowestPrice +
-                                      children *
-                                        ((selectedGoingTicket.lowestPrice -
-                                          725 * 1) *
-                                          0.75 +
-                                          725 * 1) +
-                                      infants *
-                                        ((selectedGoingTicket.lowestPrice -
-                                          725 * 1) *
-                                          0.1 +
-                                          200)
-                                  ) -
-                                    (window.location.href
-                                      .split("/")
-                                      .includes("applive")
-                                      ? 200
-                                      : 100) *
-                                      (adults + children) +
-                                    " BDT"}
-                                </Typography>
+                                
                               </Grid>
                             </Grid>
                           </CardActionArea>

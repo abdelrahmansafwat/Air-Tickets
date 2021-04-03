@@ -13,6 +13,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Forgot from './components/Forgot';
 import Dashboard from './components/Dashboard';
+import Checkout from './components/Checkout';
 import history from './history';
 
 
@@ -34,6 +35,7 @@ export default class Routes extends Component {
                     <Route path="/privacy-policy" component={Privacy} />
                     <Route path="/terms-and-conditions" component={Terms} />
                     <Route path="/refund-and-return-policy" component={Refund} />
+                    <Route path="/checkout" component={Checkout} />
                 </Switch>
             </Router>
         )
